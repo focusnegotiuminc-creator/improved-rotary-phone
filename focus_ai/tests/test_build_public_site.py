@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 import subprocess
 
@@ -21,3 +22,4 @@ def test_build_public_site_outputs_bundle():
     assert (out / "index.html").exists()
     assert (out / "landing.html").exists()
     assert (out / "ebooks" / "index.html").exists()
+    shutil.rmtree(out)

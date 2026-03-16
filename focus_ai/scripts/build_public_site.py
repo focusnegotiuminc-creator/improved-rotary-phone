@@ -35,6 +35,10 @@ def build() -> int:
     preview_css = SITE / "visual_preview.css"
     if preview_html.exists():
         shutil.copy2(preview_html, PUBLIC / "index.html")
+        html = preview_html.read_text(encoding="utf-8")
+        html = html.replace("../published/ebooks/index.html", "ebooks/index.html")
+        html = html.replace("../published/public_site/landing.html", "landing.html")
+        (PUBLIC / "index.html").write_text(html, encoding="utf-8")
     if preview_css.exists():
         shutil.copy2(preview_css, PUBLIC / "visual_preview.css")
 
@@ -57,6 +61,7 @@ def build() -> int:
     <h1>Focus AI Public Launch</h1>
     <div class=\"card\">
       <p><a href=\"index.html\">View visual preview homepage</a></p>
+      <p><a href=\"index.html\">View sacred geometry homepage</a></p>
       <p><a href=\"ebooks/index.html\">View published eBook library</a></p>
     </div>
   </main>
