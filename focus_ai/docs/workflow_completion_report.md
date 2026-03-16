@@ -29,3 +29,6 @@ Published HTML files are available in `focus_ai/published/ebooks/` with a browsa
 - Git remote `origin` is configured to `https://github.com/thegreatmachevilli/Focus--Master.git`.
 - Push attempts from this container are currently blocked by network policy (`CONNECT tunnel failed, response 403`).
 - Result: repository is linked to GitHub remote, but pushing must be completed from an environment with outbound GitHub access.
+- This runtime currently has no configured git remote in `.git/config`.
+- GitHub CLI is not available/authenticated in this environment.
+- Result: local commits are complete, but direct push/verification to GitHub cannot be performed from this container without adding a remote and credentials.
