@@ -8,3 +8,29 @@ A local, device-controllable Sacred AI workflow system with 11 stages, prompt pa
 - `make qa` — syntax checks for scripts
 - `make visual-check` — verify visual and phone-number content requirements
 - `make publish` — publish eBooks as local HTML pages to `focus_ai/published/ebooks/`
+- `make public-build` — build a public-ready site bundle in `focus_ai/published/public_site/`
+- `make deploy-infinityfree` — deploy the public bundle to InfinityFree over FTP
+- `make replit-export` — export AI engine + prompt bundle for a Replit app
+
+## Public deployment
+- GitHub Actions workflow `.github/workflows/publish-pages.yml` builds and deploys `focus_ai/published/public_site/` to GitHub Pages on push.
+- Public bundle includes visual preview homepage and published eBook library links.
+
+## InfinityFree deployment
+Set these environment variables, then run `make deploy-infinityfree`:
+- `INFINITYFREE_FTP_HOST`
+- `INFINITYFREE_FTP_USER`
+- `INFINITYFREE_FTP_PASS`
+- `INFINITYFREE_REMOTE_DIR` (optional, defaults to `htdocs`)
+
+## Replit bundle
+Run `make replit-export` to generate `focus_ai/published/replit_bundle/` with the AI engine scripts, prompt pack, workflow doc, and eBook outputs for direct import into a Replit app.
+
+### GitHub Actions secrets (recommended)
+To deploy from GitHub using previously stored repo credentials, set repository secrets:
+- `INFINITYFREE_FTP_HOST`
+- `INFINITYFREE_FTP_USER`
+- `INFINITYFREE_FTP_PASS`
+- `INFINITYFREE_REMOTE_DIR` (optional)
+
+Then run the workflow `.github/workflows/deploy-infinityfree.yml` (manual dispatch) or push to `work/main/master`.
