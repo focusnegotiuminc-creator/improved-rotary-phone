@@ -25,3 +25,12 @@ Set these environment variables, then run `make deploy-infinityfree`:
 
 ## Replit bundle
 Run `make replit-export` to generate `focus_ai/published/replit_bundle/` with the AI engine scripts, prompt pack, workflow doc, and eBook outputs for direct import into a Replit app.
+
+### GitHub Actions secrets (recommended)
+To deploy from GitHub using previously stored repo credentials, set repository secrets:
+- `INFINITYFREE_FTP_HOST`
+- `INFINITYFREE_FTP_USER`
+- `INFINITYFREE_FTP_PASS`
+- `INFINITYFREE_REMOTE_DIR` (optional)
+
+Then run the workflow `.github/workflows/deploy-infinityfree.yml` (manual dispatch) or push to `work/main/master`.
