@@ -1,3 +1,4 @@
+.PHONY: run stage qa visual-check publish public-build
 .PHONY: run stage qa visual-check publish public-build deploy-infinityfree replit-export
 
 run:
@@ -7,6 +8,7 @@ stage:
 	python3 focus_ai/scripts/engine.py --stage $(N)
 
 qa:
+	python3 -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/build_public_site.py
 	python3 -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/build_public_site.py focus_ai/scripts/deploy_infinityfree.py focus_ai/scripts/export_replit_bundle.py
 
 visual-check:
