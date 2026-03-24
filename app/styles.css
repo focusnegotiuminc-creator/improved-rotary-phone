@@ -1,0 +1,79 @@
+:root {
+  color-scheme: dark;
+  --bg: #090b11;
+  --panel: #111626;
+  --text: #f0f5ff;
+  --accent: #4da8ff;
+  --accent-2: #79ffd4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: radial-gradient(circle at top, #101b3a 0%, var(--bg) 45%);
+  color: var(--text);
+}
+
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+  display: grid;
+  gap: 1rem;
+}
+
+header h1 {
+  margin: 0;
+  color: var(--accent-2);
+}
+
+.panel {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(121, 255, 212, 0.2);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+}
+
+textarea,
+button {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid rgba(77, 168, 255, 0.35);
+}
+
+textarea {
+  margin-top: 0.35rem;
+  padding: 0.7rem;
+  background: #0e1320;
+  color: var(--text);
+  resize: vertical;
+}
+
+button {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--accent), #7b6dff);
+  color: white;
+  cursor: pointer;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background: #080c14;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 1rem;
+  min-height: 260px;
+}
