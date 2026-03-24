@@ -1,9 +1,10 @@
-# Marketing Content Drop (2026-03-24T18:42:03.191356+00:00)
+# Marketing Content Drop (2026-03-24T18:49:32.189154+00:00)
 
-## Hooks
-- Most homes are built for speed, not value. Here is the premium system.
-- Build once, optimize forever: design decisions that compound revenue.
-- Your business can run on repeatable systems instead of constant hustle.
+Hook → Insight → CTA (link in bio)
+
+## Funnel Architecture
+Traffic -> Free Value (Lead Magnet) -> Email Capture -> Low Ticket ($20 Book)
+-> Mid Ticket ($49-$149) -> High Ticket ($299-$999) -> Automation + Follow-ups
 
 ## Short-Form Video Scripts (20 ideas)
 1. Three layout mistakes lowering property value.
@@ -27,12 +28,9 @@
 19. 90-day execution dashboard walkthrough.
 20. What to measure every week for growth.
 
-## Funnel Copy Snippets
-- **Headline:** Design better systems. Build long-term wealth infrastructure.
-- **CTA:** Download the starter system and launch this week.
-- **Guarantee Framing:** Educational, actionable, transparent, and continuously improved.
-
-## Distribution Plan
-- Books: KDP + direct PDF bundles
-- Products: Gumroad packs + email delivery
-- Services: Consultation call + implementation sprint offers
+## Scaling Math Example
+- 100 visitors/day
+- 10 opt-ins
+- 2 book sales ($40)
+- 1 upsell ($49)
+- Approx. $90/day baseline before higher-ticket closes

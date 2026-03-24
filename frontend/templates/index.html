@@ -8,6 +8,8 @@
       body { font-family: Arial, sans-serif; margin: 2rem; background: #111827; color: #f3f4f6; }
       h1, h2 { margin-bottom: 0.5rem; }
       .actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.8rem; margin-bottom: 1.5rem; }
+      .links { margin-bottom: 1.2rem; }
+      a { color: #93c5fd; margin-right: 1rem; }
       button { padding: 0.7rem; border: 0; border-radius: 8px; background: #2563eb; color: white; cursor: pointer; }
       button:hover { background: #1d4ed8; }
       .panel { background: #1f2937; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; }
@@ -16,7 +18,14 @@
   </head>
   <body>
     <h1>Sacred AI Business Engine</h1>
-    <p>Trigger automated generation workflows and preview the latest outputs.</p>
+    <p>Trigger generation workflows and preview outputs.</p>
+
+    <div class="links">
+      <a href="/landing">Lead Capture Landing</a>
+      <a href="/delivery">Delivery Page</a>
+      <a href="/upsell">Upsell Page</a>
+      <a href="/high-ticket">High-Ticket Page</a>
+    </div>
 
     <form class="actions" action="/run" method="post">
       <button name="task" value="books">Generate Books</button>

@@ -1,6 +1,6 @@
 # Sacred AI Business Engine
 
-Automated content and offer generation system for books, blueprint products, business systems, and marketing assets.
+Automated content and monetization engine for books, blueprint products, business offers, funnel pages, and email follow-ups.
 
 ## Repository Structure
 - `research/`
@@ -20,9 +20,12 @@ Automated content and offer generation system for books, blueprint products, bus
 - `automation/book_writer.py` (generates 10 complete books at $19.99)
 - `automation/blueprint_generator.py` (creates blueprint product drops)
 - `automation/business_generator.py` (creates business offers and catalogs)
-- `automation/marketing_engine.py` (creates conversion-focused marketing assets)
+- `automation/marketing_engine.py` (generates funnel copy + email automation assets)
 
-## Frontend Dashboard
+## Funnel Logic
+Traffic -> Free Value (Lead Magnet) -> Email Capture -> Low Ticket ($20 Book) -> Mid Ticket ($49-$149) -> High Ticket ($299-$999) -> Automation + Follow-ups.
+
+## Frontend Dashboard + Funnel Pages
 Run:
 
 ```bash
@@ -30,7 +33,14 @@ pip install flask
 python frontend/app.py
 ```
 
-Open `http://localhost:3000` to trigger automation and preview generated outputs.
+Pages:
+- Dashboard: `http://localhost:3000/`
+- Lead capture: `http://localhost:3000/landing`
+- Delivery: `http://localhost:3000/delivery`
+- Upsell: `http://localhost:3000/upsell`
+- High-ticket: `http://localhost:3000/high-ticket`
+
+Lead emails are stored in `final_product/leads.csv`.
 
 ## GitHub Actions
 Workflow: `.github/workflows/auto-generate.yml`
@@ -39,6 +49,6 @@ Workflow: `.github/workflows/auto-generate.yml`
 - Commits and pushes generated updates automatically
 
 ## Monetization Channels
-- KDP book publishing (book library generated in `book/`)
-- Gumroad digital products (offers + blueprint assets)
-- Service offers (business setup and automation systems)
+- KDP book publishing (`book/`)
+- Gumroad digital products (`geometry/`, `final_product/`)
+- Service offers and application funnel (`frontend/`, `marketing/`)
