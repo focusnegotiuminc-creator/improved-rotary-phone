@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check whether a deployed public app URL is reachable."""
+"""Check whether a deployed app URL is reachable."""
 
 from __future__ import annotations
 
@@ -8,7 +8,21 @@ from urllib.parse import urljoin
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 
-PATHS = ["/", "/ebooks/index.html", "/landing.html"]
+DEFAULT_PATHS = ["/", "/wp-admin", "/ebooks/index.html", "/landing.html"]
+
+
+def _parse_paths(raw: str | None) -> list[str]:
+    if not raw:
+        return DEFAULT_PATHS
+    paths = []
+    for value in raw.split(","):
+        value = value.strip()
+        if not value:
+            continue
+        if not value.startswith("/"):
+            value = f"/{value}"
+        paths.append(value)
+    return paths or DEFAULT_PATHS
 
 
 def _check(url: str) -> tuple[bool, str]:
@@ -32,15 +46,24 @@ def main() -> int:
         print("  export FOCUS_APP_URL='https://example.com'")
         return 1
 
-    all_ok = True
-    for path in PATHS:
+    paths = _parse_paths(os.getenv("FOCUS_APP_PATHS"))
+    require_all = os.getenv("FOCUS_REQUIRE_ALL_PATHS", "1").strip().lower() not in {"0", "false", "no"}
+
+    failures = 0
+    for path in paths:
         target = urljoin(base.rstrip("/") + "/", path.lstrip("/"))
         ok, detail = _check(target)
         mark = "PASS" if ok else "FAIL"
         print(f"[{mark}] {target} -> {detail}")
-        all_ok = all_ok and ok
+        if not ok:
+            failures += 1
 
-    return 0 if all_ok else 2
+    if failures == 0:
+        return 0
+    if require_all:
+        return 2
+    print(f"Completed with {failures} failing path(s), but FOCUS_REQUIRE_ALL_PATHS is disabled.")
+    return 0
 
 
 if __name__ == "__main__":

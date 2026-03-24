@@ -43,6 +43,7 @@ Then run the workflow `.github/workflows/deploy-infinityfree.yml` (manual dispat
 2. Run `make public-build` to generate the deployable site in `focus_ai/published/public_site/`.
 3. Deploy with `make deploy-infinityfree` after setting FTP credentials in environment variables.
 4. After deployment, run `FOCUS_APP_URL="https://your-live-url" make verify-live` to confirm live availability.
+5. Optional: set `FOCUS_APP_PATHS` (comma-separated) and `FOCUS_REQUIRE_ALL_PATHS=0` if you only need partial endpoint success checks.
 
 ## Where to find your books
 - Markdown source books: `focus_ai/ebooks/`
@@ -53,3 +54,7 @@ Then run the workflow `.github/workflows/deploy-infinityfree.yml` (manual dispat
 - Store credentials as environment variables (never commit passwords to git).
 - Optional local `.env` files should be ignored by git.
 - Run `make backup` before major edits or deploys to generate a timestamped archive in `focus_ai/backups/`.
+
+
+### Example live check
+`FOCUS_APP_URL="https://thefocuscorp.com" FOCUS_APP_PATHS="/,/wp-admin" make verify-live`
