@@ -8,3 +8,4 @@ A local, device-controllable Sacred AI workflow system with 11 stages, prompt pa
 - `make qa` — syntax checks for scripts
 - `make visual-check` — verify visual and phone-number content requirements
 - `make publish` — publish eBooks as local HTML pages to `focus_ai/published/ebooks/`
+- `make sync` — download and extract provided Google Drive zip assets into `focus_ai/imports/`
