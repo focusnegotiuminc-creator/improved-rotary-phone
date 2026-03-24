@@ -1,36 +1,44 @@
-# Focus AI Engine
+# Sacred AI Business Engine
 
-A local, device-controllable Sacred AI workflow system with 11 stages, prompt packs, publishing checklists, draft long-form content assets, and a visual preview page for design verification.
+Automated content and offer generation system for books, blueprint products, business systems, and marketing assets.
 
-## Quick commands
-- `make run` — run all workflow stages
-- `make stage N=8` — run a specific stage
-- `make qa` — syntax checks for scripts
-- `make visual-check` — verify visual and phone-number content requirements
-- `make publish` — publish eBooks as local HTML pages to `focus_ai/published/ebooks/`
-- `make public-build` — build a public-ready site bundle in `focus_ai/published/public_site/`
-- `make deploy-infinityfree` — deploy the public bundle to InfinityFree over FTP
-- `make replit-export` — export AI engine + prompt bundle for a Replit app
+## Repository Structure
+- `research/`
+- `claims/`
+- `book/`
+- `geometry/`
+- `construction/`
+- `compliance/`
+- `alignment/`
+- `marketing/`
+- `final_product/`
+- `automation/`
+- `frontend/`
 
-## Public deployment
-- GitHub Actions workflow `.github/workflows/publish-pages.yml` builds and deploys `focus_ai/published/public_site/` to GitHub Pages on push.
-- Public bundle includes visual preview homepage and published eBook library links.
+## Core Automation Scripts
+- `automation/ai_generator.py` (orchestrates all generation)
+- `automation/book_writer.py` (generates 10 complete books at $19.99)
+- `automation/blueprint_generator.py` (creates blueprint product drops)
+- `automation/business_generator.py` (creates business offers and catalogs)
+- `automation/marketing_engine.py` (creates conversion-focused marketing assets)
 
-## InfinityFree deployment
-Set these environment variables, then run `make deploy-infinityfree`:
-- `INFINITYFREE_FTP_HOST`
-- `INFINITYFREE_FTP_USER`
-- `INFINITYFREE_FTP_PASS`
-- `INFINITYFREE_REMOTE_DIR` (optional, defaults to `htdocs`)
+## Frontend Dashboard
+Run:
 
-## Replit bundle
-Run `make replit-export` to generate `focus_ai/published/replit_bundle/` with the AI engine scripts, prompt pack, workflow doc, and eBook outputs for direct import into a Replit app.
+```bash
+pip install flask
+python frontend/app.py
+```
 
-### GitHub Actions secrets (recommended)
-To deploy from GitHub using previously stored repo credentials, set repository secrets:
-- `INFINITYFREE_FTP_HOST`
-- `INFINITYFREE_FTP_USER`
-- `INFINITYFREE_FTP_PASS`
-- `INFINITYFREE_REMOTE_DIR` (optional)
+Open `http://localhost:3000` to trigger automation and preview generated outputs.
 
-Then run the workflow `.github/workflows/deploy-infinityfree.yml` (manual dispatch) or push to `work/main/master`.
+## GitHub Actions
+Workflow: `.github/workflows/auto-generate.yml`
+- Runs every 2 hours (`0 */2 * * *`)
+- Executes `python automation/ai_generator.py`
+- Commits and pushes generated updates automatically
+
+## Monetization Channels
+- KDP book publishing (book library generated in `book/`)
+- Gumroad digital products (offers + blueprint assets)
+- Service offers (business setup and automation systems)
