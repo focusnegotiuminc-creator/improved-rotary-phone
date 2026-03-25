@@ -25,7 +25,23 @@ Options:
 
 Environment variables (used when --no-tunnel is not set):
   BASTION_SSH           Required. SSH destination for outbound bridge, e.g. user@bastion.example.com
-  BASTION_SSH_FLAGS     Optional extra ssh flags, e.g. "-i ~/.ssh/id_rsa -p 2222"
+  SSH_KEY_FILE          Optional private key path; if set, script uses IdentitiesOnly mode.
+  BASTION_SSH_FLAGS     Optional extra ssh flags, e.g. "-p 2222"
+
+GitHub credentials:
+  GH_TOKEN              Recommended for non-interactive gh auth / PR merge calls.
+EOF
+}
+
+
+required_prompt() {
+  cat <<'EOF' >&2
+Missing required connection credentials. Provide at minimum:
+  export BASTION_SSH=user@your-bastion-host
+Optional secure auth controls:
+  export SSH_KEY_FILE=~/.ssh/your_private_key
+  export GH_TOKEN=<token-with-repo-scope>
+Re-run after setting the values (do not hardcode secrets in repo files).
 EOF
 }
 
@@ -68,11 +84,14 @@ trap cleanup EXIT
 
 if [[ "$NO_TUNNEL" != "1" ]]; then
   if [[ -z "${BASTION_SSH:-}" ]]; then
-    echo "BASTION_SSH is required unless --no-tunnel is provided." >&2
+    required_prompt
     exit 2
   fi
 
   SSH_ARGS=( -N -D "${SOCKS_PORT}" )
+  if [[ -n "${SSH_KEY_FILE:-}" ]]; then
+    SSH_ARGS+=( -i "${SSH_KEY_FILE}" -o IdentitiesOnly=yes )
+  fi
   if [[ -n "${BASTION_SSH_FLAGS:-}" ]]; then
     # shellcheck disable=SC2206
     EXTRA_FLAGS=( ${BASTION_SSH_FLAGS} )
@@ -94,6 +113,9 @@ echo "Installing gh (or verifying existing install)..."
 bash "${ROOT_DIR}/focus_ai/scripts/install_gh_cli.sh"
 
 if [[ "$SKIP_MERGE" != "1" ]]; then
+  if [[ -z "${GH_TOKEN:-}" ]]; then
+    echo "Warning: GH_TOKEN is not set. gh may require interactive auth." >&2
+  fi
   echo "Merging all open pull requests..."
   MERGE_ARGS=( merge-prs )
   if [[ -n "$REPO" ]]; then

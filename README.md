@@ -71,3 +71,9 @@ If this runtime is blocked by outbound 403 policies, you can bridge through an e
 - run full go-live pipeline
 
 Use `--no-tunnel` if you already have proxy env vars configured, or `--skip-merge` to only run the engine pipeline.
+
+
+## Credential safety for bridge runs
+- Never commit raw credentials (emails, passwords, private keys, tokens) into repository files.
+- Provide secrets at runtime via environment variables only (`BASTION_SSH`, `SSH_KEY_FILE`, `GH_TOKEN`).
+- `focus_ai/scripts/unblock_and_live.sh` will prompt for missing required connection credentials and supports key-based SSH auth with `IdentitiesOnly`.
