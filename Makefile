@@ -1,4 +1,4 @@
-.PHONY: run stage qa visual-check publish public-build deploy-infinityfree replit-export merge-prs go-live install-gh unblock-live
+.PHONY: run stage qa visual-check publish public-build deploy-infinityfree replit-export merge-prs go-live install-gh unblock-live setup-autopilot
 
 run:
 	python3 focus_ai/scripts/engine.py
@@ -8,7 +8,7 @@ stage:
 
 qa:
 	python3 -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/build_public_site.py focus_ai/scripts/deploy_infinityfree.py focus_ai/scripts/export_replit_bundle.py focus_ai/scripts/github_ops.py
-	bash -n focus_ai/scripts/install_gh_cli.sh focus_ai/scripts/unblock_and_live.sh
+	bash -n focus_ai/scripts/install_gh_cli.sh focus_ai/scripts/unblock_and_live.sh focus_ai/scripts/setup_autopilot.sh
 
 visual-check:
 	python3 focus_ai/scripts/verify_visuals.py
@@ -37,3 +37,6 @@ install-gh:
 
 unblock-live:
 	bash focus_ai/scripts/unblock_and_live.sh
+
+setup-autopilot:
+	bash focus_ai/scripts/setup_autopilot.sh

@@ -15,6 +15,7 @@ A local, device-controllable Sacred AI workflow system with 11 stages, prompt pa
 - `make go-live` — run engine + publish + public build in sequence
 - `make install-gh` — attempt to install GitHub CLI and print proxy/tunnel fallback instructions on failure
 - `make unblock-live` — open an external SSH SOCKS bridge, install gh, merge PRs, and run go-live
+- `make setup-autopilot` — one-command bootstrap: refresh remotes, install gh, and start a background tmux auto-runner
 
 ## Public deployment
 - GitHub Actions workflow `.github/workflows/publish-pages.yml` builds and deploys `focus_ai/published/public_site/` to GitHub Pages on push.
@@ -77,3 +78,35 @@ Use `--no-tunnel` if you already have proxy env vars configured, or `--skip-merg
 - Never commit raw credentials (emails, passwords, private keys, tokens) into repository files.
 - Provide secrets at runtime via environment variables only (`BASTION_SSH`, `SSH_KEY_FILE`, `GH_TOKEN`).
 - `focus_ai/scripts/unblock_and_live.sh` will prompt for missing required connection credentials and supports key-based SSH auth with `IdentitiesOnly`.
+
+
+## One-command "keep it running" setup
+For your GitHub + server workflow (including Termius sessions), run:
+
+```bash
+make setup-autopilot
+```
+
+What it does:
+- checks your configured git remotes
+- runs `git fetch --all --prune` to re-sync all remotes
+- bootstraps GitHub CLI (`gh`)
+- starts a detached `tmux` loop that repeatedly runs:
+  - `python3 focus_ai/scripts/github_ops.py merge-prs`
+  - `python3 focus_ai/scripts/github_ops.py go-live`
+
+Useful options:
+- one-shot only (no background loop):
+  - `bash focus_ai/scripts/setup_autopilot.sh --no-loop`
+- custom loop interval (seconds):
+  - `INTERVAL_SECONDS=300 make setup-autopilot`
+- choose GitHub repo explicitly for merge calls:
+  - `bash focus_ai/scripts/setup_autopilot.sh --repo OWNER/REPO`
+- skip auto-merging and only keep go-live running:
+  - `bash focus_ai/scripts/setup_autopilot.sh --skip-merge`
+
+Manage background runner:
+- attach logs: `tmux attach -t focus_ai_autopilot`
+- stop runner: `tmux kill-session -t focus_ai_autopilot`
+
+> Note: "permanent" means as long as your server keeps running. For true reboot persistence, launch this command from your startup profile or a systemd service.
