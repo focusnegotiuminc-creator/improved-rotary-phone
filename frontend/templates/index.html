@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sacred AI Engine Dashboard</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 2rem; background: #111827; color: #f3f4f6; }
+      h1, h2 { margin-bottom: 0.5rem; }
+      .actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.8rem; margin-bottom: 1.5rem; }
+      .links { margin-bottom: 1.2rem; }
+      a { color: #93c5fd; margin-right: 1rem; }
+      button { padding: 0.7rem; border: 0; border-radius: 8px; background: #2563eb; color: white; cursor: pointer; }
+      button:hover { background: #1d4ed8; }
+      .panel { background: #1f2937; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; }
+      pre { white-space: pre-wrap; word-break: break-word; }
+    </style>
+  </head>
+  <body>
+    <h1>Sacred AI Business Engine</h1>
+    <p>Trigger generation workflows and preview outputs.</p>
+
+    <div class="links">
+      <a href="/landing">Lead Capture Landing</a>
+      <a href="/delivery">Delivery Page</a>
+      <a href="/upsell">Upsell Page</a>
+      <a href="/high-ticket">High-Ticket Page</a>
+    </div>
+
+    <form class="actions" action="/run" method="post">
+      <button name="task" value="books">Generate Books</button>
+      <button name="task" value="blueprints">Generate Blueprints</button>
+      <button name="task" value="business">Generate Business Products</button>
+      <button name="task" value="marketing">Generate Marketing</button>
+      <button name="task" value="all">Run Full Engine</button>
+    </form>
+
+    <div class="panel">
+      <h2>Generated Product Offers</h2>
+      <pre>{{ products }}</pre>
+    </div>
+
+    <div class="panel">
+      <h2>Generated Marketing Assets</h2>
+      <pre>{{ marketing }}</pre>
+    </div>
+  </body>
+</html>
