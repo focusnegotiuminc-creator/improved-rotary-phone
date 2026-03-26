@@ -1,0 +1,93 @@
+name: Merge repositories and deploy live hub
+
+on:
+  workflow_dispatch:
+    inputs:
+      owner:
+        description: GitHub owner/org to merge from
+        required: true
+        type: string
+      repos:
+        description: Optional comma-separated repo names (leave blank for all)
+        required: false
+        type: string
+      squash:
+        description: Squash subtree history
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+
+      - name: Merge repositories
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REPO_ARGS=""
+          if [ -n "${{ inputs.repos }}" ]; then
+            REPO_ARGS="--repos $(echo '${{ inputs.repos }}' | tr ',' ' ')"
+          fi
+          SQUASH_ARG=""
+          if [ "${{ inputs.squash }}" = "true" ]; then
+            SQUASH_ARG="--squash"
+          fi
+          python3 focus_ai/scripts/merge_github_repositories.py \
+            --owner "${{ inputs.owner }}" \
+            ${REPO_ARGS} \
+            ${SQUASH_ARG}
+
+      - name: Commit merged updates
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git add docs/index.html merged_repositories || true
+            git commit -m "Merge repositories from ${{ inputs.owner }} and refresh live hub"
+            git push
+          else
+            echo "No changes detected after merge step."
+          fi
+
+  deploy:
+    needs: merge
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

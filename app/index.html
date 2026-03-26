@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>THE EYE OF FOCUS</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header>
+        <h1>THE EYE OF FOCUS</h1>
+        <p>Daily personal command center for your 11-Stage AI Engine.</p>
+      </header>
+
+      <section class="panel">
+        <h2>Session Setup</h2>
+        <label>
+          Mission
+          <textarea id="mission" rows="3" placeholder="What is today's primary mission?"></textarea>
+        </label>
+        <label>
+          Outcomes
+          <textarea id="outcomes" rows="3" placeholder="List the outcomes you want."></textarea>
+        </label>
+        <label>
+          Constraints
+          <textarea id="constraints" rows="3" placeholder="Define constraints and boundaries."></textarea>
+        </label>
+        <label>
+          Tasks
+          <textarea id="tasks" rows="3" placeholder="Add concrete tasks for this session."></textarea>
+        </label>
+        <button id="generate">Generate Engine Brief</button>
+      </section>
+
+      <section class="panel">
+        <h2>11-Stage Engine Output</h2>
+        <pre id="output"></pre>
+        <button id="copy">Copy to Clipboard</button>
+      </section>
+    </main>
+
+    <script src="./main.js"></script>
+  </body>
+</html>
