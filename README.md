@@ -199,12 +199,6 @@ To deploy from GitHub using previously stored repo credentials, set repository s
 - `REPLIT_DEPLOY_HOOK_URL` (or `REPLIT_DEPLOY_WEBHOOK_URL`)
 - `REPLIT_DEPLOY_TOKEN` (optional)
 
-Optional repository variables:
-- `FOCUS_APP_URL` (default `https://thefocuscorp.com`)
-- `FOCUS_APP_PATHS` (default `/,/ebooks/index.html,/landing.html`)
-- `FOCUS_REQUIRE_ALL_PATHS` (default `0`)
-- `FOCUS_SKIP_TLS_VERIFY` (default `1`)
-
 Then run `.github/workflows/deploy-infinityfree.yml` manually or push to `work/main/master`.
 
 ## How to use the app

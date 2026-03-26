@@ -12,10 +12,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      FOCUS_APP_URL: ${{ vars.FOCUS_APP_URL || 'https://thefocuscorp.com' }}
-      FOCUS_APP_PATHS: ${{ vars.FOCUS_APP_PATHS || '/,/ebooks/index.html,/landing.html' }}
-      FOCUS_REQUIRE_ALL_PATHS: ${{ vars.FOCUS_REQUIRE_ALL_PATHS || '0' }}
-      FOCUS_SKIP_TLS_VERIFY: ${{ vars.FOCUS_SKIP_TLS_VERIFY || '1' }}
+      FOCUS_APP_URL: https://thefocuscorp.com
+      FOCUS_APP_PATHS: /,/ebooks/index.html,/landing.html
+      FOCUS_REQUIRE_ALL_PATHS: "0"
+      FOCUS_SKIP_TLS_VERIFY: "1"
+      INFINITYFREE_STRICT: "0"
       INFINITYFREE_FTP_HOST: ${{ secrets.INFINITYFREE_FTP_HOST }}
       INFINITYFREE_FTP_USER: ${{ secrets.INFINITYFREE_FTP_USER }}
       INFINITYFREE_FTP_PASS: ${{ secrets.INFINITYFREE_FTP_PASS }}
@@ -23,8 +24,8 @@ jobs:
       REPLIT_DEPLOY_HOOK_URL: ${{ secrets.REPLIT_DEPLOY_HOOK_URL }}
       REPLIT_DEPLOY_WEBHOOK_URL: ${{ secrets.REPLIT_DEPLOY_WEBHOOK_URL }}
       REPLIT_DEPLOY_TOKEN: ${{ secrets.REPLIT_DEPLOY_TOKEN }}
-      REPLIT_DEPLOY_METHOD: ${{ vars.REPLIT_DEPLOY_METHOD || 'POST' }}
-      REPLIT_DEPLOY_TIMEOUT: ${{ vars.REPLIT_DEPLOY_TIMEOUT || '30' }}
+      REPLIT_DEPLOY_METHOD: POST
+      REPLIT_DEPLOY_TIMEOUT: "30"
 
     steps:
       - name: Checkout
@@ -45,41 +46,11 @@ jobs:
           python3 focus_ai/scripts/publish_ebooks.py
           python3 focus_ai/scripts/build_public_site.py
 
-      - name: Detect deployment channels
-        id: channels
-        shell: bash
-        run: |
-          has_ftp=false
-          has_replit=false
-
-          if [[ -n "${INFINITYFREE_FTP_HOST}" && -n "${INFINITYFREE_FTP_USER}" && -n "${INFINITYFREE_FTP_PASS}" ]]; then
-            has_ftp=true
-          fi
-
-          if [[ -n "${REPLIT_DEPLOY_HOOK_URL}" || -n "${REPLIT_DEPLOY_WEBHOOK_URL}" ]]; then
-            has_replit=true
-          fi
-
-          echo "has_ftp=${has_ftp}" >> "$GITHUB_OUTPUT"
-          echo "has_replit=${has_replit}" >> "$GITHUB_OUTPUT"
-          echo "Detected channels => FTP:${has_ftp} Replit:${has_replit}"
-
-      - name: Trigger Replit deploy hook
-        if: ${{ steps.channels.outputs.has_replit == 'true' }}
+      - name: Trigger Replit deploy (if configured)
         run: python3 focus_ai/scripts/deploy_replit.py
 
-      - name: Deploy to InfinityFree via FTP
-        if: ${{ steps.channels.outputs.has_ftp == 'true' }}
+      - name: Deploy to InfinityFree (if configured)
         run: python3 focus_ai/scripts/deploy_infinityfree.py
-
-      - name: No direct deploy channel configured
-        if: ${{ steps.channels.outputs.has_ftp != 'true' && steps.channels.outputs.has_replit != 'true' }}
-        run: |
-          echo "No direct deploy secret configured."
-          echo "If GitHub is connected directly to Replit, push-to-main may still deploy externally."
-          echo "To enable direct workflow deploy, set one of:"
-          echo "- REPLIT_DEPLOY_HOOK_URL (or REPLIT_DEPLOY_WEBHOOK_URL)"
-          echo "- INFINITYFREE_FTP_HOST / INFINITYFREE_FTP_USER / INFINITYFREE_FTP_PASS"
 
       - name: Verify live endpoints
         run: python3 focus_ai/scripts/verify_live_app.py

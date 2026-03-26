@@ -73,10 +73,14 @@ def main() -> int:
         if not value
     ]
     if missing:
+        strict = os.getenv("INFINITYFREE_STRICT", "0").strip().lower() in {"1", "true", "yes", "on"}
         print("Missing required env vars:")
         for name in missing:
             print(f"- {name}")
-        return 1
+        if strict:
+            return 1
+        print("InfinityFree deploy skipped (non-strict mode).")
+        return 0
 
     with FTP(host, timeout=30) as ftp:
         ftp.login(user=user, passwd=password)
