@@ -12,9 +12,9 @@ REQUIRED_FILES = [
 ]
 
 REQUIRED_TOKENS = {
-    SITE / "homepage_copy.md": ["217-257-6222", "vertical luminous silhouette"],
-    SITE / "visual_preview.html": ["217-257-6222", "Abstract vertical alignment energy visual"],
-    SITE / "change_log.md": ["217-257-6222"],
+    SITE / "homepage_copy.md": ["2172576222", "vertical luminous silhouette"],
+    SITE / "visual_preview.html": ["2172576222", "Abstract vertical alignment energy visual"],
+    SITE / "change_log.md": ["2172576222"],
 }
 
 

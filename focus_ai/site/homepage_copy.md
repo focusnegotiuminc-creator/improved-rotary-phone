@@ -8,7 +8,7 @@ Sacred geometry meets modern construction strategy for founders, families, and v
 **Secondary CTA:** Download the Sacred Geometry Field Guide
 
 ### Contact
-Call us: **217-257-6222**
+Call us: **2172576222**
 
 ## Visual Direction Notes
 - Dark cosmic backdrop with gold linework.
