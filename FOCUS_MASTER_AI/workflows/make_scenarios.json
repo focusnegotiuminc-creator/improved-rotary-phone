@@ -1,0 +1,27 @@
+{
+  "scenarios": [
+    {
+      "name": "TASK EXECUTOR",
+      "trigger": "Webhook (Custom)",
+      "modules": [
+        "Webhook (Custom)",
+        "OpenAI (ChatGPT)",
+        "Router",
+        "Path A -> GitHub (save file)",
+        "Path B -> Mailchimp (email)",
+        "Path C -> Google Drive (store output)",
+        "Path D -> HTTP (API call to apps)"
+      ]
+    },
+    {
+      "name": "AUTOMATION LOOP",
+      "trigger": "Scheduler (every 1 hour)",
+      "modules": [
+        "GitHub (watch repo changes)",
+        "OpenAI (analyze task)",
+        "HTTP (send to Replit endpoint)",
+        "Slack/Email (notify)"
+      ]
+    }
+  ]
+}
