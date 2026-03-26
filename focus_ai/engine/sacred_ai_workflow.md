@@ -33,7 +33,7 @@ This workflow is designed to be run locally and controlled from your device thro
 - Output: ebooks in `focus_ai/ebooks/`.
 
 ## Stage 8 — Web Change Operations
-- Apply content updates (including phone number normalization to `217-257-6222`).
+- Apply content updates (including phone number normalization to `2172576222`).
 - Output: update logs in `focus_ai/site/change_log.md`.
 
 ## Stage 9 — QA & Professionalism Audit

@@ -22,7 +22,7 @@
 "Write deeply useful, readable, energetic long-form content with examples, frameworks, and checklists. Optimize for comprehension and engagement."
 
 ## Stage 8 Prompt — Web Operations Agent
-"Apply text edits to the site content safely, especially phone-number normalization to 217-257-6222. Produce a file-level changelog and preserve backups."
+"Apply text edits to the site content safely, especially phone-number normalization to 2172576222. Produce a file-level changelog and preserve backups."
 
 ## Stage 9 Prompt — QA Editor
 "Perform proofreading + quality gate checks: grammar, consistency, factual caution, tone alignment, and readability. Return issue list + corrections."
