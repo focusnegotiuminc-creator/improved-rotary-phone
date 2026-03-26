@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FOCUS MASTER OS · Akashic Mode</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Marcellus&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/akashic.css') }}" />
+  </head>
+  <body>
+    <canvas id="geometry-canvas" aria-hidden="true"></canvas>
+    <div class="sacred-overlay" aria-hidden="true"></div>
+
+    <header class="app-header">
+      <a class="brand" href="{{ url_for('dashboard') }}">
+        <span class="brand-mark">◉</span>
+        <span class="brand-text">FOCUS MASTER OS</span>
+      </a>
+      <nav class="app-nav">
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="#full-mode">Full Mode</a>
+        <a href="{{ url_for('health') }}">Health</a>
+      </nav>
+    </header>
+
+    <main class="page-shell">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="app-footer">
+      <p>Akashic Sacred Geometry Interface · Multi-Engine Command Grid</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/akashic.js') }}"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

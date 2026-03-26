@@ -4,3 +4,4 @@ __pycache__/
 focus_ai/backups/
 focus_ai/published/public_site/
 focus_ai/published/replit_bundle/
+FOCUS_MASTER_AI/outputs/replit_deploy_manifest_*.json

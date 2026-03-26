@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero reveal">
+  <p class="kicker">Engine App</p>
+  <h1>{{ engine.label }}</h1>
+  <p class="hero-copy">{{ engine.description }}</p>
+</section>
+
+<section class="panel reveal {{ engine.color }}">
+  <div class="panel-head">
+    <h2>{{ engine.glyph }}</h2>
+    <p>Dedicated app surface for {{ engine.label.lower() }}.</p>
+  </div>
+  <form id="engine-run-form" class="task-form" data-endpoint="/api/engine/{{ engine_id }}/run">
+    <label for="engine-task">Command</label>
+    <textarea id="engine-task" name="task" rows="4">{{ engine.default_task }}</textarea>
+    <div class="actions">
+      <button type="submit">Run {{ engine.label }}</button>
+      <button type="button" class="secondary" id="dispatch-btn">Run Through Dispatcher</button>
+      <a class="secondary ghost-link" href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+    </div>
+  </form>
+  <pre id="engine-output" class="output"></pre>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.FOCUS_ENGINE_ID = "{{ engine_id }}";
+</script>
+{% endblock %}

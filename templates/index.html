@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero reveal">
+  <p class="kicker">Standard Full Mode</p>
+  <h1>Akashic Engine Command Nexus</h1>
+  <p class="hero-copy">
+    Launch each AI engine as its own Replit app surface, orchestrate full workflows, and trigger
+    deployment hooks from a unified sacred geometry console.
+  </p>
+</section>
+
+<section class="stats reveal">
+  <article class="stat-card">
+    <h2>{{ engine_count }}</h2>
+    <p>Engine Apps Ready</p>
+  </article>
+  <article class="stat-card">
+    <h2>Full</h2>
+    <p>Orchestration Mode</p>
+  </article>
+  <article class="stat-card">
+    <h2>Replit</h2>
+    <p>Deployment Hook Layer</p>
+  </article>
+</section>
+
+<section class="panel reveal" id="full-mode">
+  <div class="panel-head">
+    <h2>Run Full Mode</h2>
+    <p>Execute the complete multi-engine pipeline with one command.</p>
+  </div>
+  <form id="full-mode-form" class="task-form" data-endpoint="/api/full-mode/run">
+    <label for="full-mode-task">Command</label>
+    <textarea id="full-mode-task" name="task" rows="3">build full automation AI system and deploy architecture</textarea>
+    <div class="actions">
+      <button type="submit">Run Standard Full Mode</button>
+      <button type="button" class="secondary" id="launch-all-btn">Launch Every Engine</button>
+      <button type="button" class="secondary" id="deploy-apps-btn">Deploy Engine Apps</button>
+    </div>
+  </form>
+  <pre id="full-mode-output" class="output"></pre>
+</section>
+
+<section class="engine-grid">
+  {% for engine in engines %}
+  <article class="engine-card reveal {{ engine.color }}" style="--delay: {{ loop.index0 * 60 }}ms;">
+    <p class="glyph">{{ engine.glyph }}</p>
+    <h3>{{ engine.label }}</h3>
+    <p>{{ engine.description }}</p>
+    <a class="card-link" href="{{ engine.url }}">Open {{ engine.label }}</a>
+  </article>
+  {% endfor %}
+</section>
+{% endblock %}
