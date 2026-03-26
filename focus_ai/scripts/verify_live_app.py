@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import os
+import ssl
 from urllib.parse import urljoin
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
@@ -27,8 +28,10 @@ def _parse_paths(raw: str | None) -> list[str]:
 
 def _check(url: str) -> tuple[bool, str]:
     req = Request(url, method="GET", headers={"User-Agent": "FocusAI-LiveCheck/1.0"})
+    skip_tls = os.getenv("FOCUS_SKIP_TLS_VERIFY", "0").strip().lower() in {"1", "true", "yes", "on"}
+    context = ssl._create_unverified_context() if skip_tls else None
     try:
-        with urlopen(req, timeout=20) as response:
+        with urlopen(req, timeout=20, context=context) as response:
             status = response.status
             if 200 <= status < 400:
                 return True, f"{status} OK"

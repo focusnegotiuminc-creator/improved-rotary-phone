@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -109,7 +110,16 @@ def run_live_pipeline(include_deploy: bool) -> int:
     ]
 
     if include_deploy:
-        commands.append([sys.executable, str(ROOT / "focus_ai" / "scripts" / "deploy_infinityfree.py")])
+        commands.append([sys.executable, str(ROOT / "focus_ai" / "scripts" / "deploy_replit.py")])
+        required_ftp = (
+            os.getenv("INFINITYFREE_FTP_HOST"),
+            os.getenv("INFINITYFREE_FTP_USER"),
+            os.getenv("INFINITYFREE_FTP_PASS"),
+        )
+        if all(required_ftp):
+            commands.append([sys.executable, str(ROOT / "focus_ai" / "scripts" / "deploy_infinityfree.py")])
+        else:
+            print("Skipping InfinityFree deploy in go-live: FTP env vars are not fully configured.")
 
     for cmd in commands:
         print(f"Running: {' '.join(cmd)}")

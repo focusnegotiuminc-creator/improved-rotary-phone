@@ -1,4 +1,4 @@
-name: Publish Focus AI Public Site
+name: Publish Focus AI Public Site (GitHub Pages Optional)
 
 on:
   push:
@@ -15,7 +15,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  pages-disabled:
+    if: ${{ vars.ENABLE_GITHUB_PAGES != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip Pages publish by default
+        run: |
+          echo "GitHub Pages publish is disabled for this repository by default."
+          echo "Set repository variable ENABLE_GITHUB_PAGES=true to enable."
+          echo "Primary live deployment should use Deploy TheFocusCorp Site workflow."
+
   build:
+    if: ${{ vars.ENABLE_GITHUB_PAGES == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -41,6 +52,7 @@ jobs:
           path: focus_ai/published/public_site
 
   deploy:
+    if: ${{ vars.ENABLE_GITHUB_PAGES == 'true' }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -50,3 +62,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+

@@ -152,6 +152,8 @@ A local, device-controllable Sacred AI workflow system with 11 stages, prompt pa
 3. Open `http://127.0.0.1:8787` to use the local AI assistant.
 - `make public-build` — build a public-ready site bundle in `focus_ai/published/public_site/`
 - `make deploy-infinityfree` — deploy the public bundle to InfinityFree over FTP
+- `make deploy-replit` — trigger Replit deployment hook/webhook (if configured)
+- `make deploy-thefocuscorp` — run build + deploy (Replit + InfinityFree) + live verification
 - `make replit-export` — export AI engine + prompt bundle for a Replit app
 - `make full-check` — run a full local verification pass (compile, tests, engine, visual check, publish, public build, Replit export)
 - `make backup` — create a timestamped backup archive in `focus_ai/backups/`
@@ -163,7 +165,12 @@ A local, device-controllable Sacred AI workflow system with 11 stages, prompt pa
 - `make setup-autopilot` — one-command bootstrap: refresh remotes, install gh, and start a background tmux auto-runner
 
 ## Public deployment
-- GitHub Actions workflow `.github/workflows/publish-pages.yml` builds and deploys `focus_ai/published/public_site/` to GitHub Pages on push.
+- Primary workflow: `.github/workflows/deploy-infinityfree.yml` (`Deploy TheFocusCorp Site`)
+- On push/manual dispatch it:
+  1. builds public assets
+  2. triggers Replit deploy hook if configured
+  3. deploys to InfinityFree if FTP secrets are configured
+  4. runs live endpoint verification against `FOCUS_APP_URL` (defaults to `https://thefocuscorp.com`)
 - Public bundle includes visual preview homepage and published eBook library links.
 
 ## InfinityFree deployment
@@ -172,6 +179,13 @@ Set these environment variables, then run `make deploy-infinityfree`:
 - `INFINITYFREE_FTP_USER`
 - `INFINITYFREE_FTP_PASS`
 - `INFINITYFREE_REMOTE_DIR` (optional, defaults to `htdocs`)
+
+## Replit deployment hook
+Set these values to enable direct Replit deploy triggers:
+- `REPLIT_DEPLOY_HOOK_URL` (or `REPLIT_DEPLOY_WEBHOOK_URL`)
+- `REPLIT_DEPLOY_TOKEN` (optional bearer token)
+- `REPLIT_DEPLOY_METHOD` (optional, default `POST`)
+- `REPLIT_DEPLOY_TIMEOUT` (optional seconds, default `30`)
 
 ## Replit bundle
 Run `make replit-export` to generate `focus_ai/published/replit_bundle/` with the AI engine scripts, prompt pack, workflow doc, and eBook outputs for direct import into a Replit app.
@@ -182,8 +196,16 @@ To deploy from GitHub using previously stored repo credentials, set repository s
 - `INFINITYFREE_FTP_USER`
 - `INFINITYFREE_FTP_PASS`
 - `INFINITYFREE_REMOTE_DIR` (optional)
+- `REPLIT_DEPLOY_HOOK_URL` (or `REPLIT_DEPLOY_WEBHOOK_URL`)
+- `REPLIT_DEPLOY_TOKEN` (optional)
 
-Then run the workflow `.github/workflows/deploy-infinityfree.yml` (manual dispatch) or push to `work/main/master`.
+Optional repository variables:
+- `FOCUS_APP_URL` (default `https://thefocuscorp.com`)
+- `FOCUS_APP_PATHS` (default `/,/ebooks/index.html,/landing.html`)
+- `FOCUS_REQUIRE_ALL_PATHS` (default `0`)
+- `FOCUS_SKIP_TLS_VERIFY` (default `1`)
+
+Then run `.github/workflows/deploy-infinityfree.yml` manually or push to `work/main/master`.
 
 ## How to use the app
 1. Run `make full-check` to validate and build assets locally.

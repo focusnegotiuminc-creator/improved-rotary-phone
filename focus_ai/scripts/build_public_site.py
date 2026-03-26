@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import os
+import stat
 from pathlib import Path
 import shutil
 
@@ -20,13 +22,25 @@ def copy_tree(src: Path, dst: Path) -> None:
             shutil.copy2(item, target)
 
 
+def _on_rm_error(func, path, exc_info):
+    # Handles Windows/OneDrive read-only files during cleanup.
+    os.chmod(path, stat.S_IWRITE)
+    func(path)
+
+
+def safe_rmtree(path: Path) -> None:
+    if not path.exists():
+        return
+    shutil.rmtree(path, onerror=_on_rm_error)
+
+
 def build() -> int:
     if not PUBLISHED.exists():
         print("Missing published ebooks. Run publish_ebooks.py first.")
         return 1
 
     if PUBLIC.exists():
-        shutil.rmtree(PUBLIC)
+        safe_rmtree(PUBLIC)
     PUBLIC.mkdir(parents=True, exist_ok=True)
 
     copy_tree(PUBLISHED, PUBLIC / "ebooks")
