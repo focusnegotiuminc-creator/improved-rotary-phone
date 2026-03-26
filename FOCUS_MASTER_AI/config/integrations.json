@@ -1,0 +1,19 @@
+{
+  "integrations": {
+    "openai": {
+      "api_key_env": "OPENAI_API_KEY"
+    },
+    "github": {
+      "token_env": "GITHUB_TOKEN"
+    },
+    "mailchimp": {
+      "api_key_env": "MAILCHIMP_API_KEY"
+    },
+    "make": {
+      "webhook_env": "MAKE_WEBHOOK_URL"
+    },
+    "replit": {
+      "endpoint_env": "REPLIT_ENDPOINT"
+    }
+  }
+}
