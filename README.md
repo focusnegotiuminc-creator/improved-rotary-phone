@@ -110,3 +110,14 @@ Manage background runner:
 - stop runner: `tmux kill-session -t focus_ai_autopilot`
 
 > Note: "permanent" means as long as your server keeps running. For true reboot persistence, launch this command from your startup profile or a systemd service.
+
+## Multi-agent runtime (new)
+
+A modular multi-agent runtime is available with task routing, specialized engines, pipeline stages, and JSON-backed memory.
+
+- Entry point: `core/orchestrator.py` (`run_task`, `run_parallel`)
+- Routing: `core/dispatcher.py` + `core/task_classifier.py`
+- Engines: `engines/*_engine/engine.py`
+- Pipelines: `pipelines/stage_1_research.py` … `pipelines/stage_10_publish.py`
+- Memory: `memory/task_history.json`, `memory/research_cache.json`, `memory/vector_store/`
+- Integrations: `integrations/`
