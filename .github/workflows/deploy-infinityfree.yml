@@ -1,0 +1,44 @@
+name: Deploy Focus AI to InfinityFree
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["work", "main", "master"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ secrets.INFINITYFREE_FTP_HOST != '' && secrets.INFINITYFREE_FTP_USER != '' && secrets.INFINITYFREE_FTP_PASS != '' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build public bundle
+        run: |
+          python3 focus_ai/scripts/publish_ebooks.py
+          python3 focus_ai/scripts/build_public_site.py
+
+      - name: Deploy to InfinityFree via FTP
+        env:
+          INFINITYFREE_FTP_HOST: ${{ secrets.INFINITYFREE_FTP_HOST }}
+          INFINITYFREE_FTP_USER: ${{ secrets.INFINITYFREE_FTP_USER }}
+          INFINITYFREE_FTP_PASS: ${{ secrets.INFINITYFREE_FTP_PASS }}
+          INFINITYFREE_REMOTE_DIR: ${{ secrets.INFINITYFREE_REMOTE_DIR }}
+        run: python3 focus_ai/scripts/deploy_infinityfree.py
+
+  missing-secrets-note:
+    runs-on: ubuntu-latest
+    if: ${{ !(secrets.INFINITYFREE_FTP_HOST != '' && secrets.INFINITYFREE_FTP_USER != '' && secrets.INFINITYFREE_FTP_PASS != '') }}
+    steps:
+      - name: Missing required InfinityFree secrets
+        run: |
+          echo "InfinityFree deploy skipped. Add repository secrets:"
+          echo "- INFINITYFREE_FTP_HOST"
+          echo "- INFINITYFREE_FTP_USER"
+          echo "- INFINITYFREE_FTP_PASS"
+          echo "Optional: INFINITYFREE_REMOTE_DIR"
