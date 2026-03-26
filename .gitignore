@@ -1,2 +1,6 @@
 __pycache__/
 *.pyc
+.env
+focus_ai/backups/
+focus_ai/published/public_site/
+focus_ai/published/replit_bundle/
