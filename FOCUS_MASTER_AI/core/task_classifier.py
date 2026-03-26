@@ -11,6 +11,9 @@ def classify_task(task: str) -> str:
     if not text:
         return "unknown"
 
+    if _has_any(text, ("initialize system", "wait for commands", "initialize and wait")):
+        return "automation"
+
     if _has_any(
         text,
         (
