@@ -16,5 +16,14 @@
     "task": "marketing funnel optimization",
     "task_type": "marketing",
     "result": "Marketing engine completed task: marketing funnel optimization"
+  },
+  {
+    "timestamp": "2026-03-26T19:54:42.102666+00:00",
+    "task": "Initialize system and wait for commands",
+    "result": {
+      "engine": "general",
+      "status": "completed",
+      "output": "Processed task without a specialized engine: Initialize system and wait for commands"
+    }
   }
 ]
