@@ -1,0 +1,37 @@
+name: Sacred AI Engine
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run update engine
+        run: python automation/update_engine.py
+
+      - name: Run AI generator
+        run: python automation/ai_generator.py
+
+      - name: Commit generated updates
+        run: |
+          git config user.name "Sacred AI Engine"
+          git config user.email "ai@engine.com"
+          git add .
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Automated AI engine update $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            git push
+          fi
