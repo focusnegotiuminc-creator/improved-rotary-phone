@@ -195,9 +195,16 @@ To deploy from GitHub using previously stored repo credentials, set repository s
 - `INFINITYFREE_FTP_HOST`
 - `INFINITYFREE_FTP_USER`
 - `INFINITYFREE_FTP_PASS`
-- `INFINITYFREE_REMOTE_DIR` (optional)
+- `INFINITYFREE_REMOTE_DIR` (optional, recommended value: `thefocuscorp.com/htdocs`)
 - `REPLIT_DEPLOY_HOOK_URL` (or `REPLIT_DEPLOY_WEBHOOK_URL`)
 - `REPLIT_DEPLOY_TOKEN` (optional)
+
+Repository variables that improve deploy path auto-detection:
+- `INFINITYFREE_REMOTE_DIR_CANDIDATES` (for example: `thefocuscorp.com/htdocs,htdocs,domains/thefocuscorp.com/public_html`)
+
+You can configure secrets/variables in one command:
+- `make configure-actions`
+- Optional dry-run preview: `python3 focus_ai/scripts/configure_github_actions.py --dry-run`
 
 Then run `.github/workflows/deploy-infinityfree.yml` manually or push to `work/main/master`.
 

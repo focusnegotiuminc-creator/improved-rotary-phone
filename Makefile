@@ -2,6 +2,7 @@
 .PHONY: run stage qa visual-check publish merge-gh merge-gh-dry-run setup-desktop-ai
 .PHONY: run stage qa visual-check publish public-build deploy-infinityfree deploy-replit deploy-thefocuscorp replit-export full-check backup verify-live
 .PHONY: run stage qa visual-check publish public-build deploy-infinityfree deploy-replit deploy-thefocuscorp replit-export merge-prs go-live install-gh unblock-live setup-autopilot
+.PHONY: configure-actions
 
 run:
 	python3 focus_ai/scripts/engine.py
@@ -14,7 +15,7 @@ qa:
 	python3 -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/merge_github_repositories.py focus_ai/scripts/setup_desktop_focus_master_ai.py
 	python3 -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/build_public_site.py
 	python3 -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/build_public_site.py focus_ai/scripts/deploy_infinityfree.py focus_ai/scripts/deploy_replit.py focus_ai/scripts/export_replit_bundle.py focus_ai/scripts/backup_working_copy.py focus_ai/scripts/verify_live_app.py
-	python3 -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/build_public_site.py focus_ai/scripts/deploy_infinityfree.py focus_ai/scripts/deploy_replit.py focus_ai/scripts/export_replit_bundle.py focus_ai/scripts/github_ops.py
+	python3 -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/build_public_site.py focus_ai/scripts/deploy_infinityfree.py focus_ai/scripts/deploy_replit.py focus_ai/scripts/export_replit_bundle.py focus_ai/scripts/github_ops.py focus_ai/scripts/configure_github_actions.py
 	bash -n focus_ai/scripts/install_gh_cli.sh focus_ai/scripts/unblock_and_live.sh focus_ai/scripts/setup_autopilot.sh
 
 visual-check:
@@ -68,3 +69,6 @@ unblock-live:
 
 setup-autopilot:
 	bash focus_ai/scripts/setup_autopilot.sh
+
+configure-actions:
+	python3 focus_ai/scripts/configure_github_actions.py

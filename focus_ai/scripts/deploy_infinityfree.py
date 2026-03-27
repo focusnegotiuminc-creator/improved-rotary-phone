@@ -6,7 +6,8 @@ Required env vars:
 - INFINITYFREE_FTP_USER
 - INFINITYFREE_FTP_PASS
 Optional:
-- INFINITYFREE_REMOTE_DIR (default: htdocs)
+- INFINITYFREE_REMOTE_DIR (default: auto)
+- INFINITYFREE_REMOTE_DIR_CANDIDATES (comma-separated)
 """
 
 from __future__ import annotations
@@ -17,6 +18,45 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PUBLIC = ROOT / "published" / "public_site"
+DEFAULT_REMOTE_DIR_CANDIDATES = [
+    "thefocuscorp.com/htdocs",
+    "htdocs",
+    "domains/thefocuscorp.com/public_html",
+]
+
+
+def _parse_remote_dir_candidates(raw: str | None) -> list[str]:
+    if not raw:
+        return list(DEFAULT_REMOTE_DIR_CANDIDATES)
+    parsed = [item.strip().strip("/") for item in raw.split(",") if item.strip()]
+    return parsed or list(DEFAULT_REMOTE_DIR_CANDIDATES)
+
+
+def _path_exists(ftp: FTP, remote_path: str) -> bool:
+    start_dir = ftp.pwd()
+    try:
+        ftp.cwd(remote_path)
+    except error_perm:
+        return False
+    finally:
+        try:
+            ftp.cwd(start_dir)
+        except error_perm:
+            pass
+    return True
+
+
+def _resolve_remote_dir(ftp: FTP, configured_remote_dir: str, candidates: list[str]) -> str:
+    configured = configured_remote_dir.strip().strip("/")
+    if configured and configured.lower() not in {"auto", "suggested"}:
+        return configured
+
+    for candidate in candidates:
+        if _path_exists(ftp, candidate):
+            return candidate
+
+    # Fall back to first candidate and create it if needed.
+    return candidates[0]
 
 
 def _mkdirs(ftp: FTP, path: str) -> None:
@@ -61,7 +101,10 @@ def main() -> int:
     host = os.getenv("INFINITYFREE_FTP_HOST")
     user = os.getenv("INFINITYFREE_FTP_USER")
     password = os.getenv("INFINITYFREE_FTP_PASS")
-    remote_dir = os.getenv("INFINITYFREE_REMOTE_DIR", "htdocs")
+    remote_dir_setting = os.getenv("INFINITYFREE_REMOTE_DIR", "auto")
+    remote_dir_candidates = _parse_remote_dir_candidates(
+        os.getenv("INFINITYFREE_REMOTE_DIR_CANDIDATES")
+    )
 
     missing = [
         name
@@ -84,6 +127,9 @@ def main() -> int:
 
     with FTP(host, timeout=30) as ftp:
         ftp.login(user=user, passwd=password)
+        remote_dir = _resolve_remote_dir(ftp, remote_dir_setting, remote_dir_candidates)
+        if remote_dir_setting.strip().lower() in {"", "auto", "suggested"}:
+            print(f"Auto-selected remote deploy directory: {remote_dir}")
         files, dirs = _upload_dir(ftp, PUBLIC, remote_dir)
         print(f"Uploaded {files} files ({dirs} directories) to {host}:{remote_dir}")
 
