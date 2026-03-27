@@ -1,8 +1,10 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """Create a Replit-ready bundle of the AI engine + prompts + public site assets."""
 
 from pathlib import Path
+import os
 import shutil
+import stat
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "published" / "replit_bundle"
@@ -20,9 +22,19 @@ INCLUDE = [
 ]
 
 
+def _on_rmtree_error(func, path, exc_info):
+    # OneDrive/Windows can leave generated files read-only.
+    os.chmod(path, stat.S_IWRITE)
+    func(path)
+
+
+def remove_tree(path: Path) -> None:
+    if path.exists():
+        shutil.rmtree(path, onerror=_on_rmtree_error)
+
+
 def build() -> int:
-    if OUT.exists():
-        shutil.rmtree(OUT)
+    remove_tree(OUT)
     OUT.mkdir(parents=True, exist_ok=True)
 
     for src in INCLUDE:

@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -35,7 +35,7 @@ def normalize_thread_uri(thread_uri: str | None) -> str | None:
 def run(stage: int | None = None, thread_uri: str | None = None) -> None:
     log = ROOT / "docs" / "engine_run.log"
     log.parent.mkdir(parents=True, exist_ok=True)
-    now = datetime.utcnow().isoformat(timespec="seconds") + "Z"
+    now = datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
     thread_uri = normalize_thread_uri(thread_uri)
 

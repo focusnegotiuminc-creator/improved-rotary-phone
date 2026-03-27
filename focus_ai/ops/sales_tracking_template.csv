@@ -1,0 +1,2 @@
+date,customer_name,offer,amount_usd,source_channel,checkout_url,status,notes
+2026-03-27,Example Customer,Focus AI eBook Bundle,49,Organic Social,https://buy.stripe.com/bJe7sKh2B6ZQ8bP4II5os02,paid,Example row

@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
-from pathlib import Path
+import os
+import stat
 from html import escape
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 EBOOKS = ROOT / "ebooks"
 OUT = ROOT / "published" / "ebooks"
+BOOK_BUNDLE_URL = os.getenv(
+    "FOCUS_BOOK_BUNDLE_URL",
+    "https://buy.stripe.com/bJe7sKh2B6ZQ8bP4II5os02",
+)
 
 
 def md_to_html(markdown: str) -> str:
@@ -54,10 +60,10 @@ def md_to_html(markdown: str) -> str:
 
 def wrap_page(title: str, body_html: str) -> str:
     return f"""<!doctype html>
-<html lang=\"en\">
+<html lang="en">
 <head>
-  <meta charset=\"utf-8\" />
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{escape(title)}</title>
   <style>
     body {{ font-family: Inter, Arial, sans-serif; margin: 0; background: #0d1023; color: #eef1ff; }}
@@ -71,12 +77,18 @@ def wrap_page(title: str, body_html: str) -> str:
 </head>
 <body>
   <main>
-    <p class=\"nav\"><a href=\"index.html\">← Back to eBook library</a></p>
-    <article class=\"card\">{body_html}</article>
+    <p class="nav"><a href="index.html">Back to eBook library</a></p>
+    <article class="card">{body_html}</article>
   </main>
 </body>
 </html>
 """
+
+
+def safe_write_text(path: Path, contents: str) -> None:
+    if path.exists():
+        os.chmod(path, stat.S_IWRITE)
+    path.write_text(contents, encoding="utf-8")
 
 
 def build() -> int:
@@ -92,22 +104,22 @@ def build() -> int:
         html_name = f"{md.stem}.html"
         body_html = md_to_html(md.read_text(encoding="utf-8"))
         page = wrap_page(title, body_html)
-        (OUT / html_name).write_text(page, encoding="utf-8")
+        safe_write_text(OUT / html_name, page)
         links.append((title, html_name))
 
     index_items = "\n".join(
         f'<li><a href="{href}">{escape(title)}</a></li>' for title, href in links
     )
     index_html = f"""<!doctype html>
-<html lang=\"en\"><head>
-  <meta charset=\"utf-8\" />
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Focus AI eBook Library</title>
   <style>
     body {{ font-family: Inter, Arial, sans-serif; margin: 0; background: radial-gradient(circle at top, #1b1940, #07070f); color: #eef1ff; }}
     main {{ max-width: 900px; margin: 0 auto; padding: 3rem 1rem 4rem; }}
     h1 {{ color: #ffd882; }}
-    .panel {{ background: #151933; border: 1px solid #2b356d; border-radius: 12px; padding: 1rem 1.25rem; }}
+    .panel {{ background: #151933; border: 1px solid #2b356d; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }}
     a {{ color: #90e4ff; }}
     li {{ margin: .6rem 0; }}
   </style>
@@ -115,11 +127,16 @@ def build() -> int:
   <main>
     <h1>Published eBook Library</h1>
     <p>These files are locally published HTML outputs generated from <code>focus_ai/ebooks/*.md</code>.</p>
-    <section class=\"panel\"><ul>{index_items}</ul></section>
+    <section class="panel">
+      <p><strong>Want the full library plus launch assets?</strong></p>
+      <p><a href="{BOOK_BUNDLE_URL}">Buy the Focus AI eBook Bundle for $49</a></p>
+      <p><a href="../offers.html">View the full offer ladder</a></p>
+    </section>
+    <section class="panel"><ul>{index_items}</ul></section>
   </main>
 </body></html>
 """
-    (OUT / "index.html").write_text(index_html, encoding="utf-8")
+    safe_write_text(OUT / "index.html", index_html)
     print(f"Published {len(markdown_files)} eBooks to {OUT}")
     return 0
 

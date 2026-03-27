@@ -1,6 +1,11 @@
-__pycache__/
+﻿__pycache__/
 *.pyc
 .env
+.env.*
+.secrets/
+secrets/
+*.key
+*.pem
 focus_ai/backups/
 focus_ai/published/public_site/
 focus_ai/published/replit_bundle/

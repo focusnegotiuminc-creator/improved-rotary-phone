@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import os
+import shutil
 import stat
 from pathlib import Path
-import shutil
 
 ROOT = Path(__file__).resolve().parents[1]
 PUBLISHED = ROOT / "published" / "ebooks"
@@ -10,6 +10,18 @@ SITE = ROOT / "site"
 PUBLIC = ROOT / "published" / "public_site"
 PRIMARY_CONTACT_NAME = "Alexis Rogers"
 PRIMARY_CONTACT_PHONE = "2172576222"
+BOOK_BUNDLE_URL = os.getenv(
+    "FOCUS_BOOK_BUNDLE_URL",
+    "https://buy.stripe.com/bJe7sKh2B6ZQ8bP4II5os02",
+)
+BLUEPRINT_PACK_URL = os.getenv(
+    "FOCUS_BLUEPRINT_PACK_URL",
+    "https://buy.stripe.com/cNi4gy27H83U4ZD3EE5os03",
+)
+BUSINESS_ENGINE_URL = os.getenv(
+    "FOCUS_BUSINESS_ENGINE_URL",
+    "https://buy.stripe.com/4gMbJ0aEd97Y9fT2AA5os04",
+)
 
 
 def copy_tree(src: Path, dst: Path) -> None:
@@ -24,7 +36,7 @@ def copy_tree(src: Path, dst: Path) -> None:
             shutil.copy2(item, target)
 
 
-def _on_rm_error(func, path, exc_info):
+def _on_rm_error(func, path, _exc_info):
     # Handles Windows/OneDrive read-only files during cleanup.
     os.chmod(path, stat.S_IWRITE)
     func(path)
@@ -50,21 +62,21 @@ def build() -> int:
     preview_html = SITE / "visual_preview.html"
     preview_css = SITE / "visual_preview.css"
     if preview_html.exists():
-        shutil.copy2(preview_html, PUBLIC / "index.html")
         html = preview_html.read_text(encoding="utf-8")
         html = html.replace("../published/ebooks/index.html", "ebooks/index.html")
         html = html.replace("../published/public_site/landing.html", "landing.html")
+        html = html.replace("../published/public_site/offers.html", "offers.html")
+        html = html.replace("../published/public_site/funnel_landing.html", "funnel_landing.html")
         (PUBLIC / "index.html").write_text(html, encoding="utf-8")
     if preview_css.exists():
         shutil.copy2(preview_css, PUBLIC / "visual_preview.css")
 
-    # Add simple landing links for public visitors.
     landing = PUBLIC / "landing.html"
     landing.write_text(
         """<!doctype html>
-<html lang=\"en\"><head>
-  <meta charset=\"utf-8\" />
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Focus AI Public Launch</title>
   <style>
     body { font-family: Inter, Arial, sans-serif; margin: 0; background: #0c1024; color: #ecf0ff; }
@@ -75,13 +87,14 @@ def build() -> int:
 </head><body>
   <main>
     <h1>Focus AI Public Launch</h1>
-    <div class=\"card\">
-      <p><a href=\"index.html\">View visual preview homepage</a></p>
-      <p><a href=\"booking.html\">Book with Alexis Rogers</a></p>
-      <p><a href=\"services.html\">View company services</a></p>
-      <p><a href=\"products.html\">Browse products and offers</a></p>
-      <p><a href=\"ebooks/index.html\">View published eBook library</a></p>
-      <p><a href=\"funnel_landing.html\">View sales funnel pages</a></p>
+    <div class="card">
+      <p><a href="index.html">View visual preview homepage</a></p>
+      <p><a href="offers.html">View live offers and checkout links</a></p>
+      <p><a href="booking.html">Book with Alexis Rogers</a></p>
+      <p><a href="services.html">View company services</a></p>
+      <p><a href="products.html">Browse products and offers</a></p>
+      <p><a href="ebooks/index.html">View published eBook library</a></p>
+      <p><a href="funnel_landing.html">Enter the sales funnel</a></p>
     </div>
   </main>
 </body></html>
@@ -127,6 +140,12 @@ h1, h2, h3 { line-height: 1.2; }
 }
 ul { padding-left: 1.2rem; }
 .small { opacity: 0.85; font-size: 0.95rem; }
+.price { color: #ffd882; font-size: 1.2rem; font-weight: 700; }
+.offer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
 input[type="email"] {
   width: min(520px, 95%);
   background: #0f1430;
@@ -222,6 +241,11 @@ nav a { color: #9de6ff; text-decoration: none; margin-right: 1rem; }
     <p><a class="btn" href="ebooks/index.html">Browse published eBooks</a></p>
   </div>
   <div class="card">
+    <h2>Live checkout ladder</h2>
+    <p>Ready-to-buy offers now route through the Focus AI launch flow.</p>
+    <p><a class="btn" href="offers.html">View live offers</a></p>
+  </div>
+  <div class="card">
     <h2>Service-backed offers</h2>
     <p>Strategy calls, build consulting, and automation planning available through the three-company network.</p>
     <p><a class="btn secondary" href="services.html">Compare services</a></p>
@@ -230,6 +254,39 @@ nav a { color: #9de6ff; text-decoration: none; margin-right: 1rem; }
     <h2>Manual purchase path</h2>
     <p>For now, purchases and custom invoices route through {PRIMARY_CONTACT_NAME} at <a href="tel:{PRIMARY_CONTACT_PHONE}">{PRIMARY_CONTACT_PHONE}</a>.</p>
     <p class="small">This keeps the flow live while payment processor setup remains separate.</p>
+</div>
+</main></body></html>
+""",
+        "offers.html": f"""<!doctype html>
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Focus AI Offers</title>
+  <link rel="stylesheet" href="funnel.css" />
+</head><body><main>
+  <nav><a href="landing.html">Home</a><a href="ebooks/index.html">eBooks</a><a href="funnel_landing.html">Funnel</a></nav>
+  <p class="small">Live offer ladder</p>
+  <h1>Focus AI Revenue Engine</h1>
+  <p>Choose the fastest entry point for your build, content, and monetization workflow.</p>
+  <div class="offer-grid">
+    <section class="card">
+      <h2>Focus AI eBook Bundle</h2>
+      <p>Five published eBooks, sacred geometry prompts, and practical reading for founders and builders.</p>
+      <p class="price">$49 one time</p>
+      <p><a class="btn" href="{BOOK_BUNDLE_URL}">Buy the eBook Bundle</a></p>
+    </section>
+    <section class="card">
+      <h2>Focus AI Blueprint Pack</h2>
+      <p>Implementation materials, blueprint thinking, and business workflow assets for turning ideas into products.</p>
+      <p class="price">$299 one time</p>
+      <p><a class="btn" href="{BLUEPRINT_PACK_URL}">Buy the Blueprint Pack</a></p>
+    </section>
+    <section class="card">
+      <h2>Focus AI Business Engine</h2>
+      <p>The flagship premium system for AI workflows, launch assets, operating structure, and delivery support.</p>
+      <p class="price">$5,000 one time</p>
+      <p><a class="btn" href="{BUSINESS_ENGINE_URL}">Buy the Business Engine</a></p>
+    </section>
   </div>
 </main></body></html>
 """,
@@ -237,7 +294,7 @@ nav a { color: #9de6ff; text-decoration: none; margin-right: 1rem; }
 <html lang="en"><head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Free Download — Sacred Geometry Wealth Blueprint</title>
+  <title>Free Download - Sacred Geometry Wealth Blueprint</title>
   <link rel="stylesheet" href="funnel.css" />
 </head><body><main>
   <nav><a href="landing.html">Home</a><a href="delivery.html">Delivery Page</a></nav>
@@ -252,6 +309,7 @@ nav a { color: #9de6ff; text-decoration: none; margin-right: 1rem; }
       <li>AI-powered architecture strategy</li>
     </ul>
   </div>
+  <p><a class="btn secondary" href="offers.html">Skip ahead to live offers</a></p>
   <h3>Get Instant Access</h3>
   <p>Enter your email to download:</p>
   <form action="delivery.html" method="get">
@@ -274,34 +332,40 @@ nav a { color: #9de6ff; text-decoration: none; margin-right: 1rem; }
   <p>Check your email for the download.</p>
   <div class="card">
     <h2>Want to Go Deeper?</h2>
-    <h3>Sacred Geometry Architecture Book</h3>
+    <h3>Focus AI eBook Bundle</h3>
     <ul>
-      <li>Complete design system</li>
+      <li>Five published eBooks in one purchase</li>
       <li>Step-by-step wealth strategy</li>
-      <li>Real-world applications</li>
+      <li>Real-world applications and prompts</li>
     </ul>
-    <p><strong>Special Offer (Today Only): $19.99</strong></p>
-    <a class="btn" href="book_offer.html">Get the Book Now</a>
+    <p><strong>Special Offer (Today Only): $49</strong></p>
+    <a class="btn" href="book_offer.html">Get the Bundle Now</a>
   </div>
 </main></body></html>
 """,
-        "book_offer.html": """<!doctype html>
+        "book_offer.html": f"""<!doctype html>
 <html lang="en"><head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sacred Geometry Architecture Book</title>
+  <title>Focus AI eBook Bundle</title>
   <link rel="stylesheet" href="funnel.css" />
 </head><body><main>
   <nav><a href="delivery.html">Back</a><a href="upsell.html">Next Offer</a></nav>
-  <h1>Sacred Geometry Architecture Book</h1>
-  <p>Low-ticket entry offer with complete system and strategy.</p>
+  <h1>Focus AI eBook Bundle</h1>
+  <p>Entry offer with the published library, prompts, and strategy resources.</p>
   <div class="card">
-    <p><strong>$19.99</strong></p>
-    <a class="btn" href="upsell.html">Purchase + Continue</a>
+    <ul>
+      <li>Instant access to the published eBook library</li>
+      <li>Foundational sacred geometry and focus frameworks</li>
+      <li>Entry point into the larger Focus AI offer ladder</li>
+    </ul>
+    <p class="price">$49 one time</p>
+    <p><a class="btn" href="{BOOK_BUNDLE_URL}">Purchase the Bundle</a></p>
+    <p><a class="btn secondary" href="upsell.html">See the next offer</a></p>
   </div>
 </main></body></html>
 """,
-        "upsell.html": """<!doctype html>
+        "upsell.html": f"""<!doctype html>
 <html lang="en"><head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -312,18 +376,19 @@ nav a { color: #9de6ff; text-decoration: none; margin-right: 1rem; }
   <h1>Upgrade Your System</h1>
   <p>You now understand the concept. Now get the actual tools.</p>
   <div class="card">
-    <h2>Sacred Geometry Blueprint Pack</h2>
+    <h2>Focus AI Blueprint Pack</h2>
     <ul>
-      <li>Real house plans</li>
-      <li>Build-ready layouts</li>
-      <li>Profit-focused designs</li>
+      <li>Business workflow assets</li>
+      <li>Build-ready blueprint thinking</li>
+      <li>Profit-focused implementation materials</li>
     </ul>
-    <p><strong>Today Only: $49 (normally $99)</strong></p>
-    <a class="btn" href="high_ticket.html">Upgrade Now</a>
+    <p class="price">$299 one time</p>
+    <p><a class="btn" href="{BLUEPRINT_PACK_URL}">Buy the Blueprint Pack</a></p>
+    <p><a class="btn secondary" href="high_ticket.html">See the premium system</a></p>
   </div>
 </main></body></html>
 """,
-        "high_ticket.html": """<!doctype html>
+        "high_ticket.html": f"""<!doctype html>
 <html lang="en"><head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -333,19 +398,21 @@ nav a { color: #9de6ff; text-decoration: none; margin-right: 1rem; }
   <nav><a href="upsell.html">Upsell</a><a href="email_automation.html">Email Automation</a></nav>
   <h1>Want This Done For You?</h1>
   <ul>
-    <li>Business structure (LLC + systems)</li>
+    <li>Business structure and systems</li>
     <li>Product setup</li>
     <li>Monetization strategy</li>
   </ul>
   <div class="card">
-    <h2>Done-For-You System</h2>
-    <p><strong>$999</strong></p>
-    <p>Limited availability</p>
-    <a class="btn" href="email_automation.html">Apply Now</a>
+    <h2>Focus AI Business Engine</h2>
+    <p>The flagship operating system for prompts, workflows, offers, and launch support.</p>
+    <p class="price">$5,000 one time</p>
+    <p>Limited premium delivery capacity</p>
+    <p><a class="btn" href="{BUSINESS_ENGINE_URL}">Buy the Business Engine</a></p>
+    <p><a class="btn secondary" href="email_automation.html">View follow-up campaign</a></p>
   </div>
 </main></body></html>
 """,
-        "email_automation.html": """<!doctype html>
+        "email_automation.html": f"""<!doctype html>
 <html lang="en"><head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -356,33 +423,34 @@ nav a { color: #9de6ff; text-decoration: none; margin-right: 1rem; }
   <h1>Email Automation (Critical)</h1>
   <p>Recommended tools: <strong>Mailchimp</strong> or <strong>ConvertKit</strong>.</p>
   <div class="card">
-    <h2>Email 1 — Your Blueprint is Inside</h2>
-    <p>Here’s your Sacred Geometry Blueprint... get the full system: [Book Link]</p>
+    <h2>Email 1 - Your Blueprint is Inside</h2>
+    <p>Here is your Sacred Geometry Blueprint. Get the full reading bundle: <a href="{BOOK_BUNDLE_URL}">Focus AI eBook Bundle</a></p>
   </div>
   <div class="card">
-    <h2>Email 2 — Why Most Homes Fail</h2>
-    <p>Most buildings are designed for cost — not value... See how: [Book Link]</p>
+    <h2>Email 2 - Why Most Systems Fail</h2>
+    <p>Most systems are designed for cost, not value. Show them the next step: <a href="{BOOK_BUNDLE_URL}">eBook Bundle</a></p>
   </div>
   <div class="card">
-    <h2>Email 3 — This changes everything</h2>
-    <p>AI + design + structure = new income model... Get started: [Link]</p>
+    <h2>Email 3 - This changes everything</h2>
+    <p>AI + design + structure can become a working revenue model. Upgrade here: <a href="{BLUEPRINT_PACK_URL}">Blueprint Pack</a></p>
   </div>
   <div class="card">
-    <h2>Email 4 — Want the actual designs?</h2>
-    <p>Concept is one thing. Execution is everything. [Blueprint Link]</p>
+    <h2>Email 4 - Want the actual system?</h2>
+    <p>Concept is one thing. Execution is everything. Send them here: <a href="{BLUEPRINT_PACK_URL}">Blueprint Pack</a></p>
   </div>
   <div class="card">
-    <h2>Email 5 — Last chance</h2>
-    <p>If you’re serious about building income systems... [Offer Link]</p>
+    <h2>Email 5 - Last chance</h2>
+    <p>If you are serious about building income systems, present the premium offer directly: <a href="{BUSINESS_ENGINE_URL}">Focus AI Business Engine</a></p>
   </div>
   <div class="card">
     <h2>Scale Targets</h2>
-    <p>100 visitors/day → 10 opt-ins → 2 book sales → 1 upsell ≈ $90/day.</p>
-    <p>Scale to $5k+/week with 500–1,000 visitors/day, consistent posting, and multiple products.</p>
+    <p>100 visitors/day -> 10 opt-ins -> 2 bundle sales -> 1 upsell.</p>
+    <p>$5k+/week is possible with real traffic, consistent posting, strong follow-up, and multiple conversions. It is a target, not a guarantee.</p>
   </div>
 </main></body></html>
 """,
     }
+
     for page_name, page_content in funnel_pages.items():
         (PUBLIC / page_name).write_text(page_content, encoding="utf-8")
 
