@@ -1,9 +1,10 @@
 import subprocess
+import sys
 
 
 def test_visual_verification_passes():
     result = subprocess.run(
-        ["python3", "focus_ai/scripts/verify_visuals.py"],
+        [sys.executable, "focus_ai/scripts/verify_visuals.py"],
         capture_output=True,
         text=True,
         check=True,

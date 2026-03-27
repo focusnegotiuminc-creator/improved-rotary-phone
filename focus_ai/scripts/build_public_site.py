@@ -8,6 +8,8 @@ ROOT = Path(__file__).resolve().parents[1]
 PUBLISHED = ROOT / "published" / "ebooks"
 SITE = ROOT / "site"
 PUBLIC = ROOT / "published" / "public_site"
+PRIMARY_CONTACT_NAME = "Alexis Rogers"
+PRIMARY_CONTACT_PHONE = "2172576222"
 
 
 def copy_tree(src: Path, dst: Path) -> None:
@@ -75,7 +77,9 @@ def build() -> int:
     <h1>Focus AI Public Launch</h1>
     <div class=\"card\">
       <p><a href=\"index.html\">View visual preview homepage</a></p>
-      <p><a href=\"index.html\">View sacred geometry homepage</a></p>
+      <p><a href=\"booking.html\">Book with Alexis Rogers</a></p>
+      <p><a href=\"services.html\">View company services</a></p>
+      <p><a href=\"products.html\">Browse products and offers</a></p>
       <p><a href=\"ebooks/index.html\">View published eBook library</a></p>
       <p><a href=\"funnel_landing.html\">View sales funnel pages</a></p>
     </div>
@@ -139,6 +143,96 @@ nav a { color: #9de6ff; text-decoration: none; margin-right: 1rem; }
     )
 
     funnel_pages = {
+        "booking.html": f"""<!doctype html>
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Book with {PRIMARY_CONTACT_NAME}</title>
+  <link rel="stylesheet" href="funnel.css" />
+</head><body><main>
+  <nav><a href="index.html">Home</a><a href="services.html">Services</a><a href="products.html">Products</a></nav>
+  <p class="small">Primary contact and routing</p>
+  <h1>Book with {PRIMARY_CONTACT_NAME}</h1>
+  <div class="card">
+    <p>{PRIMARY_CONTACT_NAME} is the central point of contact for Focus Records LLC, Royal Lee Construction Solutions LLC, and Focus Negotium Inc.</p>
+    <p><strong>Call now:</strong> <a href="tel:{PRIMARY_CONTACT_PHONE}">{PRIMARY_CONTACT_PHONE}</a></p>
+    <p><strong>Best use:</strong> strategy calls, service routing, project discovery, and product questions.</p>
+  </div>
+  <div class="card">
+    <h2>Meeting options</h2>
+    <ul>
+      <li>Creative planning for Focus Records LLC</li>
+      <li>Build and design planning for Royal Lee Construction Solutions LLC</li>
+      <li>Automation, negotiation, and monetization planning for Focus Negotium Inc</li>
+    </ul>
+    <p class="small">Until calendar automation is connected, call or text to schedule the next open slot.</p>
+  </div>
+</main></body></html>
+""",
+        "services.html": f"""<!doctype html>
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Services Across Three Companies</title>
+  <link rel="stylesheet" href="funnel.css" />
+</head><body><main>
+  <nav><a href="index.html">Home</a><a href="booking.html">Booking</a><a href="products.html">Products</a></nav>
+  <p class="small">Choose the right company path</p>
+  <h1>Services</h1>
+  <div class="card">
+    <h2>Focus Records LLC</h2>
+    <ul>
+      <li>Creative direction and release support</li>
+      <li>Visual rollout systems and branded content planning</li>
+      <li>Audience growth and campaign structure</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Royal Lee Construction Solutions LLC</h2>
+    <ul>
+      <li>Sacred geometry build consulting</li>
+      <li>Design and layout strategy</li>
+      <li>Construction planning and execution support</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Focus Negotium Inc</h2>
+    <ul>
+      <li>Business systems and process design</li>
+      <li>Negotiation support and offer architecture</li>
+      <li>Automation and monetization workflow planning</li>
+    </ul>
+    <p><a class="btn" href="booking.html">Route me through {PRIMARY_CONTACT_NAME}</a></p>
+  </div>
+</main></body></html>
+""",
+        "products.html": f"""<!doctype html>
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Products and Offers</title>
+  <link rel="stylesheet" href="funnel.css" />
+</head><body><main>
+  <nav><a href="index.html">Home</a><a href="services.html">Services</a><a href="ebooks/index.html">eBooks</a></nav>
+  <p class="small">Current product paths</p>
+  <h1>Products and Offers</h1>
+  <div class="card">
+    <h2>Digital products</h2>
+    <p>Published eBooks, sacred geometry guides, and workflow-driven business assets.</p>
+    <p><a class="btn" href="ebooks/index.html">Browse published eBooks</a></p>
+  </div>
+  <div class="card">
+    <h2>Service-backed offers</h2>
+    <p>Strategy calls, build consulting, and automation planning available through the three-company network.</p>
+    <p><a class="btn secondary" href="services.html">Compare services</a></p>
+  </div>
+  <div class="card">
+    <h2>Manual purchase path</h2>
+    <p>For now, purchases and custom invoices route through {PRIMARY_CONTACT_NAME} at <a href="tel:{PRIMARY_CONTACT_PHONE}">{PRIMARY_CONTACT_PHONE}</a>.</p>
+    <p class="small">This keeps the flow live while payment processor setup remains separate.</p>
+  </div>
+</main></body></html>
+""",
         "funnel_landing.html": """<!doctype html>
 <html lang="en"><head>
   <meta charset="utf-8" />

@@ -1,10 +1,11 @@
 from pathlib import Path
 import subprocess
+import sys
 
 
 def test_publish_outputs_index_and_books():
     result = subprocess.run(
-        ["python3", "focus_ai/scripts/publish_ebooks.py"],
+        [sys.executable, "focus_ai/scripts/publish_ebooks.py"],
         capture_output=True,
         text=True,
         check=True,

@@ -1,10 +1,11 @@
 from pathlib import Path
 import subprocess
+import sys
 
 
 def test_engine_runs_all_stages():
     result = subprocess.run(
-        ["python3", "focus_ai/scripts/engine.py"],
+        [sys.executable, "focus_ai/scripts/engine.py"],
         capture_output=True,
         text=True,
         check=True,
@@ -16,7 +17,7 @@ def test_engine_runs_all_stages():
 def test_engine_accepts_codex_thread_uri():
     result = subprocess.run(
         [
-            "python3",
+            sys.executable,
             "focus_ai/scripts/engine.py",
             "--stage",
             "1",
@@ -33,7 +34,7 @@ def test_engine_accepts_codex_thread_uri():
 def test_engine_rejects_invalid_thread_uri():
     result = subprocess.run(
         [
-            "python3",
+            sys.executable,
             "focus_ai/scripts/engine.py",
             "--thread-uri",
             "https://example.com/thread",

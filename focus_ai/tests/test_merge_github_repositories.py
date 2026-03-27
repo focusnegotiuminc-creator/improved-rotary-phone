@@ -1,10 +1,11 @@
 import subprocess
+import sys
 
 
 def test_merge_script_dry_run_with_explicit_repos():
     result = subprocess.run(
         [
-            "python3",
+            sys.executable,
             "focus_ai/scripts/merge_github_repositories.py",
             "--owner",
             "acme",
@@ -24,7 +25,7 @@ def test_merge_script_dry_run_with_explicit_repos():
 
 def test_merge_script_help_mentions_auto_branch_mode():
     result = subprocess.run(
-        ["python3", "focus_ai/scripts/merge_github_repositories.py", "--help"],
+        [sys.executable, "focus_ai/scripts/merge_github_repositories.py", "--help"],
         capture_output=True,
         text=True,
         check=True,

@@ -230,6 +230,12 @@ The block includes:
 4. After deployment, run `FOCUS_APP_URL="https://your-live-url" make verify-live` to confirm live availability.
 5. Optional: set `FOCUS_APP_PATHS` (comma-separated) and `FOCUS_REQUIRE_ALL_PATHS=0` if you only need partial endpoint success checks.
 
+## Visibility and handoff
+- Public visibility does not protect unfinished source code; if the repository is public, the code is public.
+- Keep reusable workflow context in `docs/unified_workflow_thread.md`.
+- Keep secret names (not values) in `docs/secret_registry.md`.
+- Use local builds plus deployable artifacts when you need public publishing without exposing source.
+
 ## Where to find your books
 - Markdown source books: `focus_ai/ebooks/`
 - Published HTML books: `focus_ai/published/ebooks/`
