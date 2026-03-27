@@ -19,8 +19,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PUBLIC = ROOT / "published" / "public_site"
 DEFAULT_REMOTE_DIR_CANDIDATES = [
-    "thefocuscorp.com/htdocs",
     "htdocs",
+    "thefocuscorp.com/htdocs",
     "domains/thefocuscorp.com/public_html",
 ]
 

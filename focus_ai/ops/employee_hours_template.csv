@@ -1,0 +1,2 @@
+date,employee_name,role,project,start_time,end_time,total_hours,pay_rate,pay_period,approved_by,notes
+2026-03-27,Example Employee,Operations,Focus AI Launch,09:00,17:00,8.0,0.00,2026-03-16_to_2026-03-31,Manager Name,Example row

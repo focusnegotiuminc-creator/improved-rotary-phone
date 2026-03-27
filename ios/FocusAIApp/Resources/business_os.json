@@ -1,0 +1,107 @@
+{
+  "portal": {
+    "brand": "Focus AI",
+    "site_name": "Focus AI Business Operating System",
+    "primary_contact": {
+      "name": "Alexis Rogers",
+      "phone": "2172576222",
+      "role": "Primary routing contact"
+    },
+    "tracks": [
+      {
+        "id": "revenue",
+        "title": "Revenue Rollout",
+        "summary": "Live offers, funnel routing, and follow-up content."
+      },
+      {
+        "id": "design-system",
+        "title": "Design-System Expansion",
+        "summary": "Shared sacred-geometry visuals across products and campaigns."
+      },
+      {
+        "id": "mobile",
+        "title": "Customer Mobile App",
+        "summary": "Offer browsing, checkout handoff, and content access."
+      },
+      {
+        "id": "back-office",
+        "title": "Back-Office Automation",
+        "summary": "Lead routing, deploy health, payroll readiness, and content ops."
+      }
+    ]
+  },
+  "offers": [
+    {
+      "id": "ebook-bundle",
+      "title": "Focus AI eBook Bundle",
+      "price_usd": 49,
+      "summary": "Published eBooks, sacred geometry guides, and practical business assets.",
+      "cta_label": "Buy the Focus AI eBook Bundle",
+      "checkout_url": "https://buy.stripe.com/bJe7sKh2B6ZQ8bP4II5os02"
+    },
+    {
+      "id": "blueprint-pack",
+      "title": "Focus AI Blueprint Pack",
+      "price_usd": 299,
+      "summary": "Strategy assets and implementation guides for turning ideas into products.",
+      "cta_label": "Buy the Blueprint Pack",
+      "checkout_url": "https://buy.stripe.com/cNi4gy27H83U4ZD3EE5os03"
+    },
+    {
+      "id": "business-engine",
+      "title": "Focus AI Business Engine",
+      "price_usd": 5000,
+      "summary": "Flagship operating-system offer for prompts, workflows, and launch support.",
+      "cta_label": "Buy the Business Engine",
+      "checkout_url": "https://buy.stripe.com/4gMbJ0aEd97Y9fT2AA5os04"
+    }
+  ],
+  "companies": [
+    {
+      "id": "focus-records",
+      "name": "Focus Records LLC",
+      "tagline": "Creative direction, release support, and audience-facing rollout."
+    },
+    {
+      "id": "royal-lee-construction",
+      "name": "Royal Lee Construction Solutions LLC",
+      "tagline": "Sacred geometry build consulting and construction strategy."
+    },
+    {
+      "id": "focus-negotium",
+      "name": "Focus Negotium Inc",
+      "tagline": "Negotiation, automation design, and monetization systems."
+    }
+  ],
+  "workflow_stages": [
+    {
+      "id": "intake",
+      "label": "Intake",
+      "description": "Normalize the request and route it into the right business path."
+    },
+    {
+      "id": "build-integrate",
+      "label": "Build / Integrate",
+      "description": "Produce content, code, configs, and launch assets."
+    },
+    {
+      "id": "deployment",
+      "label": "Deployment",
+      "description": "Publish safely and verify the live customer surfaces."
+    }
+  ],
+  "app": {
+    "app_name": "Focus AI",
+    "features": [
+      "Offer catalog",
+      "Stripe checkout handoff",
+      "Library links",
+      "Service intake",
+      "AI-guided product path selection"
+    ],
+    "content_library_path": "/ebooks/index.html",
+    "offers_path": "/products.html",
+    "business_os_data_path": "/data/business_os.json"
+  }
+}
+

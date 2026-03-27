@@ -5,3 +5,5 @@ focus_ai/backups/
 focus_ai/published/public_site/
 focus_ai/published/replit_bundle/
 FOCUS_MASTER_AI/outputs/replit_deploy_manifest_*.json
+FOCUS_MASTER_AI/data/business_os_runtime/
+ios/FocusAIApp/FocusAIApp.xcodeproj/

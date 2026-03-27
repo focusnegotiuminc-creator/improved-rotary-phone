@@ -18,15 +18,15 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FOCUS_APP_URL: https://thefocuscorp.com
-      FOCUS_APP_PATHS: /,/ebooks/index.html,/landing.html
+      FOCUS_APP_PATHS: /,/products.html,/ebooks/index.html,/landing.html
       FOCUS_REQUIRE_ALL_PATHS: "0"
       FOCUS_SKIP_TLS_VERIFY: "1"
       INFINITYFREE_STRICT: "0"
       INFINITYFREE_FTP_HOST: ${{ secrets.INFINITYFREE_FTP_HOST }}
       INFINITYFREE_FTP_USER: ${{ secrets.INFINITYFREE_FTP_USER }}
       INFINITYFREE_FTP_PASS: ${{ secrets.INFINITYFREE_FTP_PASS }}
-      INFINITYFREE_REMOTE_DIR: ${{ secrets.INFINITYFREE_REMOTE_DIR || vars.INFINITYFREE_REMOTE_DIR || 'suggested' }}
-      INFINITYFREE_REMOTE_DIR_CANDIDATES: ${{ vars.INFINITYFREE_REMOTE_DIR_CANDIDATES || 'thefocuscorp.com/htdocs,htdocs,domains/thefocuscorp.com/public_html' }}
+      INFINITYFREE_REMOTE_DIR: ${{ secrets.INFINITYFREE_REMOTE_DIR || vars.INFINITYFREE_REMOTE_DIR || 'htdocs' }}
+      INFINITYFREE_REMOTE_DIR_CANDIDATES: ${{ vars.INFINITYFREE_REMOTE_DIR_CANDIDATES || 'htdocs,thefocuscorp.com/htdocs,domains/thefocuscorp.com/public_html' }}
       REPLIT_DEPLOY_HOOK_URL: ${{ secrets.REPLIT_DEPLOY_HOOK_URL }}
       REPLIT_DEPLOY_WEBHOOK_URL: ${{ secrets.REPLIT_DEPLOY_WEBHOOK_URL }}
       REPLIT_DEPLOY_TOKEN: ${{ secrets.REPLIT_DEPLOY_TOKEN }}
