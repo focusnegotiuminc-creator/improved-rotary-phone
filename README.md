@@ -208,6 +208,21 @@ You can configure secrets/variables in one command:
 
 Then run `.github/workflows/deploy-infinityfree.yml` manually or push to `work/main/master`.
 
+## Replit shell/bootstrap command (GitHub + InfinityFree)
+Use the helper to generate a single copy/paste command block for the latest Replit prompt/chat command:
+
+```bash
+python3 focus_ai/scripts/build_replit_bootstrap_prompt.py --repos "OWNER/repo1,OWNER/repo2"
+```
+
+Then paste the output block into Replit Shell (or Replit AI chat command panel), replace placeholder values, and run it.
+The block includes:
+- `GITHUB_TOKEN`/`GH_TOKEN` export placeholders for a newly created GitHub token
+- Replit deploy hook/token exports
+- InfinityFree FTP exports
+- merge commands for each repo passed in `--repos`
+- `python3 focus_ai/scripts/github_ops.py go-live --deploy`
+
 ## How to use the app
 1. Run `make full-check` to validate and build assets locally.
 2. Run `make public-build` to generate the deployable site in `focus_ai/published/public_site/`.
