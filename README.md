@@ -302,3 +302,32 @@ A modular multi-agent runtime is available with task routing, specialized engine
 - Pipelines: `pipelines/stage_1_research.py` … `pipelines/stage_10_publish.py`
 - Memory: `memory/task_history.json`, `memory/research_cache.json`, `memory/vector_store/`
 - Integrations: `integrations/`
+
+## Version control + Replit publish checklist
+If you want to ship the **full Focus OS build** from a clean clone:
+
+1. Verify git status and stage everything:
+   ```bash
+   git status
+   git add -A
+   git commit -m "chore: sync full Focus OS build"
+   ```
+2. Ensure a GitHub remote is configured:
+   ```bash
+   git remote -v
+   git remote add origin <your-github-repo-url>  # only if missing
+   git push -u origin <branch>
+   ```
+3. Use GitHub repository **Secrets and variables** for deployment credentials; do not commit secrets into source files.
+4. Trigger Replit deployment through the configured deploy hook:
+   ```bash
+   make deploy-replit
+   ```
+5. Build public assets before publishing:
+   ```bash
+   make full-check
+   make public-build
+   ```
+6. To launch publicly on Replit, import this repo in Replit, configure secrets in the Replit Secrets panel, and enable Deployments (Autoscale/Reserved VM) from the Replit UI.
+
+> Security note: keep tokens, API keys, and passwords in GitHub/Replit secret stores only.
