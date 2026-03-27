@@ -6,6 +6,7 @@ This document is the single handoff point for future chats, local work, and depl
 
 ## Current Reality
 
+- Primary source repository: `focusnegotiuminc-creator/improved-rotary-phone`.
 - GitHub Actions is configured correctly at the repository level.
 - Repository secrets and variables are present.
 - Private and public visibility do not remove the current account-level GitHub billing lock.
@@ -23,7 +24,7 @@ This document is the single handoff point for future chats, local work, and depl
 
 If the goal is to keep source private while still publishing site changes publicly, use this model:
 
-1. Keep source development in the private `Focus--Master` repository and on the local device.
+1. Keep source development in `focusnegotiuminc-creator/improved-rotary-phone` and on the local device.
 2. Build public artifacts with `make public-build`.
 3. Deploy only the built output to the live host with `make deploy-thefocuscorp` or `python3 focus_ai/scripts/github_ops.py go-live --deploy`.
 4. If a separate public repo is ever needed, publish only built static artifacts there, not source code or secret-bearing workflow files.

@@ -129,7 +129,7 @@ INDEX_HTML = '''<!doctype html>
   </head>
   <body>
     <h1>Focus Master AI</h1>
-    <p class="muted">Local assistant powered by your Focus--Master repository knowledge files.</p>
+    <p class="muted">Local assistant powered by your current Focus Master repository knowledge files.</p>
     <div id="log">Assistant ready. Ask a question about brand voice, offers, launch, or workflow.</div>
     <textarea id="message" placeholder="Ask something..."></textarea>
     <br />
@@ -161,7 +161,7 @@ INDEX_HTML = '''<!doctype html>
 </html>
 '''
 
-DESKTOP_README = """# Focus Master AI (Desktop App)\n\nThis folder was generated from the Focus--Master repository.\n\n## Run\n```bash\npython3 app.py\n```\n\nThen open: http://127.0.0.1:8787\n\n## Contents\n- `app.py`: local HTTP AI service and chat endpoint\n- `index.html`: browser UI\n- `knowledge/`: copied project knowledge files used for responses\n"""
+DESKTOP_README = """# Focus Master AI (Desktop App)\n\nThis folder was generated from your current Focus Master repository.\n\n## Run\n```bash\npython3 app.py\n```\n\nThen open: http://127.0.0.1:8787\n\n## Contents\n- `app.py`: local HTTP AI service and chat endpoint\n- `index.html`: browser UI\n- `knowledge/`: copied project knowledge files used for responses\n"""
 
 
 def copy_knowledge(source_root: Path, target_dir: Path) -> list[Path]:
