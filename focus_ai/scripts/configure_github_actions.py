@@ -306,7 +306,7 @@ def main() -> int:
         "REPLIT_DEPLOY_METHOD": "POST",
         "REPLIT_DEPLOY_TIMEOUT": "30",
         "FOCUS_APP_URL": "https://thefocuscorp.com",
-        "FOCUS_APP_PATHS": "/,/ebooks/index.html,/landing.html",
+        "FOCUS_APP_PATHS": "/,/booking.html,/services.html,/products.html,/ebooks/index.html",
         "FOCUS_REQUIRE_ALL_PATHS": "0",
         "FOCUS_SKIP_TLS_VERIFY": "1",
         "INFINITYFREE_STRICT": "0",

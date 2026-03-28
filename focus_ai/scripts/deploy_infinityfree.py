@@ -14,6 +14,7 @@ Optional:
 from __future__ import annotations
 
 import os
+import time
 from ftplib import FTP, error_perm
 from pathlib import Path
 
@@ -24,6 +25,8 @@ DEFAULT_REMOTE_DIR_CANDIDATES = [
     "htdocs",
     "domains/thefocuscorp.com/public_html",
 ]
+DEFAULT_LOGIN_RETRIES = 3
+DEFAULT_LOGIN_RETRY_DELAY = 2.0
 
 
 def _parse_remote_dir_candidates(raw: str | None) -> list[str]:
@@ -59,6 +62,58 @@ def _path_exists(ftp: FTP, remote_path: str) -> bool:
         except error_perm:
             pass
     return True
+
+
+def _strict_mode() -> bool:
+    return os.getenv("INFINITYFREE_STRICT", "0").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+
+
+def _close_quietly(ftp: FTP) -> None:
+    try:
+        ftp.quit()
+    except Exception:
+        try:
+            ftp.close()
+        except Exception:
+            pass
+
+
+def _connect_and_login(
+    host: str,
+    user: str,
+    password: str,
+    *,
+    retries: int = DEFAULT_LOGIN_RETRIES,
+    retry_delay: float = DEFAULT_LOGIN_RETRY_DELAY,
+    ftp_factory=FTP,
+) -> FTP:
+    attempts = max(1, retries)
+    last_exc: Exception | None = None
+
+    for attempt in range(1, attempts + 1):
+        ftp = ftp_factory(host, timeout=30)
+        ftp.set_pasv(True)
+        try:
+            ftp.login(user=user, passwd=password)
+            return ftp
+        except Exception as exc:  # noqa: BLE001
+            last_exc = exc
+            _close_quietly(ftp)
+            if attempt >= attempts:
+                raise
+            print(
+                f"FTP login attempt {attempt} failed: {exc}. "
+                f"Retrying in {retry_delay * attempt:.1f}s..."
+            )
+            time.sleep(max(0.0, retry_delay) * attempt)
+
+    assert last_exc is not None
+    raise last_exc
 
 
 def _resolve_remote_dir(ftp: FTP, configured_remote_dir: str, candidates: list[str]) -> str:
@@ -120,6 +175,7 @@ def main() -> int:
         os.getenv("INFINITYFREE_REMOTE_DIR_CANDIDATES")
     )
 
+    strict = _strict_mode()
     missing = [
         name
         for name, value in {
@@ -130,7 +186,6 @@ def main() -> int:
         if not value
     ]
     if missing:
-        strict = os.getenv("INFINITYFREE_STRICT", "0").strip().lower() in {"1", "true", "yes", "on"}
         print("Missing required env vars:")
         for name in missing:
             print(f"- {name}")
@@ -157,6 +212,32 @@ def main() -> int:
     if last_error is not None:
         raise last_error
     return 1
+    retry_count = int(os.getenv("INFINITYFREE_LOGIN_RETRIES", str(DEFAULT_LOGIN_RETRIES)))
+    retry_delay = float(
+        os.getenv("INFINITYFREE_LOGIN_RETRY_DELAY", str(DEFAULT_LOGIN_RETRY_DELAY))
+    )
+
+    try:
+        with _connect_and_login(
+            host,
+            user,
+            password,
+            retries=retry_count,
+            retry_delay=retry_delay,
+        ) as ftp:
+            remote_dir = _resolve_remote_dir(ftp, remote_dir_setting, remote_dir_candidates)
+            if remote_dir_setting.strip().lower() in {"", "auto", "suggested"}:
+                print(f"Auto-selected remote deploy directory: {remote_dir}")
+            files, dirs = _upload_dir(ftp, PUBLIC, remote_dir)
+            print(f"Uploaded {files} files ({dirs} directories) to {host}:{remote_dir}")
+    except Exception as exc:  # noqa: BLE001
+        print(f"InfinityFree deploy failed: {exc}")
+        if strict:
+            return 1
+        print("InfinityFree deploy skipped because INFINITYFREE_STRICT is disabled.")
+        return 0
+
+    return 0
 
 
 if __name__ == "__main__":
