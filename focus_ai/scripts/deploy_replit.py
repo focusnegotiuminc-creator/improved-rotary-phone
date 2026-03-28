@@ -45,8 +45,9 @@ def main() -> int:
         or os.getenv("REPLIT_DEPLOY_WEBHOOK_URL", "").strip()
     )
     if not hook_url:
-        print("Missing REPLIT_DEPLOY_HOOK_URL/REPLIT_DEPLOY_WEBHOOK_URL. Skipping Replit deploy.")
-        return 0
+        print("Missing REPLIT_DEPLOY_HOOK_URL/REPLIT_DEPLOY_WEBHOOK_URL.")
+        print("Strict deploy mode requires deploy credentials for every run.")
+        return 1
 
     method = os.getenv("REPLIT_DEPLOY_METHOD", "POST").strip().upper() or "POST"
     timeout = int(os.getenv("REPLIT_DEPLOY_TIMEOUT", "30"))
@@ -91,4 +92,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

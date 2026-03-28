@@ -19,9 +19,8 @@ jobs:
     env:
       FOCUS_APP_URL: https://thefocuscorp.com
       FOCUS_APP_PATHS: /,/products.html,/ebooks/index.html,/landing.html
-      FOCUS_REQUIRE_ALL_PATHS: "0"
+      FOCUS_REQUIRE_ALL_PATHS: "1"
       FOCUS_SKIP_TLS_VERIFY: "1"
-      INFINITYFREE_STRICT: "0"
       INFINITYFREE_FTP_HOST: ${{ secrets.INFINITYFREE_FTP_HOST }}
       INFINITYFREE_FTP_USER: ${{ secrets.INFINITYFREE_FTP_USER }}
       INFINITYFREE_FTP_PASS: ${{ secrets.INFINITYFREE_FTP_PASS }}
@@ -61,6 +60,8 @@ jobs:
       - name: Sync WordPress theme (if configured)
         run: python3 focus_ai/scripts/deploy_wordpress_theme.py
 
+      - name: Sync WordPress plugins (strict by default)
+        run: python3 focus_ai/scripts/deploy_wordpress_plugins.py
+
       - name: Verify live endpoints
         run: python3 focus_ai/scripts/verify_live_app.py
-

@@ -357,5 +357,15 @@ If you want to ship the **full Focus OS build** from a clean clone:
    make public-build
    ```
 6. To launch publicly on Replit, import this repo in Replit, configure secrets in the Replit Secrets panel, and enable Deployments (Autoscale/Reserved VM) from the Replit UI.
+7. For strict live deployment (no silent skips, includes WordPress theme/plugins, and live endpoint verification):
+   ```bash
+   make deploy-live-strict
+   ```
+   This path is intentionally fail-fast: missing deploy credentials or missing required live artifacts cause a non-zero exit.
+8. For the full single-operator AI engine + build + strict deploy path:
+   ```bash
+   make operator-live
+   ```
+   This runs the 11-stage engine, publishes/builds artifacts, deploys integrations, and verifies live endpoints in one fail-fast flow.
 
 > Security note: keep tokens, API keys, and passwords in GitHub/Replit secret stores only.
