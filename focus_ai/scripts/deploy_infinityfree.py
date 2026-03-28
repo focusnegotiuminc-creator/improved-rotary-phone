@@ -130,14 +130,11 @@ def main() -> int:
         if not value
     ]
     if missing:
-        strict = os.getenv("INFINITYFREE_STRICT", "0").strip().lower() in {"1", "true", "yes", "on"}
         print("Missing required env vars:")
         for name in missing:
             print(f"- {name}")
-        if strict:
-            return 1
-        print("InfinityFree deploy skipped (non-strict mode).")
-        return 0
+        print("Strict deploy mode requires live credentials for every run.")
+        return 1
 
     last_error: Exception | None = None
     passwords = [secret for secret in [password, password_alt] if secret]
