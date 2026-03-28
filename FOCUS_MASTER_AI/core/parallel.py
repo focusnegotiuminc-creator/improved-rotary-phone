@@ -1,8 +1,11 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import concurrent.futures
 
-from core.dispatcher import dispatch_task
+try:
+    from FOCUS_MASTER_AI.core.dispatcher import dispatch_task
+except ImportError:
+    from core.dispatcher import dispatch_task
 
 
 def run_parallel(tasks: list[str]) -> list[object]:
@@ -17,4 +20,3 @@ def run_parallel(tasks: list[str]) -> list[object]:
         results = list(executor.map(dispatch_task, clean_tasks))
 
     return results
-

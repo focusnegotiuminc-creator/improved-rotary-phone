@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FOCUS_APP_URL: https://thefocuscorp.com
+      FOCUS_APP_PATHS: /,/products.html,/ebooks/index.html,/landing.html
       FOCUS_APP_PATHS: /,/booking.html,/services.html,/products.html,/ebooks/index.html
       FOCUS_REQUIRE_ALL_PATHS: "0"
       FOCUS_SKIP_TLS_VERIFY: "1"
@@ -25,7 +26,7 @@ jobs:
       INFINITYFREE_FTP_HOST: ${{ secrets.INFINITYFREE_FTP_HOST }}
       INFINITYFREE_FTP_USER: ${{ secrets.INFINITYFREE_FTP_USER }}
       INFINITYFREE_FTP_PASS: ${{ secrets.INFINITYFREE_FTP_PASS }}
-      INFINITYFREE_REMOTE_DIR: ${{ secrets.INFINITYFREE_REMOTE_DIR || vars.INFINITYFREE_REMOTE_DIR || 'suggested' }}
+      INFINITYFREE_REMOTE_DIR: ${{ secrets.INFINITYFREE_REMOTE_DIR || vars.INFINITYFREE_REMOTE_DIR || 'thefocuscorp.com/htdocs' }}
       INFINITYFREE_REMOTE_DIR_CANDIDATES: ${{ vars.INFINITYFREE_REMOTE_DIR_CANDIDATES || 'thefocuscorp.com/htdocs,htdocs,domains/thefocuscorp.com/public_html' }}
       REPLIT_DEPLOY_HOOK_URL: ${{ secrets.REPLIT_DEPLOY_HOOK_URL }}
       REPLIT_DEPLOY_WEBHOOK_URL: ${{ secrets.REPLIT_DEPLOY_WEBHOOK_URL }}
@@ -57,6 +58,9 @@ jobs:
 
       - name: Deploy to InfinityFree (if configured)
         run: python3 focus_ai/scripts/deploy_infinityfree.py
+
+      - name: Sync WordPress theme (if configured)
+        run: python3 focus_ai/scripts/deploy_wordpress_theme.py
 
       - name: Verify live endpoints
         run: python3 focus_ai/scripts/verify_live_app.py

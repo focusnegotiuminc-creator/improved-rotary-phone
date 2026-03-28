@@ -1,0 +1,41 @@
+name: FocusAIApp
+options:
+  bundleIdPrefix: com.thefocuscorp
+settings:
+  base:
+    SWIFT_VERSION: 5.9
+targets:
+  FocusAIApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - App
+    resources:
+      - Resources
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: Focus AI
+        UILaunchScreen:
+          UIColorName: ""
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.thefocuscorp.focusai
+        DEVELOPMENT_TEAM: ""
+        TARGETED_DEVICE_FAMILY: "1,2"
+  FocusAIAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - Tests
+    dependencies:
+      - target: FocusAIApp
+    info:
+      path: Tests/Info.plist
+      properties:
+        CFBundleDisplayName: Focus AI Tests
+

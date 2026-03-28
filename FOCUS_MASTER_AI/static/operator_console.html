@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Focus AI Operator Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/operator_console.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Focus AI Operator Console</p>
+          <h1>Launch today’s work, then prepare payroll safely.</h1>
+          <p>
+            This console talks directly to the Focus AI business operating system you now have running
+            locally. Use the task panel for today’s to-do list, and use the payroll panel to build a
+            readiness packet for review before any final payroll submission.
+          </p>
+          <div class="status-line" id="status-line"></div>
+        </div>
+        <aside class="hero-side">
+          <p class="eyebrow">Safety boundary</p>
+          <h2>Readiness first</h2>
+          <ul>
+            <li>Daily tasks can be registered and routed immediately.</li>
+            <li>Payroll preparation creates a readiness pack, not a live payroll submission.</li>
+            <li>Legal, payroll, and banking execution still require the approved external platform and final review.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="grid">
+        <div class="stack">
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Today’s to-do list</p>
+                <h2>Register task items for the day</h2>
+              </div>
+              <span class="pill">Low and medium risk only auto-route</span>
+            </div>
+            <form id="tasks-form" class="form-grid">
+              <div class="two-up">
+                <label>
+                  Company
+                  <select name="company_id">
+                    <option value="">General</option>
+                    <option value="focus-records">Focus Records LLC</option>
+                    <option value="royal-lee-construction">Royal Lee Construction Solutions LLC</option>
+                    <option value="focus-negotium">Focus Negotium Inc</option>
+                  </select>
+                </label>
+                <label>
+                  Execution mode
+                  <select name="execution_mode">
+                    <option value="dry_run">Dry run</option>
+                    <option value="live_ready">Live ready</option>
+                  </select>
+                </label>
+              </div>
+              <label>
+                Today’s tasks
+                <textarea
+                  name="tasks"
+                  placeholder="One task per line. Example:&#10;Review Stripe sales and update KPI sheet&#10;Refresh the product page headline&#10;Prepare today’s lead follow-up list"
+                  required
+                ></textarea>
+              </label>
+              <label>
+                Notes
+                <textarea
+                  name="notes"
+                  placeholder="Optional context, deadlines, owners, or blockers."
+                ></textarea>
+              </label>
+              <div class="button-row">
+                <button type="submit">Save Today’s Tasks</button>
+                <a class="link-btn secondary" href="/v1/daily-command-mode" target="_blank" rel="noreferrer">Open Daily Command JSON</a>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Payroll readiness</p>
+                <h2>Prepare the payroll packet</h2>
+              </div>
+              <span class="pill">No live payroll submission</span>
+            </div>
+            <form id="payroll-form" class="form-grid">
+              <div class="two-up">
+                <label>
+                  Pay period
+                  <input name="pay_period" placeholder="March 24 to March 30, 2026" required />
+                </label>
+                <label>
+                  Approver
+                  <input name="approver" placeholder="Reginald Hilton Jr." />
+                </label>
+              </div>
+              <label>
+                Hours and rate summary
+                <textarea
+                  name="hours_summary"
+                  placeholder="List employees, hours, rates, reimbursements, and anything that needs review."
+                  required
+                ></textarea>
+              </label>
+              <label>
+                Exceptions or notes
+                <textarea
+                  name="exceptions"
+                  placeholder="Missing approvals, overtime notes, reimbursements, or open payroll questions."
+                ></textarea>
+              </label>
+              <div class="button-row">
+                <button type="submit">Prepare Payroll Readiness Pack</button>
+                <a class="link-btn secondary" href="/v1/workflows" target="_blank" rel="noreferrer">View Workflow Catalog</a>
+              </div>
+            </form>
+          </section>
+        </div>
+
+        <div class="stack">
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Live snapshot</p>
+                <h2>System metrics</h2>
+              </div>
+            </div>
+            <div class="metrics" id="metrics"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Latest results</p>
+                <h2>What the system just recorded</h2>
+              </div>
+            </div>
+            <div class="result-list" id="results"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const metrics = document.getElementById("metrics");
+      const results = document.getElementById("results");
+      const statusLine = document.getElementById("status-line");
+
+      function addResult(title, body, meta) {
+        const card = document.createElement("article");
+        card.className = "result-card";
+        card.innerHTML = `
+          <p class="eyebrow">${title}</p>
+          <p>${body}</p>
+          <p class="small muted">${meta || ""}</p>
+        `;
+        results.prepend(card);
+      }
+
+      async function refreshStatus() {
+        const [healthRes, dailyRes, offersRes] = await Promise.all([
+          fetch("/health"),
+          fetch("/v1/daily-command-mode"),
+          fetch("/v1/offers")
+        ]);
+
+        const health = await healthRes.json();
+        const daily = await dailyRes.json();
+        const offers = await offersRes.json();
+
+        statusLine.innerHTML = [
+          `<span class="pill">${health.service}</span>`,
+          `<span class="pill">${offers.offers.length} live offers</span>`,
+          `<span class="pill">${daily.ops_counts.tasks} tasks logged</span>`,
+          `<span class="pill">${daily.ops_counts.readiness_packs} readiness packs</span>`
+        ].join("");
+
+        metrics.innerHTML = [
+          ["Offers", offers.offers.length],
+          ["Tasks", daily.ops_counts.tasks],
+          ["Leads", daily.ops_counts.leads],
+          ["Readiness Packs", daily.ops_counts.readiness_packs],
+          ["Workflows", daily.ops_counts.workflows],
+          ["Connectors", daily.connector_status.length]
+        ].map(([label, value]) => `
+          <article class="metric">
+            <strong>${value}</strong>
+            <span>${label}</span>
+          </article>
+        `).join("");
+      }
+
+      document.getElementById("tasks-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const form = new FormData(event.currentTarget);
+        const tasks = String(form.get("tasks") || "")
+          .split("\n")
+          .map((item) => item.trim())
+          .filter(Boolean);
+
+        if (!tasks.length) {
+          return;
+        }
+
+        for (const task of tasks) {
+          const response = await fetch("/v1/tasks", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              task,
+              company_id: form.get("company_id"),
+              execution_mode: form.get("execution_mode"),
+              notes: form.get("notes")
+            })
+          });
+          const payload = await response.json();
+          if (response.ok) {
+            addResult("Task saved", payload.task.task, `status=${payload.task.status} route=${payload.task.route}`);
+          } else {
+            addResult("Task error", payload.error || "Task could not be saved.", "Check the task payload.");
+          }
+        }
+
+        event.currentTarget.reset();
+        await refreshStatus();
+      });
+
+      document.getElementById("payroll-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const form = new FormData(event.currentTarget);
+        const request = [
+          `Pay period: ${form.get("pay_period")}`,
+          `Approver: ${form.get("approver") || "Pending"}`,
+          `Hours summary: ${form.get("hours_summary")}`,
+          `Exceptions: ${form.get("exceptions") || "None supplied"}`
+        ].join("\\n");
+
+        const response = await fetch("/v1/readiness/payroll", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            request,
+            pay_period: form.get("pay_period"),
+            approver: form.get("approver"),
+            hours_summary: form.get("hours_summary"),
+            exceptions: form.get("exceptions")
+          })
+        });
+        const payload = await response.json();
+        if (response.ok) {
+          addResult(
+            "Payroll readiness pack prepared",
+            payload.readiness_pack.request,
+            `pack=${payload.readiness_pack.id} policy=${payload.readiness_pack.execution_policy}`
+          );
+        } else {
+          addResult("Payroll readiness error", payload.error || "Unable to prepare payroll packet.", "");
+        }
+
+        event.currentTarget.reset();
+        await refreshStatus();
+      });
+
+      refreshStatus().catch((error) => {
+        addResult("Console startup warning", error.message, "The service may still be starting.");
+      });
+    </script>
+  </body>
+</html>

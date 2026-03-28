@@ -1,0 +1,52 @@
+{
+  "generated_for": "Focus AI Business Operating System",
+  "execution_policy": "readiness_only_for_high_risk_actions",
+  "categories": [
+    {
+      "id": "daily-revenue-summary",
+      "title": "Daily Revenue Summary",
+      "outputs": [
+        "Offer status snapshot",
+        "Site endpoint verification",
+        "Revenue next actions"
+      ]
+    },
+    {
+      "id": "campaign-content-queue",
+      "title": "Campaign Content Queue",
+      "outputs": [
+        "Organic social posts",
+        "CTA variants",
+        "Email follow-up drafts"
+      ]
+    },
+    {
+      "id": "lead-follow-up-queue",
+      "title": "Lead Follow-Up Queue",
+      "outputs": [
+        "New lead routing notes",
+        "Offer recommendation",
+        "Contact handoff status"
+      ]
+    },
+    {
+      "id": "deploy-health-check",
+      "title": "Deploy Health Check",
+      "outputs": [
+        "Homepage status",
+        "Products page status",
+        "Library status"
+      ]
+    },
+    {
+      "id": "payroll-readiness-pack",
+      "title": "Payroll Readiness Pack",
+      "outputs": [
+        "Approved hours review",
+        "Pay period summary",
+        "Exceptions list for operator review"
+      ]
+    }
+  ]
+}
+

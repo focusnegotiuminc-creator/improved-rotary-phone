@@ -1,65 +1,80 @@
-.PHONY: run stage qa visual-check publish sync
-.PHONY: run stage qa visual-check publish merge-gh merge-gh-dry-run setup-desktop-ai
-.PHONY: run stage qa visual-check publish public-build deploy-infinityfree deploy-replit deploy-thefocuscorp replit-export full-check backup verify-live
-.PHONY: run stage qa visual-check publish public-build deploy-infinityfree deploy-replit deploy-thefocuscorp replit-export merge-prs go-live install-gh unblock-live setup-autopilot
-.PHONY: configure-actions
+﻿.PHONY: run stage qa visual-check publish sync merge-gh merge-gh-dry-run setup-desktop-ai public-build deploy-infinityfree deploy-replit deploy-thefocuscorp deploy-local-live replit-export final-system live-stack full-check backup verify-live merge-prs go-live install-gh unblock-live setup-autopilot configure-actions
+
+PYTHON := python3
+ifeq ($(OS),Windows_NT)
+PYTHON := python
+endif
 
 run:
-	python3 focus_ai/scripts/engine.py
+	$(PYTHON) focus_ai/scripts/engine.py
 
 stage:
-	python3 focus_ai/scripts/engine.py --stage $(N)
+	$(PYTHON) focus_ai/scripts/engine.py --stage $(N)
 
 qa:
-	python3 -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/sync_drive_assets.py
-	python3 -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/merge_github_repositories.py focus_ai/scripts/setup_desktop_focus_master_ai.py
-	python3 -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/build_public_site.py
-	python3 -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/build_public_site.py focus_ai/scripts/deploy_infinityfree.py focus_ai/scripts/deploy_replit.py focus_ai/scripts/export_replit_bundle.py focus_ai/scripts/backup_working_copy.py focus_ai/scripts/verify_live_app.py
-	python3 -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/build_public_site.py focus_ai/scripts/deploy_infinityfree.py focus_ai/scripts/deploy_replit.py focus_ai/scripts/export_replit_bundle.py focus_ai/scripts/github_ops.py focus_ai/scripts/configure_github_actions.py
+	$(PYTHON) -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/sync_drive_assets.py
+	$(PYTHON) -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/merge_github_repositories.py focus_ai/scripts/setup_desktop_focus_master_ai.py
+	$(PYTHON) -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/build_public_site.py focus_ai/scripts/build_final_system.py focus_ai/scripts/live_stack.py
+	$(PYTHON) -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/build_public_site.py focus_ai/scripts/deploy_infinityfree.py focus_ai/scripts/deploy_replit.py focus_ai/scripts/export_replit_bundle.py focus_ai/scripts/backup_working_copy.py focus_ai/scripts/verify_live_app.py
+	$(PYTHON) -m py_compile focus_ai/scripts/engine.py focus_ai/scripts/verify_visuals.py focus_ai/scripts/publish_ebooks.py focus_ai/scripts/build_public_site.py focus_ai/scripts/deploy_infinityfree.py focus_ai/scripts/deploy_replit.py focus_ai/scripts/export_replit_bundle.py focus_ai/scripts/github_ops.py focus_ai/scripts/configure_github_actions.py
+ifeq ($(OS),Windows_NT)
+	@where bash >NUL 2>&1 && bash -n focus_ai/scripts/install_gh_cli.sh focus_ai/scripts/unblock_and_live.sh focus_ai/scripts/setup_autopilot.sh || echo "Skipping bash syntax check (bash not found in PATH)."
+else
 	bash -n focus_ai/scripts/install_gh_cli.sh focus_ai/scripts/unblock_and_live.sh focus_ai/scripts/setup_autopilot.sh
+endif
 
 visual-check:
-	python3 focus_ai/scripts/verify_visuals.py
+	$(PYTHON) focus_ai/scripts/verify_visuals.py
 
 publish:
-	python3 focus_ai/scripts/publish_ebooks.py
-
+	$(PYTHON) focus_ai/scripts/publish_ebooks.py
 
 sync:
-	python3 focus_ai/scripts/sync_drive_assets.py --clean
+	$(PYTHON) focus_ai/scripts/sync_drive_assets.py --clean
+
 merge-gh:
-	python3 focus_ai/scripts/merge_github_repositories.py --owner $(OWNER)
+	$(PYTHON) focus_ai/scripts/merge_github_repositories.py --owner $(OWNER)
 
 merge-gh-dry-run:
-	python3 focus_ai/scripts/merge_github_repositories.py --owner $(OWNER) --dry-run
+	$(PYTHON) focus_ai/scripts/merge_github_repositories.py --owner $(OWNER) --dry-run
 
 setup-desktop-ai:
-	python3 focus_ai/scripts/setup_desktop_focus_master_ai.py
+	$(PYTHON) focus_ai/scripts/setup_desktop_focus_master_ai.py
+
 public-build:
-	python3 focus_ai/scripts/publish_ebooks.py
-	python3 focus_ai/scripts/build_public_site.py
+	$(PYTHON) focus_ai/scripts/publish_ebooks.py
+	$(PYTHON) focus_ai/scripts/build_public_site.py
 
 deploy-infinityfree:
-	python3 focus_ai/scripts/deploy_infinityfree.py
+	$(PYTHON) focus_ai/scripts/deploy_infinityfree.py
 
 deploy-replit:
-	python3 focus_ai/scripts/deploy_replit.py
+	$(PYTHON) focus_ai/scripts/deploy_replit.py
 
 deploy-thefocuscorp:
-	python3 focus_ai/scripts/publish_ebooks.py
-	python3 focus_ai/scripts/build_public_site.py
-	python3 focus_ai/scripts/deploy_replit.py
-	python3 focus_ai/scripts/deploy_infinityfree.py
-	python3 focus_ai/scripts/verify_live_app.py
+	$(PYTHON) focus_ai/scripts/publish_ebooks.py
+	$(PYTHON) focus_ai/scripts/build_public_site.py
+	$(PYTHON) focus_ai/scripts/deploy_replit.py
+	$(PYTHON) focus_ai/scripts/deploy_infinityfree.py
+	$(PYTHON) focus_ai/scripts/verify_live_app.py
+
+deploy-local-live:
+	$(PYTHON) focus_ai/scripts/deploy_local_live.py
 
 replit-export:
-	python3 focus_ai/scripts/export_replit_bundle.py
+	$(PYTHON) focus_ai/scripts/export_replit_bundle.py
+
+final-system:
+	$(PYTHON) focus_ai/scripts/build_final_system.py
+
+live-stack:
+	$(PYTHON) focus_ai/scripts/live_stack.py
 
 merge-prs:
-	python3 focus_ai/scripts/github_ops.py merge-prs
+	$(PYTHON) focus_ai/scripts/github_ops.py merge-prs
 
 go-live:
-	python3 focus_ai/scripts/github_ops.py go-live
+	$(PYTHON) focus_ai/scripts/github_ops.py go-live
 
 install-gh:
 	bash focus_ai/scripts/install_gh_cli.sh
@@ -71,4 +86,5 @@ setup-autopilot:
 	bash focus_ai/scripts/setup_autopilot.sh
 
 configure-actions:
-	python3 focus_ai/scripts/configure_github_actions.py
+	$(PYTHON) focus_ai/scripts/configure_github_actions.py
+
