@@ -35,7 +35,22 @@
         "title": "Back-Office Automation",
         "summary": "Route leads, content, campaigns, hours, payroll readiness, and deploy checks through one assistant layer."
       }
-    ]
+    ],
+    "payment_processors": {
+      "stripe": {
+        "status": "live",
+        "summary": "Stripe payment links are live on the public site."
+      },
+      "square": {
+        "status": "ready_for_links",
+        "summary": "Square can be added with Payment Links or Buy Buttons once live URLs are available.",
+        "payment_links_url_env": "FOCUS_SQUARE_PAYMENT_LINKS_URL",
+        "default_payment_links_url": "",
+        "buy_button_url_env": "FOCUS_SQUARE_BUY_BUTTON_URL",
+        "default_buy_button_url": "",
+        "setup_url": "https://squareup.com/us/en/online-store/get-paid"
+      }
+    }
   },
   "design_system": {
     "core": {

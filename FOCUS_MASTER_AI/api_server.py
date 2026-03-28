@@ -84,6 +84,20 @@ def create_app() -> Flask:
             return jsonify({"ok": False, "error": "task not found"}), 404
         return jsonify({"ok": True, "task": task}), 200
 
+    @app.patch("/v1/tasks/<task_id>")
+    def update_task(task_id: str):
+        payload = request.get_json(silent=True) or {}
+        task = business_os.update_task(
+            task_id,
+            status=payload.get("status"),
+            notes=payload.get("notes"),
+            result_path=payload.get("result_path"),
+            result_summary=payload.get("result_summary"),
+        )
+        if task is None:
+            return jsonify({"ok": False, "error": "task not found"}), 404
+        return jsonify({"ok": True, "task": task}), 200
+
     @app.post("/v1/workflows/<workflow_id>/run")
     def run_workflow(workflow_id: str):
         payload = request.get_json(silent=True) or {}

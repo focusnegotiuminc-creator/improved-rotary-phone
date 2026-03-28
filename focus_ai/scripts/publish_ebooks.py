@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import stat
 from html import escape
 from pathlib import Path
 
@@ -84,6 +85,12 @@ def wrap_page(title: str, body_html: str) -> str:
 """
 
 
+def safe_write_text(path: Path, contents: str) -> None:
+    if path.exists():
+        os.chmod(path, stat.S_IWRITE)
+    path.write_text(contents, encoding="utf-8")
+
+
 def build() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     markdown_files = sorted(EBOOKS.glob("*.md"))
@@ -97,7 +104,7 @@ def build() -> int:
         html_name = f"{md.stem}.html"
         body_html = md_to_html(md.read_text(encoding="utf-8"))
         page = wrap_page(title, body_html)
-        (OUT / html_name).write_text(page, encoding="utf-8")
+        safe_write_text(OUT / html_name, page)
         links.append((title, html_name))
 
     index_items = "\n".join(
@@ -129,7 +136,7 @@ def build() -> int:
   </main>
 </body></html>
 """
-    (OUT / "index.html").write_text(index_html, encoding="utf-8")
+    safe_write_text(OUT / "index.html", index_html)
     print(f"Published {len(markdown_files)} eBooks to {OUT}")
     return 0
 

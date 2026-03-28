@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+from __future__ import annotations
+
 import json
 import os
 import shutil
@@ -30,9 +32,8 @@ def _on_rm_error(func, path, _exc_info):
 
 
 def safe_rmtree(path: Path) -> None:
-    if not path.exists():
-        return
-    shutil.rmtree(path, onerror=_on_rm_error)
+    if path.exists():
+        shutil.rmtree(path, onerror=_on_rm_error)
 
 
 def load_catalog() -> dict:
@@ -40,6 +41,17 @@ def load_catalog() -> dict:
     for offer in data.get("offers", []):
         env_name = offer.get("checkout_url_env", "")
         offer["checkout_url"] = os.getenv(env_name, "").strip() or offer.get("default_checkout_url", "")
+
+    square = data.get("portal", {}).get("payment_processors", {}).get("square", {})
+    if square:
+        square["payment_links_url"] = (
+            os.getenv(square.get("payment_links_url_env", ""), "").strip()
+            or square.get("default_payment_links_url", "")
+        )
+        square["buy_button_url"] = (
+            os.getenv(square.get("buy_button_url_env", ""), "").strip()
+            or square.get("default_buy_button_url", "")
+        )
     return data
 
 
@@ -47,8 +59,12 @@ def public_catalog(catalog: dict) -> dict:
     data = json.loads(json.dumps(catalog))
     for offer in data.get("offers", []):
         offer.pop("checkout_url_env", None)
+    square = data.get("portal", {}).get("payment_processors", {}).get("square", {})
+    square.pop("payment_links_url_env", None)
+    square.pop("buy_button_url_env", None)
     for connector in data.get("connectors", []):
         connector.pop("env_keys", None)
+        connector.pop("configured_keys", None)
     return data
 
 
@@ -64,10 +80,10 @@ def head_html(title: str) -> str:
 </head>"""
 
 
-def render_nav() -> str:
+def nav_html() -> str:
     return (
         '<nav class="top-nav">'
-        '<a href="index.html">Home</a>'
+        '<a href="/">Home</a>'
         '<a href="business_os.html">Business OS</a>'
         '<a href="services.html">Services</a>'
         '<a href="products.html">Products</a>'
@@ -78,18 +94,18 @@ def render_nav() -> str:
 
 
 def render_company_cards(catalog: dict) -> str:
-    cards = []
     accents = catalog["design_system"]["company_accents"]
+    cards = []
     for company in catalog.get("companies", []):
         accent = accents.get(company["accent_key"], {})
-        capability_items = "".join(f"<li>{item}</li>" for item in company.get("capabilities", []))
+        capabilities = "".join(f"<li>{item}</li>" for item in company.get("capabilities", []))
         cards.append(
             f"""
 <article class="info-card" style="--accent:{accent.get('accent', '#7CC8FF')};">
-  <p class="company-tag">{accent.get('label', 'Business unit')}</p>
+  <p class="eyebrow">{accent.get('label', 'Business Unit')}</p>
   <h3>{company['name']}</h3>
   <p>{company['tagline']}</p>
-  <ul class="detail-list">{capability_items}</ul>
+  <ul class="detail-list">{capabilities}</ul>
 </article>
 """.strip()
         )
@@ -115,7 +131,7 @@ def render_offer_cards(catalog: dict) -> str:
     return "\n".join(cards)
 
 
-def render_tracks(catalog: dict) -> str:
+def render_track_cards(catalog: dict) -> str:
     return "\n".join(
         f"""
 <article class="track-card">
@@ -161,7 +177,7 @@ def render_connector_cards(catalog: dict) -> str:
   <p class="eyebrow">{connector['category'].title()}</p>
   <h3>{connector['label']}</h3>
   <p>{connector['notes']}</p>
-  <p class="small">Activation mode: {connector['mode'].replace('-', ' ')}</p>
+  <p class="small">Status: {connector.get('status', connector.get('mode', 'unknown'))}</p>
 </article>
 """.strip()
         for connector in catalog.get("connectors", [])
@@ -183,7 +199,7 @@ def build_css(catalog: dict) -> str:
   --teal: __TEAL__;
   --sky: __SKY__;
   --ember: __EMBER__;
-  --line: rgba(122, 168, 255, 0.28);
+  --line: rgba(124, 200, 255, 0.24);
   --shadow: 0 24px 60px rgba(2, 8, 24, 0.45);
   --display: __DISPLAY__;
   --body: __BODY__;
@@ -196,231 +212,44 @@ body {
   color: var(--ink);
   font-family: var(--body);
   background:
-    radial-gradient(900px 520px at 14% 8%, rgba(62, 228, 214, 0.15), transparent 60%),
-    radial-gradient(760px 460px at 88% 10%, rgba(242, 201, 109, 0.18), transparent 55%),
+    radial-gradient(900px 520px at 10% 2%, rgba(62, 228, 214, 0.12), transparent 60%),
+    radial-gradient(760px 460px at 92% 4%, rgba(242, 201, 109, 0.14), transparent 55%),
     linear-gradient(165deg, var(--bg-900), var(--bg-800) 48%, #08172e 100%);
 }
 a { color: var(--sky); text-decoration: none; }
 a:hover { text-decoration: underline; }
-main {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 1.2rem clamp(1rem, 3vw, 2.2rem) 4rem;
-}
-.top-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 0.8rem 0 1.2rem;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid rgba(122, 168, 255, 0.16);
-}
-.top-nav a {
-  color: var(--ink);
-  opacity: 0.88;
-  font-size: 0.96rem;
-}
-.hero-panel,
-.feature-panel {
-  position: relative;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 28px;
-  background: linear-gradient(155deg, rgba(9, 18, 35, 0.82), rgba(15, 30, 58, 0.7));
-  box-shadow: var(--shadow);
-}
-.hero-panel {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.9fr);
-  gap: 1.4rem;
-  padding: clamp(1.4rem, 4vw, 3rem);
-}
-.hero-panel::before,
-.feature-panel::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 78% 18%, rgba(124, 200, 255, 0.15), transparent 36%),
-    radial-gradient(circle at 20% 88%, rgba(242, 201, 109, 0.11), transparent 42%);
-  pointer-events: none;
-}
-.poster {
-  display: grid;
-  gap: 0.8rem;
-  align-content: start;
-  z-index: 1;
-}
-.eyebrow {
-  margin: 0;
-  color: var(--gold);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  font-size: 0.78rem;
-  font-weight: 700;
-}
-h1, h2, h3 {
-  margin: 0;
-  font-family: var(--display);
-  line-height: 1.05;
-}
-h1 { font-size: clamp(2.4rem, 6vw, 5rem); }
+main { max-width: 1180px; margin: 0 auto; padding: 1.2rem clamp(1rem, 3vw, 2.2rem) 4rem; }
+.top-nav { display: flex; flex-wrap: wrap; gap: 1rem; padding: 0.8rem 0 1.2rem; margin-bottom: 1rem; border-bottom: 1px solid rgba(122, 168, 255, 0.16); }
+.top-nav a { color: var(--ink); opacity: 0.88; font-size: 0.96rem; }
+h1,h2,h3 { margin: 0; font-family: var(--display); line-height: 1.05; }
+h1 { font-size: clamp(2.4rem, 6vw, 4.8rem); }
 h2 { font-size: clamp(1.8rem, 4vw, 3rem); }
 h3 { font-size: clamp(1.35rem, 2.4vw, 1.9rem); }
 p, li { color: var(--muted); line-height: 1.65; }
-.button-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-  margin-top: 1rem;
-}
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  padding: 0.82rem 1.15rem;
-  border-radius: 999px;
-  background: linear-gradient(120deg, var(--gold), #ffd98f 52%, var(--ember));
-  color: #1c1420;
-  font-weight: 700;
-  border: 1px solid transparent;
-  transition: transform 180ms ease, box-shadow 180ms ease;
-}
-.btn:hover {
-  transform: translateY(-2px);
-  text-decoration: none;
-  box-shadow: 0 10px 28px rgba(255, 170, 122, 0.28);
-}
-.btn.secondary {
-  background: rgba(10, 19, 38, 0.32);
-  color: var(--ink);
-  border-color: rgba(124, 200, 255, 0.42);
-}
-.orbital-graphic {
-  min-height: 320px;
-  border-radius: 22px;
-  border: 1px solid rgba(122, 168, 255, 0.2);
-  background:
-    radial-gradient(circle at center, rgba(242, 201, 109, 0.14), transparent 34%),
-    repeating-conic-gradient(from 0deg, rgba(124, 200, 255, 0.09) 0deg 10deg, transparent 10deg 24deg),
-    linear-gradient(145deg, rgba(11, 22, 46, 0.88), rgba(6, 13, 28, 0.92));
-  position: relative;
-}
-.orbital-graphic::before,
-.orbital-graphic::after {
-  content: "";
-  position: absolute;
-  inset: 16%;
-  border-radius: 50%;
-  border: 1px solid rgba(242, 201, 109, 0.35);
-}
-.orbital-graphic::after {
-  inset: 28%;
-  border-color: rgba(62, 228, 214, 0.4);
-}
+.hero-panel,.feature-panel,.offer-card,.info-card,.track-card,.stage-card { border: 1px solid var(--line); border-radius: 24px; background: linear-gradient(155deg, rgba(9, 18, 35, 0.84), rgba(15, 30, 58, 0.72)); box-shadow: var(--shadow); }
+.hero-panel { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr); gap: 1.2rem; padding: clamp(1.3rem, 4vw, 2.4rem); }
+.poster,.feature-panel { display: grid; gap: 0.8rem; align-content: start; }
+.eyebrow { margin: 0; color: var(--gold); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.78rem; font-weight: 700; }
+.button-row { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.9rem; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0.82rem 1.15rem; border-radius: 999px; font-weight: 700; background: linear-gradient(120deg, var(--gold), #ffd98f 52%, var(--ember)); color: #1c1420; border: 1px solid transparent; }
+.btn.secondary { background: rgba(8, 15, 31, 0.6); color: var(--ink); border-color: rgba(124, 200, 255, 0.32); }
+.orbital-graphic { min-height: 300px; border-radius: 22px; background: radial-gradient(circle at center, rgba(242, 201, 109, 0.14), transparent 34%), repeating-conic-gradient(from 0deg, rgba(124, 200, 255, 0.08) 0deg 10deg, transparent 10deg 24deg), linear-gradient(145deg, rgba(11, 22, 46, 0.88), rgba(6, 13, 28, 0.92)); position: relative; }
+.orbital-graphic::before,.orbital-graphic::after { content: ""; position: absolute; inset: 16%; border-radius: 50%; border: 1px solid rgba(242, 201, 109, 0.35); }
+.orbital-graphic::after { inset: 28%; border-color: rgba(62, 228, 214, 0.4); }
 .section-block { margin-top: 1.35rem; }
-.grid-three,
-.offer-grid,
-.stage-grid,
-.track-grid,
-.detail-grid {
-  display: grid;
-  gap: 1rem;
-}
-.grid-three,
-.offer-grid,
-.track-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.stage-grid,
-.detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.info-card,
-.offer-card,
-.track-card,
-.stage-card {
-  position: relative;
-  padding: 1.1rem;
-  border-radius: 20px;
-  border: 1px solid rgba(122, 168, 255, 0.18);
-  background: linear-gradient(155deg, rgba(10, 19, 39, 0.82), rgba(13, 24, 47, 0.68));
-}
-.info-card::before {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 4px;
-  border-radius: 20px 0 0 20px;
-  background: var(--accent, var(--sky));
-}
-.detail-list {
-  margin: 0.8rem 0 0;
-  padding-left: 1.1rem;
-}
-.price {
-  margin-top: 0.8rem;
-  color: #ffe0a0;
-  font-weight: 700;
-  font-size: 1.08rem;
-}
+.grid-three,.offer-grid,.track-grid,.stage-grid,.detail-grid,.split-band { display: grid; gap: 1rem; }
+.grid-three,.offer-grid,.track-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.stage-grid,.detail-grid,.split-band { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.feature-panel,.offer-card,.info-card,.track-card,.stage-card { padding: 1.1rem; }
+.info-card::before { content: ""; display: block; width: 4px; height: 36px; border-radius: 999px; background: var(--accent, var(--sky)); margin-bottom: 0.7rem; }
+.detail-list,.kicker-list { margin: 0.8rem 0 0; padding-left: 1.1rem; }
+.price { color: #ffe0a0; font-weight: 700; font-size: 1.08rem; }
 .small { font-size: 0.93rem; opacity: 0.88; }
-.split-band {
-  display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-  gap: 1rem;
-  margin-top: 1.3rem;
-}
-.feature-panel { padding: 1.2rem; }
-.kicker-list {
-  display: grid;
-  gap: 0.75rem;
-  margin: 0;
-  padding-left: 1.1rem;
-}
-.metrics {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-  margin-top: 1rem;
-}
-.metric {
-  min-width: 150px;
-  padding: 0.8rem 0.9rem;
-  border-radius: 16px;
-  background: rgba(7, 14, 28, 0.75);
-  border: 1px solid rgba(122, 168, 255, 0.18);
-}
-.metric strong {
-  display: block;
-  color: var(--ink);
-  font-size: 1.18rem;
-}
-form.inline-form {
-  display: grid;
-  gap: 0.8rem;
-  max-width: 520px;
-}
-input[type="email"] {
-  width: 100%;
-  background: rgba(10, 18, 35, 0.78);
-  color: var(--ink);
-  border: 1px solid rgba(122, 168, 255, 0.3);
-  border-radius: 12px;
-  padding: 0.82rem 0.95rem;
-}
-@media (max-width: 960px) {
-  .hero-panel,
-  .split-band { grid-template-columns: 1fr; }
-  .grid-three,
-  .offer-grid,
-  .track-grid,
-  .stage-grid,
-  .detail-grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 640px) {
-  .button-row { flex-direction: column; }
-  .btn { width: 100%; }
-}
+.status-chip { display: inline-flex; align-items: center; min-height: 28px; padding: 0.25rem 0.75rem; border-radius: 999px; background: rgba(62,228,214,0.12); color: var(--teal); font-size: 0.82rem; }
+@media (max-width: 960px) { .hero-panel,.grid-three,.offer-grid,.track-grid,.stage-grid,.detail-grid,.split-band { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .button-row { flex-direction: column; } .btn { width: 100%; } }
 """
-    replacements = {
+    for key, value in {
         "__BG900__": colors["bg_900"],
         "__BG800__": colors["bg_800"],
         "__PANEL__": colors["panel"],
@@ -432,45 +261,33 @@ input[type="email"] {
         "__EMBER__": colors["ember"],
         "__DISPLAY__": display,
         "__BODY__": body,
-    }
-    for key, value in replacements.items():
+    }.items():
         template = template.replace(key, value)
     return template.strip() + "\n"
 
 
-def build() -> int:
-    if not PUBLISHED.exists():
-        print("Missing published ebooks. Run publish_ebooks.py first.")
-        return 1
+def render_square_panel(catalog: dict) -> str:
+    square = catalog["portal"]["payment_processors"]["square"]
+    buttons = []
+    if square.get("payment_links_url"):
+        buttons.append(f'<a class="btn secondary" href="{square["payment_links_url"]}">Pay with Square</a>')
+    if square.get("buy_button_url"):
+        buttons.append(f'<a class="btn secondary" href="{square["buy_button_url"]}">Square Buy Button</a>')
+    if not buttons:
+        buttons.append(f'<a class="btn secondary" href="{square["setup_url"]}">Square setup path</a>')
+    return f"""
+<section class="feature-panel">
+  <p class="eyebrow">Square-ready payment path</p>
+  <h2>Square support is now wired into the catalog and site build.</h2>
+  <p>{square['summary']}</p>
+  <p class="small">Status: {square['status']}</p>
+  <div class="button-row">{''.join(buttons)}</div>
+</section>
+""".strip()
 
-    catalog = load_catalog()
+
+def build_pages(catalog: dict) -> dict[str, str]:
     contact = catalog["portal"]["primary_contact"]
-
-    if PUBLIC.exists():
-        safe_rmtree(PUBLIC)
-    PUBLIC.mkdir(parents=True, exist_ok=True)
-
-    copy_tree(PUBLISHED, PUBLIC / "ebooks")
-
-    preview_html = SITE / "visual_preview.html"
-    preview_css = SITE / "visual_preview.css"
-    if preview_html.exists():
-        shutil.copy2(preview_html, PUBLIC / "index.html")
-        html = preview_html.read_text(encoding="utf-8")
-        html = html.replace("../published/ebooks/index.html", "ebooks/index.html")
-        html = html.replace("../published/public_site/landing.html", "landing.html")
-        (PUBLIC / "index.html").write_text(html, encoding="utf-8")
-    if preview_css.exists():
-        shutil.copy2(preview_css, PUBLIC / "visual_preview.css")
-
-    (PUBLIC / "funnel.css").write_text(build_css(catalog), encoding="utf-8")
-    data_dir = PUBLIC / "data"
-    data_dir.mkdir(parents=True, exist_ok=True)
-    (data_dir / "business_os.json").write_text(
-        json.dumps(public_catalog(catalog), indent=2),
-        encoding="utf-8",
-    )
-
     hero = f"""
 <section class="hero-panel">
   <div class="poster">
@@ -483,31 +300,65 @@ def build() -> int:
       <a class="btn secondary" href="business_os.html">See the full business OS</a>
       <a class="btn secondary" href="booking.html">Book with {contact['name']}</a>
     </div>
-    <div class="metrics">
-      <div class="metric"><strong>3</strong><span>operating companies</span></div>
-      <div class="metric"><strong>4</strong><span>equal-precedence delivery tracks</span></div>
-      <div class="metric"><strong>11</strong><span>assistant workflow stages</span></div>
-    </div>
   </div>
   <div class="orbital-graphic" aria-hidden="true"></div>
 </section>
+""".strip()
+
+    products_page = f"""<!doctype html>
+<html lang="en">
+{head_html("Products and Offers")}
+<body><main>
+  {nav_html()}
+  <section class="hero-panel">
+    <div class="poster">
+      <p class="eyebrow">Live revenue surface</p>
+      <h1>The Focus AI ladder moves from insight to implementation to the full business engine.</h1>
+      <p>Stripe payment links are live now, and Square-ready support has been added so the site can expose Square payment links or buy buttons as soon as live URLs are available.</p>
+      <div class="button-row">
+        <a class="btn" href="{catalog['offers'][0]['checkout_url']}">{catalog['offers'][0]['cta_label']}</a>
+        <a class="btn secondary" href="ebooks/index.html">Browse the library</a>
+      </div>
+    </div>
+    <section class="feature-panel">
+      <p class="eyebrow">Offer ladder</p>
+      <ul class="kicker-list">
+        <li>$49 bundle for fast entry and proof of value.</li>
+        <li>$299 blueprint pack for practical implementation depth.</li>
+        <li>$5,000 business engine for the flagship operating-system offer.</li>
+      </ul>
+    </section>
+  </section>
+  <section class="section-block">
+    <div class="offer-grid">{render_offer_cards(catalog)}</div>
+  </section>
+  <section class="split-band">
+    <section class="feature-panel">
+      <p class="eyebrow">What buyers unlock</p>
+      <ul class="kicker-list">
+        <li>Published content, prompts, and operating materials.</li>
+        <li>Shared design direction across the portal, app, and campaigns.</li>
+        <li>Assistant-ready structure for deployment, follow-up, and optimization.</li>
+      </ul>
+    </section>
+    {render_square_panel(catalog)}
+  </section>
+</main></body></html>
 """
 
-    pages = {
+    return {
         "landing.html": f"""<!doctype html>
 <html lang="en">
 {head_html("Focus AI Public Launch")}
 <body><main>
-  {render_nav()}
+  {nav_html()}
   {hero}
-  <section class="section-block">
-    <div class="track-grid">{render_tracks(catalog)}</div>
-  </section>
+  <section class="section-block"><div class="track-grid">{render_track_cards(catalog)}</div></section>
   <section class="split-band">
     <section class="feature-panel">
       <p class="eyebrow">Current live offers</p>
       <h2>Revenue path first, backed by deeper systems.</h2>
-      <p>The portal is already wired for live Stripe checkout and can move visitors from content to bundle to premium operating-system offers.</p>
+      <p>The portal is wired for live Stripe checkout and a Square-ready payment path.</p>
       <div class="button-row">
         <a class="btn" href="products.html">Browse offers</a>
         <a class="btn secondary" href="ebooks/index.html">View eBook library</a>
@@ -529,12 +380,12 @@ def build() -> int:
 <html lang="en">
 {head_html("Focus AI Business Operating System")}
 <body><main>
-  {render_nav()}
+  {nav_html()}
   <section class="hero-panel">
     <div class="poster">
       <p class="eyebrow">Full-precedence operating model</p>
       <h1>Equal priority for revenue, design system, mobile shipping, and back-office automation.</h1>
-      <p>The public portal lives in <strong>focus_ai</strong>. The internal assistant control plane lives in <strong>FOCUS_MASTER_AI</strong>. They now share one catalog, one workflow map, and one operator-safe readiness policy.</p>
+      <p>The public portal lives in <strong>focus_ai</strong>. The internal assistant control plane lives in <strong>FOCUS_MASTER_AI</strong>. They share one catalog, one workflow map, and one operator-safe readiness policy.</p>
       <div class="button-row">
         <a class="btn" href="products.html">Go to offers</a>
         <a class="btn secondary" href="data/business_os.json">View shared data</a>
@@ -568,7 +419,7 @@ def build() -> int:
 <html lang="en">
 {head_html(f"Book with {contact['name']}")}
 <body><main>
-  {render_nav()}
+  {nav_html()}
   <section class="hero-panel">
     <div class="poster">
       <p class="eyebrow">Primary routing</p>
@@ -595,7 +446,7 @@ def build() -> int:
 <html lang="en">
 {head_html("Services Across Three Companies")}
 <body><main>
-  {render_nav()}
+  {nav_html()}
   <section class="hero-panel">
     <div class="poster">
       <p class="eyebrow">Service routing</p>
@@ -608,63 +459,15 @@ def build() -> int:
     </div>
     <div class="orbital-graphic" aria-hidden="true"></div>
   </section>
-  <section class="section-block">
-    <div class="grid-three">{render_company_cards(catalog)}</div>
-  </section>
+  <section class="section-block"><div class="grid-three">{render_company_cards(catalog)}</div></section>
 </main></body></html>
 """,
-        "products.html": f"""<!doctype html>
-<html lang="en">
-{head_html("Products and Offers")}
-<body><main>
-  {render_nav()}
-  <section class="hero-panel">
-    <div class="poster">
-      <p class="eyebrow">Live revenue surface</p>
-      <h1>The Focus AI ladder moves from insight to implementation to the full business engine.</h1>
-      <p>Every offer uses the same shared catalog, live Stripe checkout links, and the same brand system used across the portal and mobile roadmap.</p>
-      <div class="button-row">
-        <a class="btn" href="{catalog['offers'][0]['checkout_url']}">{catalog['offers'][0]['cta_label']}</a>
-        <a class="btn secondary" href="ebooks/index.html">Browse the library</a>
-      </div>
-    </div>
-    <section class="feature-panel">
-      <p class="eyebrow">Offer ladder</p>
-      <ul class="kicker-list">
-        <li>$49 bundle for fast entry and proof of value.</li>
-        <li>$299 blueprint pack for practical implementation depth.</li>
-        <li>$5,000 business engine for the flagship operating-system offer.</li>
-      </ul>
-    </section>
-  </section>
-  <section class="section-block">
-    <div class="offer-grid">{render_offer_cards(catalog)}</div>
-  </section>
-  <section class="split-band">
-    <section class="feature-panel">
-      <p class="eyebrow">What buyers unlock</p>
-      <ul class="kicker-list">
-        <li>Published content, prompts, and operating materials.</li>
-        <li>Shared design direction across the portal, app, and campaigns.</li>
-        <li>Assistant-ready structure for deployment, follow-up, and optimization.</li>
-      </ul>
-    </section>
-    <section class="feature-panel">
-      <p class="eyebrow">Traffic goal</p>
-      <h2>Use organic content + follow-up, not promises.</h2>
-      <p>Revenue targets remain goals rather than guarantees. The system is designed to improve conversion, follow-up quality, and launch speed through consistent execution.</p>
-      <div class="button-row">
-        <a class="btn secondary" href="funnel_landing.html">Enter the funnel</a>
-      </div>
-    </section>
-  </section>
-</main></body></html>
-""",
+        "products.html": products_page,
         "funnel_landing.html": f"""<!doctype html>
 <html lang="en">
 {head_html("Free Download - Sacred Geometry Wealth Blueprint")}
 <body><main>
-  {render_nav()}
+  {nav_html()}
   <section class="hero-panel">
     <div class="poster">
       <p class="eyebrow">Lead capture</p>
@@ -674,9 +477,7 @@ def build() -> int:
         <input type="email" placeholder="you@example.com" aria-label="Email address" required />
         <button class="btn" type="submit">Download now</button>
       </form>
-      <div class="button-row">
-        <a class="btn secondary" href="products.html">Skip to offers</a>
-      </div>
+      <div class="button-row"><a class="btn secondary" href="products.html">Skip to offers</a></div>
     </div>
     <section class="feature-panel">
       <p class="eyebrow">Download includes</p>
@@ -693,20 +494,18 @@ def build() -> int:
 <html lang="en">
 {head_html("Your Blueprint Is Ready")}
 <body><main>
-  {render_nav()}
+  {nav_html()}
   <section class="hero-panel">
     <div class="poster">
       <p class="eyebrow">Delivery</p>
       <h1>Your blueprint is on the way.</h1>
       <p>Check your inbox, then move into the bundle if you want the full library and operating materials immediately.</p>
-      <div class="button-row">
-        <a class="btn" href="book_offer.html">Continue to the bundle</a>
-      </div>
+      <div class="button-row"><a class="btn" href="book_offer.html">Continue to the bundle</a></div>
     </div>
     <section class="feature-panel">
       <p class="eyebrow">Next step</p>
-      <h2>Focus AI eBook Bundle</h2>
-      <p>Five published eBooks, sacred-geometry insight, and the first step into the larger operating-system ladder.</p>
+      <h2>{catalog['offers'][0]['title']}</h2>
+      <p>{catalog['offers'][0]['summary']}</p>
     </section>
   </section>
 </main></body></html>
@@ -715,7 +514,7 @@ def build() -> int:
 <html lang="en">
 {head_html(catalog['offers'][0]['title'])}
 <body><main>
-  {render_nav()}
+  {nav_html()}
   <section class="hero-panel">
     <div class="poster">
       <p class="eyebrow">Entry offer</p>
@@ -742,7 +541,7 @@ def build() -> int:
 <html lang="en">
 {head_html(catalog['offers'][1]['title'])}
 <body><main>
-  {render_nav()}
+  {nav_html()}
   <section class="hero-panel">
     <div class="poster">
       <p class="eyebrow">Core implementation offer</p>
@@ -769,7 +568,7 @@ def build() -> int:
 <html lang="en">
 {head_html(catalog['offers'][2]['title'])}
 <body><main>
-  {render_nav()}
+  {nav_html()}
   <section class="hero-panel">
     <div class="poster">
       <p class="eyebrow">Flagship premium offer</p>
@@ -792,7 +591,7 @@ def build() -> int:
 <html lang="en">
 {head_html("Email Automation Sequence")}
 <body><main>
-  {render_nav()}
+  {nav_html()}
   <section class="hero-panel">
     <div class="poster">
       <p class="eyebrow">Follow-up campaign</p>
@@ -815,7 +614,41 @@ def build() -> int:
 """,
     }
 
-    for page_name, page_content in pages.items():
+
+def build() -> int:
+    if not PUBLISHED.exists():
+        print("Missing published ebooks. Run publish_ebooks.py first.")
+        return 1
+
+    catalog = load_catalog()
+
+    if PUBLIC.exists():
+        safe_rmtree(PUBLIC)
+    PUBLIC.mkdir(parents=True, exist_ok=True)
+
+    copy_tree(PUBLISHED, PUBLIC / "ebooks")
+
+    preview_html = SITE / "visual_preview.html"
+    preview_css = SITE / "visual_preview.css"
+    if preview_html.exists():
+        html = preview_html.read_text(encoding="utf-8")
+        html = html.replace("../published/ebooks/index.html", "ebooks/index.html")
+        html = html.replace("../published/public_site/landing.html", "landing.html")
+        html = html.replace("../published/public_site/funnel_landing.html", "funnel_landing.html")
+        html = html.replace("../published/public_site/offers.html", "products.html")
+        (PUBLIC / "index.html").write_text(html, encoding="utf-8")
+    else:
+        (PUBLIC / "index.html").write_text(build_pages(catalog)["landing.html"], encoding="utf-8")
+    if preview_css.exists():
+        shutil.copy2(preview_css, PUBLIC / "visual_preview.css")
+
+    (PUBLIC / "funnel.css").write_text(build_css(catalog), encoding="utf-8")
+
+    data_dir = PUBLIC / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    (data_dir / "business_os.json").write_text(json.dumps(public_catalog(catalog), indent=2), encoding="utf-8")
+
+    for page_name, page_content in build_pages(catalog).items():
         (PUBLIC / page_name).write_text(page_content, encoding="utf-8")
 
     print(f"Built public site at {PUBLIC}")

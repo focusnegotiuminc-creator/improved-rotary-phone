@@ -1,0 +1,12 @@
+{
+  "generated_utc": "2026-03-27T06:38:26.082850+00:00",
+  "bundle": "Focus Master AI Final System",
+  "paths": {
+    "public_site": "public_site",
+    "ebooks": "ebooks",
+    "docs": "docs",
+    "system": "system",
+    "sacred_geometry_engine": "sacred_geometry_engine",
+    "master_manuscript": "final_product/focus_master_ai_master_manuscript.md"
+  }
+}

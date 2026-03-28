@@ -1,0 +1,451 @@
+/*
+Theme Name: Focus Sacred Pro
+Author: Focus Negotium Inc
+Version: 3.0
+Description: Sacred geometry portal theme for the Focus AI operating system
+*/
+
+:root {
+  --bg-900: #050812;
+  --bg-800: #0a1329;
+  --panel: rgba(14, 23, 48, 0.82);
+  --panel-strong: rgba(10, 18, 35, 0.9);
+  --ink: #f6f8ff;
+  --muted: #c2cce5;
+  --gold: #f2c96d;
+  --teal: #3ee4d6;
+  --sky: #7cc8ff;
+  --ember: #ff9b68;
+  --line: rgba(122, 168, 255, 0.2);
+  --shadow: 0 28px 60px rgba(2, 8, 24, 0.42);
+  --display: "Cormorant Garamond", Georgia, serif;
+  --body: "Space Grotesk", "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: var(--body);
+  background:
+    radial-gradient(900px 520px at 10% 2%, rgba(62, 228, 214, 0.12), transparent 60%),
+    radial-gradient(760px 460px at 92% 4%, rgba(242, 201, 109, 0.14), transparent 55%),
+    linear-gradient(165deg, var(--bg-900), var(--bg-800) 48%, #08172e 100%);
+}
+
+a {
+  color: var(--sky);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--display);
+  line-height: 1.05;
+}
+
+p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.sacred-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+}
+
+.sacred-bg::before,
+.sacred-bg::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(242, 201, 109, 0.18);
+}
+
+.sacred-bg::before {
+  width: 76vw;
+  height: 76vw;
+  top: 8vh;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: slow-spin 60s linear infinite;
+}
+
+.sacred-bg::after {
+  width: 46vw;
+  height: 46vw;
+  bottom: -12vw;
+  right: -6vw;
+  border-color: rgba(62, 228, 214, 0.14);
+  animation: slow-spin 44s linear infinite reverse;
+}
+
+.site-header,
+.site-footer,
+.focus-portal {
+  width: min(1200px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+.site-header {
+  padding: 1.1rem 0 0;
+}
+
+.site-header__inner,
+.site-footer__inner {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.brand-lockup {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.brand-kicker,
+.eyebrow,
+.panel-tag,
+.contact-label {
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.brand-title {
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+}
+
+.site-nav {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.site-nav a,
+.footer-links a {
+  color: var(--ink);
+  opacity: 0.9;
+}
+
+.focus-portal {
+  display: grid;
+  gap: 1.35rem;
+  padding: 1.35rem 0 4rem;
+}
+
+.hero-panel,
+.panel,
+.contact-card {
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: linear-gradient(155deg, rgba(9, 18, 35, 0.84), rgba(15, 30, 58, 0.72));
+  box-shadow: var(--shadow);
+}
+
+.hero-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+  gap: 1.2rem;
+  padding: clamp(1.35rem, 4vw, 2.4rem);
+}
+
+.hero-copy,
+.hero-visual {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero-copy h1 {
+  font-size: clamp(2.7rem, 5vw, 5.1rem);
+}
+
+.hero-lead {
+  font-size: 1.08rem;
+}
+
+.button-row,
+.quick-links,
+.footer-links {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.quick-links span {
+  color: rgba(246, 248, 255, 0.28);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.82rem 1.15rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: linear-gradient(120deg, var(--gold), #ffd98f 52%, var(--ember));
+  color: #1a1520;
+  font-weight: 700;
+}
+
+.btn:hover {
+  text-decoration: none;
+  filter: brightness(1.03);
+}
+
+.btn.secondary {
+  color: var(--ink);
+  background: rgba(8, 15, 31, 0.6);
+  border-color: rgba(124, 200, 255, 0.34);
+}
+
+.hero-visual {
+  align-content: center;
+}
+
+.orbital-shell {
+  position: relative;
+  min-height: 330px;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at center, rgba(242, 201, 109, 0.14), transparent 34%),
+    repeating-conic-gradient(from 0deg, rgba(124, 200, 255, 0.08) 0deg 10deg, transparent 10deg 24deg),
+    linear-gradient(145deg, rgba(11, 22, 46, 0.88), rgba(6, 13, 28, 0.92));
+  overflow: hidden;
+}
+
+.orbital-ring,
+.node,
+.core-beam {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.orbital-ring {
+  border-radius: 50%;
+  border: 1px solid rgba(242, 201, 109, 0.34);
+}
+
+.ring-one {
+  inset: 12%;
+}
+
+.ring-two {
+  inset: 24%;
+  border-color: rgba(62, 228, 214, 0.32);
+}
+
+.ring-three {
+  inset: 34%;
+  border-color: rgba(124, 200, 255, 0.38);
+}
+
+.core-beam {
+  top: 12%;
+  width: 10px;
+  height: 76%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #f7d87f 0%, #65e2d1 52%, #7dd2ff 100%);
+  box-shadow: 0 0 36px rgba(125, 210, 255, 0.28);
+}
+
+.node {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(246, 248, 255, 0.94);
+  box-shadow: 0 0 22px rgba(255, 255, 255, 0.4);
+}
+
+.node-one {
+  top: 16%;
+}
+
+.node-two {
+  top: 45%;
+}
+
+.node-three {
+  top: 74%;
+}
+
+.contact-card {
+  padding: 1.2rem;
+}
+
+.contact-card h2 {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  margin: 0.35rem 0 0.45rem;
+}
+
+.contact-card a {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.section-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.company-grid,
+.offer-grid,
+.track-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.panel {
+  padding: 1.2rem;
+}
+
+.company-panel,
+.offer-panel,
+.track-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.company-panel::before,
+.offer-panel::before,
+.track-panel::before {
+  content: "";
+  display: block;
+  width: 4px;
+  height: 42px;
+  border-radius: 999px;
+  margin-bottom: 0.8rem;
+  background: var(--accent, var(--sky));
+}
+
+.focus-records {
+  --accent: var(--sky);
+}
+
+.royal-lee {
+  --accent: var(--gold);
+}
+
+.focus-negotium {
+  --accent: var(--teal);
+}
+
+.offer-panel h3,
+.track-panel h3 {
+  font-size: clamp(1.5rem, 2.2vw, 2.05rem);
+}
+
+.price {
+  color: #ffe0a0;
+  font-weight: 700;
+  font-size: 1.15rem;
+  margin: 0.45rem 0;
+}
+
+.site-footer {
+  padding: 0 0 2rem;
+}
+
+.site-footer__inner {
+  padding: 1rem 0 0;
+  border-top: 1px solid rgba(122, 168, 255, 0.14);
+}
+
+.footer-copy {
+  margin-top: 0.15rem;
+}
+
+#ai-bot {
+  position: fixed;
+  right: 1.2rem;
+  bottom: 1.2rem;
+  min-height: 48px;
+  padding: 0.75rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  background: linear-gradient(120deg, var(--gold), #ffd98f 52%, var(--ember));
+  color: #11131d;
+  font-weight: 700;
+  box-shadow: var(--shadow);
+}
+
+#ai-chatbox {
+  position: fixed;
+  right: 1.2rem;
+  bottom: 4.9rem;
+  width: min(320px, calc(100vw - 2.4rem));
+  padding: 1rem;
+  border-radius: 20px;
+  border: 1px solid rgba(124, 200, 255, 0.34);
+  background: var(--panel-strong);
+  box-shadow: var(--shadow);
+}
+
+body.admin-bar .site-header {
+  top: 32px;
+}
+
+@keyframes slow-spin {
+  from {
+    transform: translateX(-50%) rotate(0deg);
+  }
+  to {
+    transform: translateX(-50%) rotate(360deg);
+  }
+}
+
+@media (max-width: 960px) {
+  .hero-panel,
+  .company-grid,
+  .offer-grid,
+  .track-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .site-header,
+  .site-footer,
+  .focus-portal {
+    width: min(1200px, calc(100% - 1.2rem));
+  }
+
+  .site-nav,
+  .button-row,
+  .quick-links,
+  .footer-links {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}

@@ -25,8 +25,8 @@ jobs:
       INFINITYFREE_FTP_HOST: ${{ secrets.INFINITYFREE_FTP_HOST }}
       INFINITYFREE_FTP_USER: ${{ secrets.INFINITYFREE_FTP_USER }}
       INFINITYFREE_FTP_PASS: ${{ secrets.INFINITYFREE_FTP_PASS }}
-      INFINITYFREE_REMOTE_DIR: ${{ secrets.INFINITYFREE_REMOTE_DIR || vars.INFINITYFREE_REMOTE_DIR || 'htdocs' }}
-      INFINITYFREE_REMOTE_DIR_CANDIDATES: ${{ vars.INFINITYFREE_REMOTE_DIR_CANDIDATES || 'htdocs,thefocuscorp.com/htdocs,domains/thefocuscorp.com/public_html' }}
+      INFINITYFREE_REMOTE_DIR: ${{ secrets.INFINITYFREE_REMOTE_DIR || vars.INFINITYFREE_REMOTE_DIR || 'thefocuscorp.com/htdocs' }}
+      INFINITYFREE_REMOTE_DIR_CANDIDATES: ${{ vars.INFINITYFREE_REMOTE_DIR_CANDIDATES || 'thefocuscorp.com/htdocs,htdocs,domains/thefocuscorp.com/public_html' }}
       REPLIT_DEPLOY_HOOK_URL: ${{ secrets.REPLIT_DEPLOY_HOOK_URL }}
       REPLIT_DEPLOY_WEBHOOK_URL: ${{ secrets.REPLIT_DEPLOY_WEBHOOK_URL }}
       REPLIT_DEPLOY_TOKEN: ${{ secrets.REPLIT_DEPLOY_TOKEN }}
@@ -57,6 +57,9 @@ jobs:
 
       - name: Deploy to InfinityFree (if configured)
         run: python3 focus_ai/scripts/deploy_infinityfree.py
+
+      - name: Sync WordPress theme (if configured)
+        run: python3 focus_ai/scripts/deploy_wordpress_theme.py
 
       - name: Verify live endpoints
         run: python3 focus_ai/scripts/verify_live_app.py

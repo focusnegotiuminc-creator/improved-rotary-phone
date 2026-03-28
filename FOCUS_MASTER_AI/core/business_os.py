@@ -6,6 +6,7 @@ import re
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
+from threading import RLock
 from typing import Any
 
 try:
@@ -83,6 +84,7 @@ class BusinessOperatingSystem:
         self.readiness_packs = JsonStore(self.runtime_dir / "readiness_packs.json", [])
         self.content_jobs = JsonStore(self.runtime_dir / "content_jobs.json", [])
         self.knowledge_cache_path = self.runtime_dir / "knowledge_snapshot.json"
+        self._mutation_lock = RLock()
 
     def _load_catalog(self) -> dict[str, Any]:
         if not self.catalog_path.exists():
@@ -198,6 +200,35 @@ class BusinessOperatingSystem:
     def get_task(self, task_id: str) -> dict[str, Any] | None:
         for task in self.tasks.read():
             if task.get("id") == task_id:
+                return task
+        return None
+
+    def update_task(
+        self,
+        task_id: str,
+        *,
+        status: str | None = None,
+        notes: str | None = None,
+        result_path: str | None = None,
+        result_summary: str | None = None,
+    ) -> dict[str, Any] | None:
+        with self._mutation_lock:
+            tasks = self.tasks.read()
+            for task in tasks:
+                if task.get("id") != task_id:
+                    continue
+                if status:
+                    task["status"] = status
+                    task["updated_at"] = _utc_now()
+                    if status == "completed":
+                        task["completed_at"] = _utc_now()
+                if notes is not None:
+                    task["notes"] = notes
+                if result_path:
+                    task["result_path"] = result_path
+                if result_summary:
+                    task["result_summary"] = result_summary
+                self.tasks.write(tasks)
                 return task
         return None
 
@@ -317,35 +348,41 @@ class BusinessOperatingSystem:
             "notes": payload.get("notes", ""),
         }
 
-        if risk == "high":
-            kind = self._infer_readiness_kind(task_text, workflow)
-            readiness_pack = self._build_readiness_pack(kind, task_text, payload, owner_task_id=task_record["id"])
-            self.readiness_packs.append(readiness_pack)
-            task_record["status"] = "readiness_prepared"
-            task_record["readiness_pack_id"] = readiness_pack["id"]
-            task_record["readiness_only"] = True
-            task_record["execution_preview"] = {
-                "summary": "High-risk actions stop at readiness pack generation.",
-                "kind": kind,
-            }
-        elif payload.get("execute") and risk == "low":
-            task_record["status"] = "completed"
-            task_record["execution_preview"] = dispatch_task(task_text)
-        elif risk == "medium":
-            task_record["status"] = "live_ready" if execution_mode == "live_ready" else "queued"
-            task_record["execution_preview"] = {
-                "summary": "Medium-risk workflows are staged for operator release.",
-                "workflow": (workflow or {}).get("title", route),
-                "mode": execution_mode,
-            }
-        else:
-            task_record["status"] = "queued"
-            task_record["execution_preview"] = {
-                "summary": "Low-risk workflow registered and ready for execution.",
-                "workflow": (workflow or {}).get("title", route),
-            }
+        with self._mutation_lock:
+            if risk == "high":
+                kind = self._infer_readiness_kind(task_text, workflow)
+                readiness_pack = self._build_readiness_pack(
+                    kind,
+                    task_text,
+                    payload,
+                    owner_task_id=task_record["id"],
+                )
+                self.readiness_packs.append(readiness_pack)
+                task_record["status"] = "readiness_prepared"
+                task_record["readiness_pack_id"] = readiness_pack["id"]
+                task_record["readiness_only"] = True
+                task_record["execution_preview"] = {
+                    "summary": "High-risk actions stop at readiness pack generation.",
+                    "kind": kind,
+                }
+            elif payload.get("execute") and risk == "low":
+                task_record["status"] = "completed"
+                task_record["execution_preview"] = dispatch_task(task_text)
+            elif risk == "medium":
+                task_record["status"] = "live_ready" if execution_mode == "live_ready" else "queued"
+                task_record["execution_preview"] = {
+                    "summary": "Medium-risk workflows are staged for operator release.",
+                    "workflow": (workflow or {}).get("title", route),
+                    "mode": execution_mode,
+                }
+            else:
+                task_record["status"] = "queued"
+                task_record["execution_preview"] = {
+                    "summary": "Low-risk workflow registered and ready for execution.",
+                    "workflow": (workflow or {}).get("title", route),
+                }
 
-        self.tasks.append(task_record)
+            self.tasks.append(task_record)
         return task_record
 
     def run_workflow(self, workflow_id: str, payload: dict[str, Any]) -> dict[str, Any]:
@@ -372,7 +409,8 @@ class BusinessOperatingSystem:
             "source": str(payload.get("source", "portal")).strip() or "portal",
             "notes": str(payload.get("notes", "")).strip(),
         }
-        self.leads.append(lead)
+        with self._mutation_lock:
+            self.leads.append(lead)
         return lead
 
     def get_knowledge_snapshot(self, limit: int | None = 80) -> dict[str, Any]:
@@ -397,7 +435,8 @@ class BusinessOperatingSystem:
             "related_artifacts": related,
             "status": "planned",
         }
-        self.content_jobs.append(job)
+        with self._mutation_lock:
+            self.content_jobs.append(job)
         return job
 
     def create_readiness_pack(self, kind: str, payload: dict[str, Any]) -> dict[str, Any]:
@@ -405,7 +444,8 @@ class BusinessOperatingSystem:
         if not request:
             raise ValueError("request is required")
         pack = self._build_readiness_pack(kind, request, payload)
-        self.readiness_packs.append(pack)
+        with self._mutation_lock:
+            self.readiness_packs.append(pack)
         return pack
 
     def mobile_config(self) -> dict[str, Any]:
