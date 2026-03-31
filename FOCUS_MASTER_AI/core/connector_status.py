@@ -6,8 +6,12 @@ from typing import Any
 
 try:
     from FOCUS_MASTER_AI.integrations.github_api import GitHubClient
+    from FOCUS_MASTER_AI.integrations.openai_client import get_openai_runtime_status
+    from FOCUS_MASTER_AI.core.runtime_config import bootstrap_runtime_env
 except ImportError:
     from integrations.github_api import GitHubClient
+    from integrations.openai_client import get_openai_runtime_status
+    from core.runtime_config import bootstrap_runtime_env
 
 
 def _state_tone(state: str) -> str:
@@ -15,19 +19,42 @@ def _state_tone(state: str) -> str:
 
 
 def build_connector_status() -> dict[str, Any]:
+    bootstrap_runtime_env()
     openai_key = bool(os.getenv("OPENAI_API_KEY", "").strip())
     openai_package = importlib.util.find_spec("openai") is not None
+    openai_runtime = get_openai_runtime_status()
     make_ready = bool(os.getenv("MAKE_WEBHOOK_URL", "").strip())
     replit_ready = bool(os.getenv("REPLIT_RUNNER_URL", "").strip())
     github = GitHubClient().healthcheck()
+    if openai_key and openai_package:
+        if openai_runtime["state"] == "ready":
+            openai_state = "ready"
+            openai_message = openai_runtime["message"]
+            ai_twin_state = "ready"
+            ai_twin_message = "Live reasoning is available for scene, avatar, and voice prompt generation."
+        elif openai_runtime["state"] == "attention":
+            openai_state = "attention"
+            openai_message = openai_runtime["message"]
+            ai_twin_state = "fallback"
+            ai_twin_message = "OpenAI is configured but not currently generating, so the AI twin stack is running in fallback mode."
+        else:
+            openai_state = "partial"
+            openai_message = "OpenAI is configured locally, but live generation has not been verified in this runtime."
+            ai_twin_state = "partial"
+            ai_twin_message = "AI twin prompts can compile locally now and will switch to live reasoning once OpenAI generation succeeds."
+    else:
+        openai_state = "attention"
+        openai_message = "Missing API key or package install."
+        ai_twin_state = "fallback"
+        ai_twin_message = "Running in high-quality templated fallback mode until OpenAI is configured."
 
     items = [
         {
             "id": "openai",
             "label": "OpenAI Reasoning Core",
-            "state": "ready" if openai_key and openai_package else "attention",
-            "tone": _state_tone("ready" if openai_key and openai_package else "attention"),
-            "message": "Live model access available." if openai_key and openai_package else "Missing API key or package install.",
+            "state": openai_state,
+            "tone": _state_tone(openai_state),
+            "message": openai_message,
         },
         {
             "id": "make",
@@ -46,23 +73,24 @@ def build_connector_status() -> dict[str, Any]:
         {
             "id": "github",
             "label": "GitHub Publish Surface",
-            "state": "ready" if github.get("ok") else "attention",
-            "tone": _state_tone("ready" if github.get("ok") else "attention"),
+            "state": github.get("state", "ready" if github.get("ok") else "attention"),
+            "tone": _state_tone(github.get("state", "ready" if github.get("ok") else "attention")),
             "message": github.get("message", "GitHub integration status unavailable."),
         },
         {
             "id": "ai_twin",
             "label": "AI Twin Video Stack",
-            "state": "ready" if openai_key and openai_package else "fallback",
-            "tone": _state_tone("ready" if openai_key and openai_package else "fallback"),
-            "message": "Live reasoning available for scene and avatar prompt generation." if openai_key and openai_package else "Running in high-quality templated fallback mode until OpenAI is configured.",
+            "state": ai_twin_state,
+            "tone": _state_tone(ai_twin_state),
+            "message": ai_twin_message,
         },
     ]
 
     ready_count = sum(1 for item in items if item["state"] == "ready")
+    attention_count = sum(1 for item in items if item["state"] == "attention")
     return {
         "items": items,
         "ready_count": ready_count,
-        "attention_count": len(items) - ready_count,
+        "attention_count": attention_count,
         "total": len(items),
     }

@@ -10,7 +10,19 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_ENV_FILE = ROOT / ".secrets" / "focus_master.env"
+
+
+def _candidate_env_files() -> list[Path]:
+    home = Path.home()
+    return [
+        ROOT / ".secrets" / "focus_master.env",
+        ROOT.parent / ".secrets" / "focus_master.env",
+        ROOT.parent / "GitHub" / "Focus--Master" / ".secrets" / "focus_master.env",
+        home / "OneDrive" / "Documents" / "GitHub" / "Focus--Master" / ".secrets" / "focus_master.env",
+    ]
+
+
+DEFAULT_ENV_FILE = next((path for path in _candidate_env_files() if path.exists()), _candidate_env_files()[0])
 
 
 def parse_args() -> argparse.Namespace:

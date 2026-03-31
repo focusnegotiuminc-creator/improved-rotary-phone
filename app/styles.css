@@ -1,79 +1,272 @@
 :root {
-  color-scheme: dark;
-  --bg: #090b11;
-  --panel: #111626;
-  --text: #f0f5ff;
-  --accent: #4da8ff;
-  --accent-2: #79ffd4;
+  --bg-900: #050812;
+  --bg-800: #09142a;
+  --panel: rgba(10, 20, 38, 0.76);
+  --panel-strong: rgba(8, 16, 31, 0.9);
+  --text: #f6f8ff;
+  --muted: #c1cbe3;
+  --gold: #f2c96d;
+  --teal: #43e2d6;
+  --sky: #7cc8ff;
+  --line: rgba(124, 200, 255, 0.22);
+  --shadow: 0 24px 60px rgba(2, 8, 24, 0.45);
 }
 
 * {
   box-sizing: border-box;
 }
 
+html,
+body {
+  min-height: 100%;
+}
+
 body {
   margin: 0;
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  background: radial-gradient(circle at top, #101b3a 0%, var(--bg) 45%);
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(920px 520px at 12% 8%, rgba(67, 226, 214, 0.14), transparent 60%),
+    radial-gradient(760px 460px at 90% 10%, rgba(242, 201, 109, 0.14), transparent 56%),
+    linear-gradient(160deg, var(--bg-900), var(--bg-800) 50%, #071426 100%);
   color: var(--text);
+  overflow-x: hidden;
 }
 
-.app {
-  max-width: 960px;
+.ambient-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-radial-gradient(circle at center, transparent 0 18px, rgba(255, 255, 255, 0.03) 18px 19px),
+    repeating-conic-gradient(from 0deg at 82% 20%, rgba(242, 201, 109, 0.06) 0deg 12deg, transparent 12deg 24deg);
+  mask-image: radial-gradient(circle at center, black 36%, transparent 92%);
+  opacity: 0.7;
+}
+
+.app-shell {
+  width: min(1320px, 94vw);
   margin: 0 auto;
-  padding: 2rem 1rem 3rem;
+  padding: clamp(1rem, 3vw, 2rem) 0 3rem;
   display: grid;
-  gap: 1rem;
+  gap: 1.1rem;
 }
 
-header h1 {
+.hero,
+.panel,
+.mini-panel {
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: linear-gradient(155deg, rgba(9, 18, 36, 0.82), rgba(15, 30, 58, 0.72));
+  box-shadow: var(--shadow);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(280px, 0.82fr);
+  gap: 1rem;
+  padding: clamp(1.2rem, 3vw, 2.2rem);
+}
+
+.eyebrow,
+.mini-label {
   margin: 0;
-  color: var(--accent-2);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.hero h1,
+.panel h2,
+.mini-panel h2 {
+  margin: 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  line-height: 1.04;
+}
+
+.hero h1 {
+  margin-top: 0.5rem;
+  font-size: clamp(2.4rem, 6vw, 5.1rem);
+}
+
+.lede {
+  max-width: 68ch;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-top: 0.9rem;
+}
+
+.hero-side {
+  display: grid;
+  gap: 0.9rem;
+  align-content: start;
+}
+
+.mini-panel {
+  min-height: 100%;
+  padding: 1rem;
+  background: linear-gradient(155deg, rgba(11, 21, 40, 0.78), rgba(8, 14, 26, 0.9));
+}
+
+.mini-panel h2 {
+  margin-top: 0.35rem;
+  font-size: clamp(1.2rem, 2.1vw, 1.8rem);
+}
+
+.hero-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.2rem;
+}
+
+.hero-points span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(124, 200, 255, 0.26);
+  background: rgba(8, 18, 35, 0.6);
+  color: #d8e8ff;
+  font-size: 0.9rem;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 320px;
+  gap: 1rem;
+  align-items: start;
 }
 
 .panel {
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
-  border: 1px solid rgba(121, 255, 212, 0.2);
-  border-radius: 12px;
   padding: 1rem;
+}
+
+.panel-head {
+  margin-bottom: 0.9rem;
+}
+
+.panel h2 {
+  font-size: clamp(1.45rem, 2.6vw, 2.3rem);
+}
+
+.control-panel,
+.output-panel {
+  min-height: 100%;
+}
+
+.stage-panel {
+  position: sticky;
+  top: 1rem;
+  background: linear-gradient(155deg, rgba(8, 16, 31, 0.92), rgba(11, 23, 44, 0.9));
 }
 
 label {
   display: block;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.95rem;
+  color: #edf4ff;
   font-weight: 600;
 }
 
-textarea,
-button {
-  width: 100%;
-  border-radius: 8px;
-  border: 1px solid rgba(77, 168, 255, 0.35);
-}
-
 textarea {
-  margin-top: 0.35rem;
-  padding: 0.7rem;
-  background: #0e1320;
+  width: 100%;
+  margin-top: 0.45rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 16px;
+  border: 1px solid rgba(124, 200, 255, 0.26);
+  background: rgba(6, 13, 26, 0.78);
   color: var(--text);
   resize: vertical;
+  font: inherit;
+  line-height: 1.55;
+}
+
+textarea::placeholder {
+  color: rgba(193, 203, 227, 0.58);
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
 }
 
 button {
-  margin-top: 0.5rem;
-  padding: 0.75rem;
+  width: 100%;
+  min-height: 50px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  padding: 0.8rem 1.2rem;
+  font: inherit;
   font-weight: 700;
-  background: linear-gradient(90deg, var(--accent), #7b6dff);
-  color: white;
   cursor: pointer;
+  color: #18121f;
+  background: linear-gradient(118deg, var(--gold), #ffd88a 50%, #ff9b68);
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+button.secondary {
+  background: rgba(8, 18, 35, 0.5);
+  color: var(--text);
+  border-color: rgba(124, 200, 255, 0.28);
 }
 
 pre {
   white-space: pre-wrap;
   word-wrap: break-word;
-  background: #080c14;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
+  background: var(--panel-strong);
+  border: 1px solid rgba(124, 200, 255, 0.18);
+  border-radius: 20px;
   padding: 1rem;
-  min-height: 260px;
+  min-height: 520px;
+  color: #e9f1ff;
+  line-height: 1.58;
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.93rem;
+}
+
+.stage-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.7rem;
+  color: var(--muted);
+}
+
+.stage-list li::marker {
+  color: var(--gold);
+}
+
+@media (max-width: 1120px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .stage-panel {
+    position: static;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    width: min(94vw, 100%);
+  }
+
+  button,
+  .button-row {
+    width: 100%;
+  }
 }

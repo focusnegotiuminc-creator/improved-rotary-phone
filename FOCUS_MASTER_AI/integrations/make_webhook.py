@@ -5,8 +5,14 @@ from typing import Any
 
 import requests
 
+try:
+    from FOCUS_MASTER_AI.core.runtime_config import bootstrap_runtime_env
+except ImportError:  # pragma: no cover
+    from core.runtime_config import bootstrap_runtime_env
+
 
 def trigger_make(task: str, extra_payload: dict[str, Any] | None = None) -> dict:
+    bootstrap_runtime_env()
     webhook = os.getenv("MAKE_WEBHOOK_URL", "").strip()
     if not webhook:
         return {

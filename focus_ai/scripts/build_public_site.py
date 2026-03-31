@@ -8,10 +8,16 @@ import stat
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = ROOT.parent
 CONFIG = ROOT / "config" / "business_os.json"
 PUBLISHED = ROOT / "published" / "ebooks"
 SITE = ROOT / "site"
 PUBLIC = ROOT / "published" / "public_site"
+COMMAND_APP = REPO_ROOT / "app"
+ENGINE_STAGES = REPO_ROOT / "engine" / "stages.json"
+MASTER_PROMPT_SCRIPT = SITE / "master_prompt_studio.js"
+RLC_OUTPUT = REPO_ROOT / "construction" / "rlc_office_pkg_extracted" / "output"
+RLC_CHECKLIST = REPO_ROOT / "construction" / "rlc_bid_input_checklist.md"
 
 
 def copy_tree(src: Path, dst: Path) -> None:
@@ -68,6 +74,44 @@ def public_catalog(catalog: dict) -> dict:
     return data
 
 
+def _format_currency(value: float) -> str:
+    return f"${value:,.2f}"
+
+
+def _ebook_count() -> int:
+    return len(list((ROOT / "ebooks").glob("*.md")))
+
+
+def _rlc_bid_summary() -> dict[str, str]:
+    if not RLC_OUTPUT.joinpath("bid_summary.json").exists():
+        return {}
+    data = json.loads(RLC_OUTPUT.joinpath("bid_summary.json").read_text(encoding="utf-8"))
+    return {
+        item["Label"]: _format_currency(float(item["Amount"]))
+        for item in data
+    }
+
+
+def _rlc_line_item_count() -> int:
+    csv_path = RLC_OUTPUT / "material_list.csv"
+    if not csv_path.exists():
+        return 0
+    return max(0, len(csv_path.read_text(encoding="utf-8").splitlines()) - 1)
+
+
+def _rlc_checklist_items() -> list[str]:
+    if not RLC_CHECKLIST.exists():
+        return []
+    items: list[str] = []
+    for raw_line in RLC_CHECKLIST.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        if ". " in line and line.split(". ", 1)[0].isdigit():
+            items.append(line.split(". ", 1)[1].strip())
+    return items
+
+
 def head_html(title: str) -> str:
     return f"""<head>
   <meta charset="utf-8" />
@@ -83,7 +127,10 @@ def head_html(title: str) -> str:
 def nav_html() -> str:
     return (
         '<nav class="top-nav">'
-        '<a href="/">Home</a>'
+        '<a href="index.html">Home</a>'
+        '<a href="machine.html">Prompt Studio</a>'
+        '<a href="command/">Command Center</a>'
+        '<a href="rlc-office-package.html">RLC Package</a>'
         '<a href="business_os.html">Business OS</a>'
         '<a href="services.html">Services</a>'
         '<a href="products.html">Products</a>'
@@ -184,6 +231,43 @@ def render_connector_cards(catalog: dict) -> str:
     )
 
 
+def render_system_cards(catalog: dict) -> str:
+    systems = [
+        {
+            "eyebrow": "Storefront + services",
+            "title": "TheFocusCorp.com",
+            "summary": "Sell the eBook library, route service inquiries, and move visitors through the live offer ladder.",
+            "href": "products.html",
+            "cta": "Browse offers",
+        },
+        {
+            "eyebrow": "No-key prompt compiler",
+            "title": "Master Prompt Studio",
+            "summary": "Turn one rough task into a stronger execution packet with engine sequencing, connectors, and AI twin guidance.",
+            "href": "machine.html",
+            "cta": "Open the studio",
+        },
+        {
+            "eyebrow": "Daily command app",
+            "title": "The Eye of Focus",
+            "summary": "Start the day with a reusable 11-stage command brief that carries the work cleanly into the next tool.",
+            "href": "command/",
+            "cta": "Enter command mode",
+        },
+    ]
+    return "\n".join(
+        f"""
+<article class="feature-panel">
+  <p class="eyebrow">{item['eyebrow']}</p>
+  <h3>{item['title']}</h3>
+  <p>{item['summary']}</p>
+  <div class="button-row"><a class="btn secondary" href="{item['href']}">{item['cta']}</a></div>
+</article>
+""".strip()
+        for item in systems
+    )
+
+
 def build_css(catalog: dict) -> str:
     colors = catalog["design_system"]["core"]["colors"]
     display = catalog["design_system"]["core"]["typography"]["display_family"]
@@ -231,7 +315,7 @@ p, li { color: var(--muted); line-height: 1.65; }
 .poster,.feature-panel { display: grid; gap: 0.8rem; align-content: start; }
 .eyebrow { margin: 0; color: var(--gold); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.78rem; font-weight: 700; }
 .button-row { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.9rem; }
-.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0.82rem 1.15rem; border-radius: 999px; font-weight: 700; background: linear-gradient(120deg, var(--gold), #ffd98f 52%, var(--ember)); color: #1c1420; border: 1px solid transparent; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0.82rem 1.15rem; border-radius: 999px; font-weight: 700; background: linear-gradient(120deg, var(--gold), #ffd98f 52%, var(--ember)); color: #1c1420; border: 1px solid transparent; cursor: pointer; }
 .btn.secondary { background: rgba(8, 15, 31, 0.6); color: var(--ink); border-color: rgba(124, 200, 255, 0.32); }
 .orbital-graphic { min-height: 300px; border-radius: 22px; background: radial-gradient(circle at center, rgba(242, 201, 109, 0.14), transparent 34%), repeating-conic-gradient(from 0deg, rgba(124, 200, 255, 0.08) 0deg 10deg, transparent 10deg 24deg), linear-gradient(145deg, rgba(11, 22, 46, 0.88), rgba(6, 13, 28, 0.92)); position: relative; }
 .orbital-graphic::before,.orbital-graphic::after { content: ""; position: absolute; inset: 16%; border-radius: 50%; border: 1px solid rgba(242, 201, 109, 0.35); }
@@ -246,8 +330,23 @@ p, li { color: var(--muted); line-height: 1.65; }
 .price { color: #ffe0a0; font-weight: 700; font-size: 1.08rem; }
 .small { font-size: 0.93rem; opacity: 0.88; }
 .status-chip { display: inline-flex; align-items: center; min-height: 28px; padding: 0.25rem 0.75rem; border-radius: 999px; background: rgba(62,228,214,0.12); color: var(--teal); font-size: 0.82rem; }
+.metric-strip { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.9rem; }
+.metric-strip span { display: inline-flex; align-items: center; min-height: 34px; padding: 0.25rem 0.8rem; border-radius: 999px; border: 1px solid rgba(124, 200, 255, 0.24); background: rgba(8, 15, 31, 0.5); color: var(--ink); font-size: 0.9rem; }
+.studio-layout,.drawing-grid { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.studio-panel { min-height: 100%; }
+.studio-label { display: block; color: var(--ink); font-weight: 700; }
+.studio-input,.inline-form input { width: 100%; margin-top: 0.55rem; min-height: 240px; padding: 0.9rem 1rem; border-radius: 18px; border: 1px solid rgba(124, 200, 255, 0.24); background: rgba(8, 15, 31, 0.74); color: var(--ink); font: inherit; resize: vertical; }
+.inline-form input { min-height: auto; }
+.studio-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.9rem; }
+.studio-output { min-height: 520px; margin: 0; white-space: pre-wrap; background: rgba(6, 13, 27, 0.9); border: 1px solid rgba(124, 200, 255, 0.18); border-radius: 20px; padding: 1rem; color: #e9f1ff; font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; line-height: 1.58; overflow-x: auto; }
+.studio-summary { display: grid; gap: 0.3rem; margin-top: 0.9rem; padding: 0.85rem 1rem; border-radius: 18px; background: rgba(8, 15, 31, 0.5); border: 1px solid rgba(124, 200, 255, 0.18); }
+.download-strip { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.9rem; }
+.drawing-frame { padding: 1rem; border-radius: 24px; border: 1px solid var(--line); background: linear-gradient(155deg, rgba(9, 18, 35, 0.84), rgba(15, 30, 58, 0.72)); box-shadow: var(--shadow); }
+.drawing-frame img { width: 100%; height: auto; display: block; border-radius: 18px; background: #ffffff; }
+.drawing-frame figcaption { margin-top: 0.8rem; color: var(--muted); }
 @media (max-width: 960px) { .hero-panel,.grid-three,.offer-grid,.track-grid,.stage-grid,.detail-grid,.split-band { grid-template-columns: 1fr; } }
-@media (max-width: 640px) { .button-row { flex-direction: column; } .btn { width: 100%; } }
+@media (max-width: 960px) { .studio-layout,.drawing-grid { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .button-row,.studio-actions,.download-strip { flex-direction: column; } .btn { width: 100%; } }
 """
     for key, value in {
         "__BG900__": colors["bg_900"],
@@ -288,6 +387,9 @@ def render_square_panel(catalog: dict) -> str:
 
 def build_pages(catalog: dict) -> dict[str, str]:
     contact = catalog["portal"]["primary_contact"]
+    ebook_count = _ebook_count()
+    rlc_summary = _rlc_bid_summary()
+    rlc_checklist = _rlc_checklist_items()
     hero = f"""
 <section class="hero-panel">
   <div class="poster">
@@ -304,6 +406,69 @@ def build_pages(catalog: dict) -> dict[str, str]:
   <div class="orbital-graphic" aria-hidden="true"></div>
 </section>
 """.strip()
+
+    home_page = f"""<!doctype html>
+<html lang="en">
+{head_html("TheFocusCorp.com")}
+<body><main>
+  {nav_html()}
+  <section class="hero-panel">
+    <div class="poster">
+      <p class="eyebrow">TheFocusCorp.com</p>
+      <h1>One luminous storefront for the business ladder, the prompt machine, and the daily command center.</h1>
+      <p>{catalog['portal']['visual_thesis']}</p>
+      <p>Focus Records LLC, Royal Lee Construction Solutions LLC, and Focus Negotium Inc now route through one sharper public experience with books, services, prompt tooling, and client-facing package surfaces in one place.</p>
+      <div class="metric-strip">
+        <span>{ebook_count} published books</span>
+        <span>3 operating companies</span>
+        <span>1 no-key prompt studio</span>
+      </div>
+      <div class="button-row">
+        <a class="btn" href="products.html">Shop the live offers</a>
+        <a class="btn secondary" href="machine.html">Open Master Prompt Studio</a>
+        <a class="btn secondary" href="command/">Enter The Eye of Focus</a>
+      </div>
+    </div>
+    <section class="feature-panel">
+      <p class="eyebrow">Fresh live layout</p>
+      <h2>Public commerce, command workflow, and client delivery now feel like one machine instead of scattered projects.</h2>
+      <ul class="kicker-list">
+        <li>Use the storefront to sell books, blueprint packs, and the flagship business engine.</li>
+        <li>Use the browser-side prompt studio to turn one rough task into a stronger execution packet.</li>
+        <li>Use The Eye of Focus to create a daily 11-stage command brief before work starts.</li>
+      </ul>
+    </section>
+  </section>
+  <section class="section-block">
+    <p class="eyebrow">Three apps, one machine</p>
+    <h2>The front end now routes between commerce, prompts, and execution without breaking the story.</h2>
+    <div class="grid-three">{render_system_cards(catalog)}</div>
+  </section>
+  <section class="section-block">
+    <div class="split-band">
+      <section class="feature-panel">
+        <p class="eyebrow">Royal Lee Construction</p>
+        <h2>522 Vermont bid package is now part of the experience.</h2>
+        <p>Surface the office package with cost summary, plan visuals, checklist context, and download-ready attachments.</p>
+        <div class="button-row">
+          <a class="btn" href="rlc-office-package.html">Open the RLC package</a>
+          <a class="btn secondary" href="booking.html">Book with {contact['name']}</a>
+        </div>
+      </section>
+      <section class="feature-panel">
+        <p class="eyebrow">Published library</p>
+        <h2>The book catalog is live, styled, and connected to the product ladder.</h2>
+        <p>The library now behaves like a real storefront surface instead of a utility export, while still preserving fast reading pages.</p>
+        <div class="button-row">
+          <a class="btn" href="ebooks/index.html">Browse the library</a>
+          <a class="btn secondary" href="{catalog['offers'][0]['checkout_url']}">{catalog['offers'][0]['cta_label']}</a>
+        </div>
+      </section>
+    </div>
+  </section>
+  <section class="section-block"><div class="track-grid">{render_track_cards(catalog)}</div></section>
+</main></body></html>
+"""
 
     products_page = f"""<!doctype html>
 <html lang="en">
@@ -346,7 +511,118 @@ def build_pages(catalog: dict) -> dict[str, str]:
 </main></body></html>
 """
 
+    machine_page = f"""<!doctype html>
+<html lang="en">
+{head_html("Master Prompt Studio")}
+<body><main>
+  {nav_html()}
+  <section class="hero-panel">
+    <div class="poster">
+      <p class="eyebrow">No-key prompt compiler</p>
+      <h1>Turn one rough task into a stronger execution packet.</h1>
+      <p>This studio runs directly in the browser so the site stays useful even before every remote connector is fully configured.</p>
+      <div class="metric-strip">
+        <span>Engine sequencing</span>
+        <span>Connector-aware output</span>
+        <span>AI twin layer when relevant</span>
+      </div>
+      <div class="button-row">
+        <a class="btn" href="command/">Use The Eye of Focus next</a>
+        <a class="btn secondary" href="products.html">Return to live offers</a>
+      </div>
+    </div>
+    <section class="feature-panel">
+      <p class="eyebrow">What it creates</p>
+      <ul class="kicker-list">
+        <li>A primary engine recommendation based on the task itself.</li>
+        <li>A deliberate engine chain instead of one flat completion.</li>
+        <li>A reusable master prompt plus action checklist and connector targets.</li>
+      </ul>
+    </section>
+  </section>
+  <section class="section-block studio-layout">
+    <section class="feature-panel studio-panel">
+      <label class="studio-label" for="studio-task">Raw task</label>
+      <textarea id="studio-task" class="studio-input">Take the next Focus task, refine the prompt, route the right engines, include AI twin video support when helpful, and prepare the cleanest next actions.</textarea>
+      <div class="studio-actions">
+        <button class="btn" id="studio-generate" type="button">Compile prompt packet</button>
+        <button class="btn secondary" id="studio-copy" type="button">Copy packet</button>
+        <button class="btn secondary" id="studio-download" type="button">Download Markdown</button>
+      </div>
+      <div class="studio-summary" id="studio-summary"></div>
+    </section>
+    <section class="feature-panel studio-panel">
+      <p class="eyebrow">Compiled packet</p>
+      <pre class="studio-output" id="studio-output"></pre>
+    </section>
+  </section>
+  <script src="master_prompt_studio.js"></script>
+</main></body></html>
+"""
+
+    rlc_page = f"""<!doctype html>
+<html lang="en">
+{head_html("RLC Office Package")}
+<body><main>
+  {nav_html()}
+  <section class="hero-panel">
+    <div class="poster">
+      <p class="eyebrow">Royal Lee Construction Solutions LLC</p>
+      <h1>522 Vermont office package with live visual and download-ready surfaces.</h1>
+      <p>This page carries the current bid summary, drawing previews, checklist context, and attachment links into one cleaner front-end experience.</p>
+      <div class="metric-strip">
+        <span>Total bid {rlc_summary.get('Total Bid', '$0.00')}</span>
+        <span>Materials {rlc_summary.get('Materials Total', '$0.00')}</span>
+        <span>{_rlc_line_item_count()} takeoff lines</span>
+      </div>
+      <div class="download-strip">
+        <a class="btn" href="rlc/bid_summary.json">Download bid summary</a>
+        <a class="btn secondary" href="rlc/material_list.csv">Download material list</a>
+        <a class="btn secondary" href="booking.html">Route through {contact['name']}</a>
+      </div>
+    </div>
+    <section class="feature-panel">
+      <p class="eyebrow">Package checklist</p>
+      <ul class="kicker-list">{''.join(f'<li>{item}</li>' for item in rlc_checklist[:6])}</ul>
+      <p class="small">Official insurance certificates and business-license documents still require issuer-provided updates before final delivery.</p>
+    </section>
+  </section>
+  <section class="section-block drawing-grid">
+    <figure class="drawing-frame">
+      <img src="rlc/first_floor.svg" alt="First floor drawing preview" />
+      <figcaption>First floor preview for the office package.</figcaption>
+    </figure>
+    <figure class="drawing-frame">
+      <img src="rlc/second_floor.svg" alt="Second floor drawing preview" />
+      <figcaption>Second floor preview for the office package.</figcaption>
+    </figure>
+  </section>
+  <section class="section-block split-band">
+    <section class="feature-panel">
+      <p class="eyebrow">Bid structure</p>
+      <ul class="kicker-list">
+        <li>Labor: {rlc_summary.get('Labor (Reduced by 2/3)', '$0.00')}</li>
+        <li>Insurance fee: {rlc_summary.get('Insurance Fee', '$0.00')}</li>
+        <li>Subtotal: {rlc_summary.get('Subtotal', '$0.00')}</li>
+        <li>Overhead: {rlc_summary.get('Overhead (8%)', '$0.00')}</li>
+      </ul>
+    </section>
+    <section class="feature-panel">
+      <p class="eyebrow">Attachments</p>
+      <div class="download-strip">
+        <a class="btn secondary" href="rlc/insurance_license_summary.md">Insurance summary</a>
+        <a class="btn secondary" href="rlc/first_floor.svg">First floor SVG</a>
+        <a class="btn secondary" href="rlc/second_floor.svg">Second floor SVG</a>
+      </div>
+    </section>
+  </section>
+</main></body></html>
+"""
+
     return {
+        "index.html": home_page,
+        "machine.html": machine_page,
+        "rlc-office-package.html": rlc_page,
         "landing.html": f"""<!doctype html>
 <html lang="en">
 {head_html("Focus AI Public Launch")}
@@ -627,28 +903,21 @@ def build() -> int:
     PUBLIC.mkdir(parents=True, exist_ok=True)
 
     copy_tree(PUBLISHED, PUBLIC / "ebooks")
-
-    preview_html = SITE / "visual_preview.html"
-    preview_css = SITE / "visual_preview.css"
-    if preview_html.exists():
-        html = preview_html.read_text(encoding="utf-8")
-        html = html.replace("../published/ebooks/index.html", "ebooks/index.html")
-        html = html.replace("../published/public_site/landing.html", "landing.html")
-        html = html.replace("../published/public_site/funnel_landing.html", "funnel_landing.html")
-        html = html.replace("../published/public_site/offers.html", "products.html")
-        (PUBLIC / "index.html").write_text(html, encoding="utf-8")
-    else:
-        (PUBLIC / "index.html").write_text(build_pages(catalog)["landing.html"], encoding="utf-8")
-    if preview_css.exists():
-        shutil.copy2(preview_css, PUBLIC / "visual_preview.css")
+    copy_tree(COMMAND_APP, PUBLIC / "command")
+    copy_tree(RLC_OUTPUT, PUBLIC / "rlc")
 
     (PUBLIC / "funnel.css").write_text(build_css(catalog), encoding="utf-8")
+    if MASTER_PROMPT_SCRIPT.exists():
+        shutil.copy2(MASTER_PROMPT_SCRIPT, PUBLIC / "master_prompt_studio.js")
 
     data_dir = PUBLIC / "data"
     data_dir.mkdir(parents=True, exist_ok=True)
     (data_dir / "business_os.json").write_text(json.dumps(public_catalog(catalog), indent=2), encoding="utf-8")
+    if ENGINE_STAGES.exists():
+        shutil.copy2(ENGINE_STAGES, data_dir / "stages.json")
 
-    for page_name, page_content in build_pages(catalog).items():
+    pages = build_pages(catalog)
+    for page_name, page_content in pages.items():
         (PUBLIC / page_name).write_text(page_content, encoding="utf-8")
 
     print(f"Built public site at {PUBLIC}")

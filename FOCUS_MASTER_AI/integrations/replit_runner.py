@@ -5,8 +5,14 @@ from typing import Any
 
 import requests
 
+try:
+    from FOCUS_MASTER_AI.core.runtime_config import bootstrap_runtime_env
+except ImportError:  # pragma: no cover
+    from core.runtime_config import bootstrap_runtime_env
+
 
 def trigger_replit(task: str) -> dict[str, Any]:
+    bootstrap_runtime_env()
     endpoint = os.getenv("REPLIT_RUNNER_URL", "").strip()
     if not endpoint:
         return {

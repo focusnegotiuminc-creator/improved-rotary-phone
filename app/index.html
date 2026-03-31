@@ -3,41 +3,102 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>THE EYE OF FOCUS</title>
+    <title>The Eye of Focus | Daily Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="app">
-      <header>
-        <h1>THE EYE OF FOCUS</h1>
-        <p>Daily personal command center for your 11-Stage AI Engine.</p>
-      </header>
-
-      <section class="panel">
-        <h2>Session Setup</h2>
-        <label>
-          Mission
-          <textarea id="mission" rows="3" placeholder="What is today's primary mission?"></textarea>
-        </label>
-        <label>
-          Outcomes
-          <textarea id="outcomes" rows="3" placeholder="List the outcomes you want."></textarea>
-        </label>
-        <label>
-          Constraints
-          <textarea id="constraints" rows="3" placeholder="Define constraints and boundaries."></textarea>
-        </label>
-        <label>
-          Tasks
-          <textarea id="tasks" rows="3" placeholder="Add concrete tasks for this session."></textarea>
-        </label>
-        <button id="generate">Generate Engine Brief</button>
+    <div class="ambient-glow" aria-hidden="true"></div>
+    <main class="app-shell">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Daily Command Mode</p>
+          <h1>THE EYE OF FOCUS</h1>
+          <p class="lede">
+            Build a stronger operating brief before you touch the rest of the machine. This
+            command center turns rough intent into a clean 11-stage execution sheet you can reuse
+            across coding, design, publishing, and launch work.
+          </p>
+          <div class="hero-points">
+            <span>11-stage structure</span>
+            <span>Sacred geometry base mode</span>
+            <span>Copy-ready execution brief</span>
+          </div>
+        </div>
+        <div class="hero-side">
+          <article class="mini-panel">
+            <p class="mini-label">Best for</p>
+            <h2>Morning startup, refocus, and end-of-day handoff.</h2>
+          </article>
+          <article class="mini-panel">
+            <p class="mini-label">Pairs with</p>
+            <h2>Master Prompt Studio, live storefront pages, and the engine dashboard.</h2>
+          </article>
+        </div>
       </section>
 
-      <section class="panel">
-        <h2>11-Stage Engine Output</h2>
-        <pre id="output"></pre>
-        <button id="copy">Copy to Clipboard</button>
+      <section class="workspace">
+        <section class="panel control-panel">
+          <div class="panel-head">
+            <p class="eyebrow">Session Setup</p>
+            <h2>Frame the work before execution starts.</h2>
+          </div>
+          <label>
+            Mission
+            <textarea id="mission" rows="3" placeholder="What is today's primary mission?"></textarea>
+          </label>
+          <label>
+            Outcomes
+            <textarea id="outcomes" rows="4" placeholder="List the outcomes you want. One line per target works best."></textarea>
+          </label>
+          <label>
+            Constraints
+            <textarea id="constraints" rows="3" placeholder="Define constraints, non-negotiables, and risk boundaries."></textarea>
+          </label>
+          <label>
+            Tasks
+            <textarea id="tasks" rows="4" placeholder="Add concrete tasks for this session. One line per task is ideal."></textarea>
+          </label>
+          <div class="button-row">
+            <button id="generate">Generate Engine Brief</button>
+          </div>
+        </section>
+
+        <section class="panel output-panel">
+          <div class="panel-head">
+            <p class="eyebrow">11-Stage Engine Output</p>
+            <h2>Copy this directly into your next execution environment.</h2>
+          </div>
+          <pre id="output"></pre>
+          <div class="button-row">
+            <button id="copy" class="secondary">Copy to Clipboard</button>
+          </div>
+        </section>
+
+        <aside class="panel stage-panel">
+          <div class="panel-head">
+            <p class="eyebrow">Stage Rail</p>
+            <h2>The daily sequence stays fixed.</h2>
+          </div>
+          <ol class="stage-list">
+            <li>Intent Alignment</li>
+            <li>Context Loading</li>
+            <li>Pattern Recognition</li>
+            <li>Architecture Framing</li>
+            <li>Prompt Engine Assembly</li>
+            <li>Execution Planning</li>
+            <li>Build &amp; Integrate</li>
+            <li>Verification &amp; QA</li>
+            <li>Refinement Loop</li>
+            <li>Deployment &amp; Distribution</li>
+            <li>Daily Command Mode</li>
+          </ol>
+        </aside>
       </section>
     </main>
 

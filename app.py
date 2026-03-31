@@ -10,7 +10,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
-from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request, send_from_directory, url_for
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -20,6 +19,7 @@ OUTPUTS_DIR = FOCUS_APP_DIR / "outputs"
 if str(FOCUS_APP_DIR) not in sys.path:
     sys.path.insert(0, str(FOCUS_APP_DIR))
 
+from core.runtime_config import bootstrap_runtime_env
 from core.dispatcher import dispatch_task
 from core.connector_status import build_connector_status
 from core.orchestrator import run_multi_engine_workflow
@@ -39,7 +39,7 @@ from engines import (
 from integrations.make_webhook import trigger_make
 from integrations.replit_runner import trigger_replit
 
-load_dotenv()
+bootstrap_runtime_env()
 
 app = Flask(
     __name__,
