@@ -6,11 +6,15 @@ from typing import Any
 
 try:
     from FOCUS_MASTER_AI.integrations.github_api import GitHubClient
+    from FOCUS_MASTER_AI.integrations.make_webhook import get_make_runtime_status
     from FOCUS_MASTER_AI.integrations.openai_client import get_openai_runtime_status
+    from FOCUS_MASTER_AI.integrations.replit_runner import get_replit_runtime_status
     from FOCUS_MASTER_AI.core.runtime_config import bootstrap_runtime_env
 except ImportError:
     from integrations.github_api import GitHubClient
+    from integrations.make_webhook import get_make_runtime_status
     from integrations.openai_client import get_openai_runtime_status
+    from integrations.replit_runner import get_replit_runtime_status
     from core.runtime_config import bootstrap_runtime_env
 
 
@@ -24,7 +28,9 @@ def build_connector_status() -> dict[str, Any]:
     openai_package = importlib.util.find_spec("openai") is not None
     openai_runtime = get_openai_runtime_status()
     make_ready = bool(os.getenv("MAKE_WEBHOOK_URL", "").strip())
+    make_runtime = get_make_runtime_status()
     replit_ready = bool(os.getenv("REPLIT_RUNNER_URL", "").strip())
+    replit_runtime = get_replit_runtime_status()
     github = GitHubClient().healthcheck()
     if openai_key and openai_package:
         if openai_runtime["state"] == "ready":
@@ -48,6 +54,34 @@ def build_connector_status() -> dict[str, Any]:
         ai_twin_state = "fallback"
         ai_twin_message = "Running in high-quality templated fallback mode until OpenAI is configured."
 
+    if make_ready:
+        if make_runtime["state"] == "ready":
+            make_state = "ready"
+            make_message = "Make webhook is responding and ready for remote automations."
+        elif make_runtime["state"] == "attention":
+            make_state = "attention"
+            make_message = make_runtime["message"]
+        else:
+            make_state = "partial"
+            make_message = "Make webhook is configured locally, but has not been verified in this runtime."
+    else:
+        make_state = "attention"
+        make_message = "Configure MAKE_WEBHOOK_URL for live automation runs."
+
+    if replit_ready:
+        if replit_runtime["state"] == "ready":
+            replit_state = "ready"
+            replit_message = "Remote runner endpoint is responding."
+        elif replit_runtime["state"] == "attention":
+            replit_state = "attention"
+            replit_message = replit_runtime["message"]
+        else:
+            replit_state = "partial"
+            replit_message = "Remote runner is configured locally, but has not been verified in this runtime."
+    else:
+        replit_state = "attention"
+        replit_message = "Configure REPLIT_RUNNER_URL for live remote execution."
+
     items = [
         {
             "id": "openai",
@@ -59,16 +93,16 @@ def build_connector_status() -> dict[str, Any]:
         {
             "id": "make",
             "label": "Make Automation Webhook",
-            "state": "ready" if make_ready else "attention",
-            "tone": _state_tone("ready" if make_ready else "attention"),
-            "message": "Webhook is configured for remote automations." if make_ready else "Configure MAKE_WEBHOOK_URL for live automation runs.",
+            "state": make_state,
+            "tone": _state_tone(make_state),
+            "message": make_message,
         },
         {
             "id": "replit",
             "label": "Replit Remote Runner",
-            "state": "ready" if replit_ready else "attention",
-            "tone": _state_tone("ready" if replit_ready else "attention"),
-            "message": "Remote runner endpoint is configured." if replit_ready else "Configure REPLIT_RUNNER_URL for live remote execution.",
+            "state": replit_state,
+            "tone": _state_tone(replit_state),
+            "message": replit_message,
         },
         {
             "id": "github",
