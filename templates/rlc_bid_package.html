@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+{% block title %}RLC Bid Package - 522 Vermont{% endblock %}
+{% block body_class %}app-body rlc-body{% endblock %}
+{% block main_class %}page-shell page-shell-rlc{% endblock %}
+
+{% block content %}
+<section class="rlc-hero">
+  <div class="rlc-inner rlc-hero-grid">
+    <div class="rlc-hero-copy reveal">
+      <p class="rlc-kicker">Royal Lee Construction Solutions LLC</p>
+      <h1 class="rlc-title">{{ package.project_name }}</h1>
+      <p class="rlc-summary-copy">
+        A client-ready construction bid front end built from the March 27 owner packet, blueprint
+        sheets, material takeoff, and delivery workflow for {{ package.project_owner }}.
+      </p>
+
+      <div class="rlc-chip-row">
+        {% for item in package.scope_items[:4] %}
+        <span class="rlc-chip">{{ item }}</span>
+        {% endfor %}
+      </div>
+
+      <div class="rlc-meta-grid">
+        <article class="rlc-meta-card">
+          <span>Owner</span>
+          <strong>{{ package.project_owner }}</strong>
+        </article>
+        <article class="rlc-meta-card">
+          <span>Location</span>
+          <strong>{{ package.project_location }}</strong>
+        </article>
+        <article class="rlc-meta-card">
+          <span>Prepared</span>
+          <strong>{{ package.prepared_date }}</strong>
+        </article>
+      </div>
+
+      <div class="rlc-actions">
+        {% for doc in package.primary_downloads %}
+        <a class="{% if loop.first %}rlc-primary-link{% else %}rlc-secondary-link{% endif %}" href="{{ doc.url }}">
+          {{ doc.label }}
+        </a>
+        {% endfor %}
+      </div>
+
+      <p class="rlc-footnote">
+        Draft package only. Final supplier verification, debris quote confirmation, and refreshed
+        insurance paperwork are still required before formal issue.
+      </p>
+    </div>
+
+    <div class="rlc-hero-visual reveal" style="--delay: 120ms;">
+      <div class="rlc-logo-rail">
+        <img src="{{ package.rlc_logo_url }}" alt="Royal Lee Construction Solutions logo" />
+        <img src="{{ package.focus_logo_url }}" alt="Focus Inc logo" />
+      </div>
+      <div class="rlc-sheet-stage">
+        <div class="rlc-sheet">
+          {{ package.drawings.first_floor | safe }}
+        </div>
+        <div class="rlc-float-card">
+          <span>Current Draft Total</span>
+          <strong>{{ package.total_bid_display }}</strong>
+          <p>{{ package.line_item_count }} supplier-linked takeoff lines are already packaged for review.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="rlc-stat-band">
+  <div class="rlc-stat-grid reveal">
+    <article class="rlc-stat">
+      <span class="rlc-stat-label">Total Bid</span>
+      <strong class="rlc-stat-value">{{ package.total_bid_display }}</strong>
+    </article>
+    <article class="rlc-stat">
+      <span class="rlc-stat-label">Materials</span>
+      <strong class="rlc-stat-value">{{ package.materials_total_display }}</strong>
+    </article>
+    <article class="rlc-stat">
+      <span class="rlc-stat-label">Labor</span>
+      <strong class="rlc-stat-value">{{ package.labor_total_display }}</strong>
+    </article>
+    <article class="rlc-stat">
+      <span class="rlc-stat-label">Attachments</span>
+      <strong class="rlc-stat-value">{{ package.download_count }}</strong>
+    </article>
+  </div>
+</section>
+
+<section class="rlc-section">
+  <div class="rlc-section-heading rlc-inner reveal">
+    <div>
+      <p class="rlc-section-kicker">Package Story</p>
+      <h2>Scope, readiness, and the owner-facing narrative</h2>
+    </div>
+    <p class="rlc-section-copy">
+      The package now carries the cleaned sketch workflow, separated pricing stack, and delivery
+      notes in a format that is easier to review with a client.
+    </p>
+  </div>
+
+  <div class="rlc-two-col rlc-inner">
+    <article class="rlc-panel reveal">
+      <h3>Scope of work</h3>
+      <ul class="rlc-list">
+        {% for item in package.scope_items %}
+        <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </article>
+    <article class="rlc-panel reveal" style="--delay: 120ms;">
+      <h3>Readiness notes</h3>
+      <p class="rlc-panel-copy">{{ package.review_note }}</p>
+      <ul class="rlc-list">
+        {% for item in package.readiness_notes %}
+        <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+</section>
+
+<section class="rlc-section">
+  <div class="rlc-section-heading rlc-inner reveal">
+    <div>
+      <p class="rlc-section-kicker">Bid Stack</p>
+      <h2>Pricing is separated cleanly for fast review</h2>
+    </div>
+  </div>
+
+  <div class="rlc-summary-board rlc-inner">
+    <article class="rlc-panel reveal">
+      <div class="rlc-amount-list">
+        {% for item in package.summary_items %}
+        <div class="rlc-amount-row {% if 'total bid' in item.label | lower %}total{% endif %}">
+          <span>{{ item.label }}</span>
+          <strong>{{ item.amount_display }}</strong>
+        </div>
+        {% endfor %}
+      </div>
+    </article>
+
+    <article class="rlc-panel reveal" style="--delay: 120ms;">
+      <h3>Design requirements already baked into the packet</h3>
+      <ul class="rlc-list">
+        {% for item in package.design_elements %}
+        <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+      <div class="rlc-note-block">
+        <span>Insurance note</span>
+        <p>{{ package.insurance_notice }}</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="rlc-section">
+  <div class="rlc-section-heading rlc-inner reveal">
+    <div>
+      <p class="rlc-section-kicker">Plan Sheets</p>
+      <h2>Floor-plan previews anchor the package visually</h2>
+    </div>
+    <p class="rlc-section-copy">
+      These are schematic previews for presentation. Field verification still governs final
+      fabrication and install decisions.
+    </p>
+  </div>
+
+  <div class="rlc-plan-grid rlc-inner">
+    <article class="rlc-plan-card reveal">
+      <div class="rlc-plan-frame">
+        {{ package.drawings.first_floor | safe }}
+      </div>
+      <h3>First floor schematic</h3>
+      <p>Main presentation drawing for the client-facing package.</p>
+    </article>
+    <article class="rlc-plan-card reveal" style="--delay: 120ms;">
+      <div class="rlc-plan-frame">
+        {{ package.drawings.second_floor | safe }}
+      </div>
+      <h3>Second floor schematic</h3>
+      <p>Secondary sheet for the full blueprint set and owner review packet.</p>
+    </article>
+  </div>
+</section>
+
+<section class="rlc-section">
+  <div class="rlc-section-heading rlc-inner reveal">
+    <div>
+      <p class="rlc-section-kicker">Material Takeoff</p>
+      <h2>Supplier-linked pricing detail stays visible</h2>
+    </div>
+    <p class="rlc-section-copy">
+      The takeoff below preserves the practical sourcing detail so the front end still feels like a
+      working operations surface, not just a marketing shell.
+    </p>
+  </div>
+
+  <div class="rlc-table-wrap rlc-inner reveal">
+    <table class="rlc-table">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Item</th>
+          <th>Supplier</th>
+          <th>Qty</th>
+          <th>Unit Price</th>
+          <th>Line Total</th>
+          <th>Source</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in package.material_rows %}
+        <tr>
+          <td>{{ row.category }}</td>
+          <td>
+            <strong>{{ row.item }}</strong>
+            <p class="rlc-table-note">{{ row.notes }}</p>
+          </td>
+          <td>{{ row.supplier }}</td>
+          <td>{{ row.quantity }} {{ row.unit }}</td>
+          <td>{{ row.unit_price_display }}</td>
+          <td>{{ row.line_total_display }}</td>
+          <td>
+            {% if row.source_is_link == 'true' %}
+            <a href="{{ row.source }}" target="_blank" rel="noreferrer">Reference</a>
+            {% else %}
+            {{ row.source }}
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="rlc-section">
+  <div class="rlc-section-heading rlc-inner reveal">
+    <div>
+      <p class="rlc-section-kicker">Workflow Pull-Up</p>
+      <h2>Input prep and delivery notes stay attached to the package</h2>
+    </div>
+  </div>
+
+  <div class="rlc-reference-grid rlc-inner">
+    <article class="rlc-panel reveal">
+      <h3>Input checklist</h3>
+      <ol class="rlc-numbered">
+        {% for item in package.checklist_items %}
+        <li>{{ item }}</li>
+        {% endfor %}
+      </ol>
+    </article>
+    <article class="rlc-panel reveal" style="--delay: 120ms;">
+      <h3>Delivery workflow</h3>
+      <p class="rlc-panel-copy">Recommended attachment set for the Steven Bunch delivery draft:</p>
+      <ul class="rlc-list compact">
+        {% for item in package.attachment_items %}
+        <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+      <div class="rlc-divider"></div>
+      <h4>Operator approval checklist</h4>
+      <ul class="rlc-list compact">
+        {% for item in package.approval_items %}
+        <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+</section>
+
+<section class="rlc-section rlc-downloads" id="downloads">
+  <div class="rlc-section-heading rlc-inner reveal">
+    <div>
+      <p class="rlc-section-kicker">Delivery Assets</p>
+      <h2>Every major package file is ready to pull from one place</h2>
+    </div>
+  </div>
+
+  <div class="rlc-download-grid rlc-inner">
+    {% for doc in package.downloads %}
+    <a class="rlc-download-card reveal" href="{{ doc.url }}" style="--delay: {{ loop.index0 * 60 }}ms;">
+      <span class="rlc-download-arrow">-&gt;</span>
+      <span class="rlc-download-label">{{ doc.label }}</span>
+      <p>{{ doc.description }}</p>
+      <small>{{ doc.filename }}</small>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

@@ -33,10 +33,14 @@ class MemoryManager:
 
     def log_task(self, task: str, result: Any) -> None:
         history = self._read_json(self.task_history_path, [])
+        task_type = "general"
+        if isinstance(result, dict):
+            task_type = str(result.get("engine") or result.get("workflow") or "general")
         history.append(
             {
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp_utc": datetime.now(timezone.utc).isoformat(),
                 "task": task,
+                "task_type": task_type,
                 "result": result,
             }
         )

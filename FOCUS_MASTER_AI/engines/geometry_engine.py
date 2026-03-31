@@ -1,18 +1,11 @@
 ﻿from __future__ import annotations
 
-from integrations.openai_client import call_gpt
+try:
+    from FOCUS_MASTER_AI.core.engine_runtime import run_ai_engine
+except ImportError:
+    from core.engine_runtime import run_ai_engine
 
 
 def run(task: str) -> dict:
-    prompt = (
-        "Provide geometry/design guidance for this request. "
-        "Include layout logic, dimensions assumptions, and constraints.\n\n"
-        f"Task: {task}"
-    )
-    output = call_gpt(prompt)
-    return {
-        "engine": "geometry",
-        "status": "completed",
-        "output": output,
-    }
+    return run_ai_engine("geometry", task)
 

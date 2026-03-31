@@ -1,18 +1,11 @@
 ﻿from __future__ import annotations
 
-from integrations.openai_client import call_gpt
+try:
+    from FOCUS_MASTER_AI.core.engine_runtime import run_ai_engine
+except ImportError:
+    from core.engine_runtime import run_ai_engine
 
 
 def run(task: str) -> dict:
-    prompt = (
-        "Write a clear draft response for this task. "
-        "Use a practical tone and include a short action checklist.\n\n"
-        f"Task: {task}"
-    )
-    output = call_gpt(prompt)
-    return {
-        "engine": "writing",
-        "status": "completed",
-        "output": output,
-    }
+    return run_ai_engine("writing", task)
 

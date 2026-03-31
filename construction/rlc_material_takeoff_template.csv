@@ -1,0 +1,15 @@
+category,item,description,quantity,unit,unit_cost,extended_cost,source,notes
+ceiling,grid_main,Main tee grid,,,,"Menards",
+ceiling,grid_cross,Cross tee grid,,,,"Menards",
+ceiling,tile,Ceiling tile,,,,"Menards",
+drywall,panel,Drywall panel,,,,"Menards",
+drywall,screw,Hilti drywall screws,,,,"Menards",
+drywall,router_bit,Hilti drywall router bits,,,,"Menards",
+tools,laser,Line level laser,,,,"Menards or alternate supplier",
+tools,cart,Drywall cart,,,,"Supplier",
+tools,hand_tools,Kliens / clamps / tin snips / blades,,,,"Supplier",
+consumables,caulk,Caulk and sealants,,,,"Menards",
+paint,rollers,Rollers trays and accessories,,,,"Menards",
+site,disposal,Big River Disposal dumpster,,,,"Big River Disposal",
+insurance,fee,Insurance administration fee,1,lot,300,300,Internal,Fixed fee
+

@@ -18,11 +18,7 @@
 
 ## 7-Day Push
 1. Day 1: Publish a founder post with the problem, the framework, and the eBook Bundle CTA.
-<<<<<<< HEAD
-2. Day 2: Publish a short video on how AI plus structure can become a revenue engine, then link the bundle.
-=======
 2. Day 2: Publish a short video on how AI + structure can become a revenue engine, then link the bundle.
->>>>>>> aabaebe29afc010a53b5d42952f7eda4d93cbd29
 3. Day 3: Share a case-study style post and send readers to the Blueprint Pack.
 4. Day 4: Publish an FAQ post that handles objections and points premium buyers to the Business Engine.
 5. Day 5: Send direct follow-ups to warm leads who clicked but did not buy.
@@ -40,11 +36,7 @@ CTA:
 Start with the eBook Bundle or go straight to the Business Engine.
 
 ## KPIs
-<<<<<<< HEAD
 - Daily clicks to `products.html`
-=======
-- Daily clicks to `offers.html`
->>>>>>> aabaebe29afc010a53b5d42952f7eda4d93cbd29
 - Bundle conversions
 - Blueprint Pack conversions
 - Business Engine conversions

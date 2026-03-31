@@ -13,6 +13,8 @@ def classify_task(task: str) -> str:
 
     if _has_any(text, ("initialize system", "wait for commands", "initialize and wait")):
         return "automation"
+    if _has_any(text, ("ai twin", "digital twin", "avatar", "video", "voiceover", "reel")):
+        return "ai_twin"
 
     if _has_any(
         text,
