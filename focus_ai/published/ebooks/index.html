@@ -1,60 +1,183 @@
 <!doctype html>
-<html lang="en"><head>
+<html lang="en">
+<head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Focus AI eBook Library</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>:root {
       --bg-900: #050812;
-      --bg-800: #09142a;
-      --panel: rgba(10, 20, 38, 0.78);
+      --bg-850: #0a1222;
+      --bg-800: #101a31;
+      --panel: rgba(8, 16, 31, 0.82);
       --ink: #f6f8ff;
       --muted: #c1cbe3;
       --gold: #f2c96d;
       --sky: #7cc8ff;
-      --line: rgba(124, 200, 255, 0.22);
+      --ember: #ff9b68;
+      --line: rgba(124, 200, 255, 0.2);
+      --shadow: 0 28px 70px rgba(2, 8, 24, 0.45);
     }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+      color: var(--ink);
+      font-family: "Manrope", "Segoe UI", sans-serif;
       background:
         radial-gradient(920px 520px at 14% 8%, rgba(62, 228, 214, 0.14), transparent 60%),
         radial-gradient(760px 460px at 90% 10%, rgba(242, 201, 109, 0.14), transparent 56%),
-        linear-gradient(160deg, var(--bg-900), var(--bg-800) 50%, #071426 100%);
-      color: var(--ink);
+        linear-gradient(160deg, var(--bg-900), var(--bg-850) 50%, var(--bg-800) 100%);
     }
-    main { max-width: 980px; margin: 0 auto; padding: 3rem 1rem 4rem; }
-    h1, h2 { font-family: "Cormorant Garamond", Georgia, serif; color: var(--gold); }
-    p, li { color: var(--muted); line-height: 1.7; }
-    .hero, .panel {
-      background: linear-gradient(155deg, rgba(9, 18, 36, 0.84), rgba(15, 30, 58, 0.72));
+    main { max-width: 1080px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+    a { color: var(--sky); text-decoration: none; }
+    h1, h2, h3 { margin: 0; font-family: "Cormorant Garamond", Georgia, serif; color: var(--gold); line-height: 1.05; }
+    p, li { line-height: 1.72; color: var(--muted); }
+    .eyebrow {
+      margin: 0;
+      color: var(--gold);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 0.74rem;
+      font-weight: 700;
+    }
+    .hero, .card, .book-card {
       border: 1px solid var(--line);
-      border-radius: 24px;
-      padding: 1rem 1.25rem;
+      border-radius: 28px;
+      padding: 1.2rem 1.25rem;
       margin-bottom: 1rem;
+      background: linear-gradient(155deg, rgba(9, 18, 36, 0.84), rgba(15, 30, 58, 0.72));
+      box-shadow: var(--shadow);
     }
-    a { color: var(--sky); }
-    li { margin: .6rem 0; }
-  </style>
-</head><body>
+    .hero {
+      display: grid;
+      gap: 0.85rem;
+    }
+    .cta-row, .meta-row, .catalog-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0.82rem 1.05rem;
+      border-radius: 999px;
+      background: linear-gradient(120deg, var(--gold), #ffd999 52%, var(--ember));
+      color: #1b1420;
+      font-weight: 800;
+    }
+    .btn.secondary {
+      background: rgba(6, 13, 26, 0.54);
+      color: var(--ink);
+      border: 1px solid rgba(124, 200, 255, 0.22);
+    }
+    .meta-row span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0.28rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(124, 200, 255, 0.18);
+      background: rgba(6, 13, 26, 0.58);
+      font-size: 0.88rem;
+    }
+    .price { color: #fff0c1; }
+    article.card h1 { margin-top: 1rem; }
+    article.card h2, article.card h3 { margin-top: 1.25rem; }
+    @media (max-width: 780px) {
+      .catalog-grid { grid-template-columns: 1fr; }
+      .cta-row, .meta-row { flex-direction: column; }
+      .btn { width: 100%; }
+    }</style>
+</head>
+<body>
   <main>
     <section class="hero">
-      <h1>Published eBook Library</h1>
-      <p>These files are generated from <code>focus_ai/ebooks/*.md</code> and styled as storefront-ready reading pages for TheFocusCorp.com.</p>
-      <p><a href="../index.html">Return to home</a> · <a href="../products.html">Browse live offers</a></p>
+      <p class="eyebrow">Published eBook library</p>
+      <h1>Read the Focus AI library online or download printable PDFs.</h1>
+      <p>The book storefront now includes visible pricing, downloadable PDFs, and direct routing into the higher-value Focus AI offer ladder.</p>
+      <div class="meta-row">
+        <span>5 current titles</span>
+        <span>Call or text 2172576222</span>
+        <span>Primary route: Alexis Rogers</span>
+      </div>
+      <div class="cta-row">
+        <a class="btn" href="../books.html">Open books sales page</a>
+        <a class="btn secondary" href="https://buy.stripe.com/bJe7sKh2B6ZQ8bP4II5os02">Buy the bundle</a>
+        <a class="btn secondary" href="../products.html">Browse live offers</a>
+      </div>
+      <p><a href="../index.html">Return to home</a> · <a href="../services.html">See services</a> · <a href="../command/">Open command platform</a></p>
     </section>
-    <section class="panel">
-      <p><strong>Want the full library plus launch assets?</strong></p>
-      <p><a href="https://buy.stripe.com/bJe7sKh2B6ZQ8bP4II5os02">Buy the Focus AI eBook Bundle for $49</a></p>
-      <p><a href="../products.html">View the live product ladder</a></p>
-    </section>
-    <section class="panel"><ul><li><a href="chakra_system_deep_dive.html">Chakra System Deep Dive</a></li>
-<li><a href="focus_on_coding_for_dummies_the_coding_bible.html">Focus On Coding For Dummies The Coding Bible</a></li>
-<li><a href="focus_on_foundation.html">Focus On Foundation</a></li>
-<li><a href="focus_on_wtf_you_feel.html">Focus On Wtf You Feel</a></li>
-<li><a href="the_hidden_truths_of_sacred_geometry.html">The Hidden Truths Of Sacred Geometry</a></li></ul></section>
+    <section class="catalog-grid"><article class="book-card">
+  <p class="eyebrow">Energy architecture</p>
+  <h2>Chakra System Deep Dive</h2>
+  <p>A practical guide to chakra alignment, sacred geometry, and energetic structure for daily life and spatial design.</p>
+  <div class="meta-row">
+    <span class="price">$14.99</span>
+    <span>PDF + web edition</span>
+  </div>
+  <div class="cta-row">
+    <a class="btn" href="chakra_system_deep_dive.html">Read online</a>
+    <a class="btn secondary" href="pdfs/chakra_system_deep_dive.pdf">Download PDF</a>
+  </div>
+</article><article class="book-card">
+  <p class="eyebrow">Builder mindset</p>
+  <h2>Focus on Coding for Dummies: The Coding Bible</h2>
+  <p>A motivational technical primer for turning scattered ideas into working code, systems, and repeatable execution habits.</p>
+  <div class="meta-row">
+    <span class="price">$14.99</span>
+    <span>PDF + web edition</span>
+  </div>
+  <div class="cta-row">
+    <a class="btn" href="focus_on_coding_for_dummies_the_coding_bible.html">Read online</a>
+    <a class="btn secondary" href="pdfs/focus_on_coding_for_dummies_the_coding_bible.pdf">Download PDF</a>
+  </div>
+</article><article class="book-card">
+  <p class="eyebrow">Personal structure</p>
+  <h2>Focus on Foundation</h2>
+  <p>A grounding framework for discipline, identity, and long-term structure across business, health, and inner alignment.</p>
+  <div class="meta-row">
+    <span class="price">$14.99</span>
+    <span>PDF + web edition</span>
+  </div>
+  <div class="cta-row">
+    <a class="btn" href="focus_on_foundation.html">Read online</a>
+    <a class="btn secondary" href="pdfs/focus_on_foundation.pdf">Download PDF</a>
+  </div>
+</article><article class="book-card">
+  <p class="eyebrow">Emotional clarity</p>
+  <h2>Focus on WTF You Feel</h2>
+  <p>A direct-language emotional decoding guide for naming internal states and transforming confusion into usable insight.</p>
+  <div class="meta-row">
+    <span class="price">$14.99</span>
+    <span>PDF + web edition</span>
+  </div>
+  <div class="cta-row">
+    <a class="btn" href="focus_on_wtf_you_feel.html">Read online</a>
+    <a class="btn secondary" href="pdfs/focus_on_wtf_you_feel.pdf">Download PDF</a>
+  </div>
+</article><article class="book-card">
+  <p class="eyebrow">Sacred systems</p>
+  <h2>The Hidden Truths of Sacred Geometry</h2>
+  <p>An expanded sacred geometry narrative connecting pattern, architecture, symbolism, and human operating systems.</p>
+  <div class="meta-row">
+    <span class="price">$19.99</span>
+    <span>PDF + web edition</span>
+  </div>
+  <div class="cta-row">
+    <a class="btn" href="the_hidden_truths_of_sacred_geometry.html">Read online</a>
+    <a class="btn secondary" href="pdfs/the_hidden_truths_of_sacred_geometry.pdf">Download PDF</a>
+  </div>
+</article></section>
   </main>
-</body></html>
+</body>
+</html>
