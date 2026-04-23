@@ -1,6 +1,6 @@
 {
   "research solar alignment": {
-    "timestamp_utc": "2026-04-23T19:22:21.257435+00:00",
+    "timestamp_utc": "2026-04-23T19:40:06.131860+00:00",
     "result": "Research engine completed task: research solar alignment"
   },
   "build an ai automation system with ai twin video prompts and remote connector handoffs": "# Research Engine Fallback Execution Brief\n\nTask: build an AI automation system with ai twin video prompts and remote connector handoffs\n\nMission:\nTurn the user's request into a premium execution-ready system output led by the Research Engine, with automation hooks, reusable prompts, and top-tier end-user clarity.\n\nPriority Deliverables:\n- source-aware findings summary\n- key risks and assumptions\n- recommended next actions\n\nExecution Flow:\n- Primary engine: Research Engine\n- Engine chain: research, writing, ai_twin, automation\n- User experience target: Make the Research Engine feel decisive, high-quality, and ready for execution.\n\nAutomation Handoff:\n- Expand raw task input into a machine-grade prompt packet before execution.\n- Run the most relevant engines in a deliberate sequence instead of one flat completion.\n- Prepare connector-ready payloads for Make, Replit, GitHub, and any configured remotes.\n- Generate an AI twin video brief with scene, voiceover, and distribution cutdown guidance.\n",
