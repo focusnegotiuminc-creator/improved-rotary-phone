@@ -174,6 +174,10 @@ def main() -> int:
     remote_dir_candidates = _parse_remote_dir_candidates(
         os.getenv("INFINITYFREE_REMOTE_DIR_CANDIDATES")
     )
+    retry_count = int(os.getenv("INFINITYFREE_LOGIN_RETRIES", str(DEFAULT_LOGIN_RETRIES)))
+    retry_delay = float(
+        os.getenv("INFINITYFREE_LOGIN_RETRY_DELAY", str(DEFAULT_LOGIN_RETRY_DELAY))
+    )
 
     strict = _strict_mode()
     missing = [
@@ -199,9 +203,17 @@ def main() -> int:
     for ftp_host in _host_candidates(host):
         for passwd in passwords:
             try:
-                with FTP(ftp_host, timeout=30) as ftp:
-                    ftp.login(user=user, passwd=passwd)
+                with _connect_and_login(
+                    ftp_host,
+                    user,
+                    passwd,
+                    retries=retry_count,
+                    retry_delay=retry_delay,
+                    ftp_factory=FTP,
+                ) as ftp:
                     remote_dir = _resolve_remote_dir(ftp, remote_dir_setting, remote_dir_candidates)
+                    if remote_dir_setting.strip().lower() in {"", "auto", "suggested"}:
+                        print(f"Auto-selected remote deploy directory: {remote_dir}")
                     files, dirs = _upload_dir(ftp, PUBLIC, remote_dir)
                     print(f"Uploaded {files} files ({dirs} directories) to {ftp_host}:{remote_dir}")
                     return 0
@@ -210,34 +222,13 @@ def main() -> int:
                 print(f"Failed host {ftp_host} with provided credential set: {exc}")
 
     if last_error is not None:
-        raise last_error
-    return 1
-    retry_count = int(os.getenv("INFINITYFREE_LOGIN_RETRIES", str(DEFAULT_LOGIN_RETRIES)))
-    retry_delay = float(
-        os.getenv("INFINITYFREE_LOGIN_RETRY_DELAY", str(DEFAULT_LOGIN_RETRY_DELAY))
-    )
-
-    try:
-        with _connect_and_login(
-            host,
-            user,
-            password,
-            retries=retry_count,
-            retry_delay=retry_delay,
-        ) as ftp:
-            remote_dir = _resolve_remote_dir(ftp, remote_dir_setting, remote_dir_candidates)
-            if remote_dir_setting.strip().lower() in {"", "auto", "suggested"}:
-                print(f"Auto-selected remote deploy directory: {remote_dir}")
-            files, dirs = _upload_dir(ftp, PUBLIC, remote_dir)
-            print(f"Uploaded {files} files ({dirs} directories) to {host}:{remote_dir}")
-    except Exception as exc:  # noqa: BLE001
-        print(f"InfinityFree deploy failed: {exc}")
+        print(f"InfinityFree deploy failed: {last_error}")
         if strict:
             return 1
         print("InfinityFree deploy skipped because INFINITYFREE_STRICT is disabled.")
         return 0
 
-    return 0
+    return 1
 
 
 if __name__ == "__main__":
