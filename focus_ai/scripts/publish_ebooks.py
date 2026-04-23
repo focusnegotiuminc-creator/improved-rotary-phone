@@ -205,7 +205,7 @@ def wrap_page(title: str, hero_html: str, body_html: str) -> str:
 
 def safe_write_text(path: Path, contents: str) -> None:
     if path.exists():
-        os.chmod(path, stat.S_IWRITE)
+        os.chmod(path, 0o644)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(contents, encoding="utf-8")
 
