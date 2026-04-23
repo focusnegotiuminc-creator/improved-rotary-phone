@@ -1,0 +1,457 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Focus AI Model Orchestra</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <style>
+      .orchestra-shell {
+        width: min(1440px, 94vw);
+        margin: 0 auto;
+        padding: clamp(1rem, 3vw, 2rem) 0 3rem;
+        display: grid;
+        gap: 1rem;
+      }
+
+      .orchestra-hero,
+      .orchestra-card,
+      .provider-card {
+        border: 1px solid rgba(129, 201, 255, 0.2);
+        border-radius: 28px;
+        background: linear-gradient(155deg, rgba(9, 18, 36, 0.84), rgba(14, 29, 56, 0.74));
+        box-shadow: var(--shadow);
+      }
+
+      .orchestra-hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+        gap: 1rem;
+        padding: clamp(1.3rem, 3vw, 2.2rem);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .orchestra-hero::before {
+        content: "";
+        position: absolute;
+        inset: auto -10% 68% auto;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(242, 201, 109, 0.18), transparent 68%);
+        pointer-events: none;
+      }
+
+      .hero-grid,
+      .provider-grid,
+      .system-grid,
+      .output-grid {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .provider-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .system-grid,
+      .output-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .orchestra-card,
+      .provider-card {
+        padding: 1.1rem;
+      }
+
+      .hero-grid,
+      .orchestra-card,
+      .provider-card,
+      .panel-head,
+      .lane-list li,
+      .orchestra-output {
+        min-width: 0;
+      }
+
+      h1,
+      h2,
+      p,
+      .provider-chip,
+      .lane-list strong,
+      label span,
+      .orchestra-output {
+        overflow-wrap: anywhere;
+      }
+
+      .provider-card {
+        cursor: pointer;
+        transition: transform 180ms ease, border-color 180ms ease, filter 180ms ease;
+      }
+
+      .provider-card:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.05);
+      }
+
+      .provider-card.active {
+        border-color: rgba(242, 201, 109, 0.42);
+        background: linear-gradient(155deg, rgba(18, 28, 48, 0.94), rgba(20, 35, 62, 0.82));
+      }
+
+      .provider-chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 32px;
+        padding: 0.24rem 0.7rem;
+        border-radius: 999px;
+        border: 1px solid rgba(129, 201, 255, 0.18);
+        background: rgba(6, 12, 24, 0.56);
+        color: #ddeaff;
+        font-size: 0.82rem;
+      }
+
+      .control-stack {
+        display: grid;
+        gap: 0.95rem;
+      }
+
+      .control-stack textarea,
+      .control-stack input,
+      .control-stack select {
+        width: 100%;
+        margin-top: 0.45rem;
+        padding: 0.9rem 0.95rem;
+        border-radius: 18px;
+        border: 1px solid rgba(129, 201, 255, 0.22);
+        background: rgba(5, 12, 24, 0.74);
+        color: var(--text);
+        font: inherit;
+      }
+
+      .control-stack textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .lane-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .lane-list li {
+        border-radius: 20px;
+        border: 1px solid rgba(129, 201, 255, 0.12);
+        background: rgba(6, 12, 24, 0.56);
+        padding: 0.9rem;
+      }
+
+      .lane-list strong {
+        display: block;
+        color: #fff0c5;
+      }
+
+      .safety-note {
+        border-left: 3px solid rgba(242, 201, 109, 0.42);
+        padding-left: 0.9rem;
+      }
+
+      .orchestra-output {
+        margin: 0;
+        min-height: 460px;
+        padding: 1rem;
+        border-radius: 22px;
+        border: 1px solid rgba(129, 201, 255, 0.16);
+        background: rgba(4, 10, 22, 0.92);
+        color: #edf4ff;
+        font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+        font-size: 0.92rem;
+        line-height: 1.62;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .orchestra-orbit {
+        min-height: 320px;
+        border-radius: 26px;
+        position: relative;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at center, rgba(242, 201, 109, 0.18), transparent 34%),
+          linear-gradient(145deg, rgba(7, 15, 29, 0.92), rgba(10, 20, 38, 0.86));
+      }
+
+      .orchestra-orbit::before,
+      .orchestra-orbit::after {
+        content: "";
+        position: absolute;
+        inset: 12%;
+        border-radius: 50%;
+        border: 1px solid rgba(242, 201, 109, 0.28);
+        animation: orbitSpin 18s linear infinite;
+      }
+
+      .orchestra-orbit::after {
+        inset: 24%;
+        border-color: rgba(129, 201, 255, 0.3);
+        animation-direction: reverse;
+        animation-duration: 11s;
+      }
+
+      .orchestra-core {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 108px;
+        height: 108px;
+        translate: -50% -50%;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(242, 201, 109, 0.96), rgba(255, 159, 109, 0.4) 46%, rgba(129, 201, 255, 0.08) 74%, transparent 78%);
+        box-shadow: 0 0 48px rgba(242, 201, 109, 0.34);
+        animation: pulseCore 6s ease-in-out infinite;
+      }
+
+      .orbit-node {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: rgba(129, 201, 255, 0.95);
+        box-shadow: 0 0 16px rgba(129, 201, 255, 0.55);
+      }
+
+      .node-openai { left: 50%; top: 10%; translate: -50% 0; }
+      .node-anthropic { right: 12%; top: 48%; translate: 0 -50%; }
+      .node-local { left: 50%; bottom: 10%; translate: -50% 0; }
+      .node-memory { left: 12%; top: 48%; translate: 0 -50%; }
+
+      @keyframes orbitSpin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+
+      @keyframes pulseCore {
+        0%,
+        100% {
+          transform: scale(0.96);
+          opacity: 0.86;
+        }
+        50% {
+          transform: scale(1.06);
+          opacity: 1;
+        }
+      }
+
+      @media (max-width: 1180px) {
+        .orchestra-hero,
+        .provider-grid,
+        .system-grid,
+        .output-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .orchestra-shell {
+          width: calc(100vw - 1rem);
+        }
+
+        .orchestra-hero,
+        .orchestra-card,
+        .provider-card {
+          padding: 1rem;
+        }
+
+        .hero-actions,
+        .hero-metrics {
+          flex-direction: column;
+        }
+
+        .hero-actions .action-link,
+        .hero-metrics span {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ambient-field" aria-hidden="true"></div>
+    <main class="orchestra-shell">
+      <section class="orchestra-hero">
+        <div class="hero-grid">
+          <p class="eyebrow">Focus AI Model Orchestra</p>
+          <h1>Route multiple model providers through one deliberate operator surface.</h1>
+          <p class="lede">
+            This console is the start of the unified AI engine UI: one place to plan how OpenAI,
+            Anthropic, local workers, memory, and publishing lanes should work together without
+            collapsing into an unsafe black box.
+          </p>
+          <div class="hero-actions">
+            <a class="action-link primary" href="./index.html">Return to Eye of Focus</a>
+            <a class="action-link" href="../machine.html">Open Prompt Studio</a>
+            <a class="action-link" href="../services.html">See Service Routes</a>
+          </div>
+          <div class="hero-metrics">
+            <span>Provider-aware routing</span>
+            <span>Memory and publishing lanes</span>
+            <span>Admin-controlled policy profiles</span>
+          </div>
+          <p class="safety-note">
+            This UI is designed for high-capability orchestration with explicit admin control and
+            auditability. It is not intended as an unbounded or no-guardrails surface.
+          </p>
+        </div>
+        <div class="orchestra-orbit" aria-hidden="true">
+          <div class="orchestra-core"></div>
+          <span class="orbit-node node-openai"></span>
+          <span class="orbit-node node-anthropic"></span>
+          <span class="orbit-node node-local"></span>
+          <span class="orbit-node node-memory"></span>
+        </div>
+      </section>
+
+      <section class="provider-grid">
+        <article class="provider-card active" data-provider="openai">
+          <p class="eyebrow">Provider lane</p>
+          <h2>OpenAI</h2>
+          <p>Use for core generation, code reasoning, prompt compilation, and workflow packaging.</p>
+          <span class="provider-chip">Primary orchestration lane</span>
+        </article>
+        <article class="provider-card active" data-provider="anthropic">
+          <p class="eyebrow">Provider lane</p>
+          <h2>Anthropic</h2>
+          <p>Use for long-context synthesis, policy-aware review, and second-opinion drafting.</p>
+          <span class="provider-chip">Secondary reasoning lane</span>
+        </article>
+        <article class="provider-card active" data-provider="local">
+          <p class="eyebrow">Execution lane</p>
+          <h2>Local Workers</h2>
+          <p>Reserve for deterministic transforms, offline tasks, parsing, and bounded automations.</p>
+          <span class="provider-chip">On-device utilities</span>
+        </article>
+        <article class="provider-card active" data-provider="memory">
+          <p class="eyebrow">Continuity lane</p>
+          <h2>Memory Fabric</h2>
+          <p>Carry forward context, task history, asset references, and approved operator decisions.</p>
+          <span class="provider-chip">Persistence + recall</span>
+        </article>
+      </section>
+
+      <section class="system-grid">
+        <section class="orchestra-card">
+          <div class="panel-head">
+            <p class="eyebrow">Mission Router</p>
+            <h2>Compose the provider mesh for the next session.</h2>
+            <p class="panel-copy">
+              Choose the workload, tune the control profile, and decide which providers stay active.
+            </p>
+          </div>
+          <div class="control-stack">
+            <label>
+              <span>Mission</span>
+              <textarea id="mesh-mission" placeholder="Describe the orchestration goal for this session."></textarea>
+            </label>
+            <label>
+              <span>Primary Workload</span>
+              <select id="mesh-workload">
+                <option value="Code generation and debugging">Code generation and debugging</option>
+                <option value="Research and synthesis">Research and synthesis</option>
+                <option value="Product and storefront execution">Product and storefront execution</option>
+                <option value="Content publishing and book operations">Content publishing and book operations</option>
+                <option value="Operations and automation mapping">Operations and automation mapping</option>
+              </select>
+            </label>
+            <label>
+              <span>Policy Profile</span>
+              <select id="mesh-policy">
+                <option value="Balanced admin control">Balanced admin control</option>
+                <option value="Research heavy">Research heavy</option>
+                <option value="Build heavy">Build heavy</option>
+                <option value="Publishing heavy">Publishing heavy</option>
+              </select>
+            </label>
+            <label>
+              <span>Requested Providers</span>
+              <input id="mesh-providers" type="text" value="OpenAI, Anthropic, Local Workers, Memory Fabric" />
+            </label>
+          </div>
+          <div class="button-row">
+            <button id="mesh-generate" type="button">Generate Routing Plan</button>
+            <button id="mesh-copy" class="secondary" type="button">Copy Plan</button>
+          </div>
+        </section>
+
+        <section class="orchestra-card">
+          <div class="panel-head">
+            <p class="eyebrow">Routing Lanes</p>
+            <h2>Default path for the combined engine UI.</h2>
+          </div>
+          <ol class="lane-list" id="mesh-lanes">
+            <li>
+              <strong>Lane 1 · Intake and task normalization</strong>
+              OpenAI prepares the first structured brief and labels the work by surface and urgency.
+            </li>
+            <li>
+              <strong>Lane 2 · Long-context review</strong>
+              Anthropic reviews the brief for coverage, missing context, and risk framing.
+            </li>
+            <li>
+              <strong>Lane 3 · Local execution</strong>
+              Local workers handle deterministic transforms, parsing, and file outputs.
+            </li>
+            <li>
+              <strong>Lane 4 · Memory update and publish path</strong>
+              The continuity layer captures decisions, artifacts, and next actions for the next run.
+            </li>
+          </ol>
+        </section>
+      </section>
+
+      <section class="output-grid">
+        <section class="orchestra-card">
+          <div class="panel-head">
+            <p class="eyebrow">Generated orchestration plan</p>
+            <h2>Use this as the first draft of the combined engine control logic.</h2>
+          </div>
+          <div class="session-summary" id="mesh-summary"></div>
+          <pre id="mesh-output" class="orchestra-output">Generate the routing plan to populate this panel.</pre>
+        </section>
+        <section class="orchestra-card">
+          <div class="panel-head">
+            <p class="eyebrow">Implementation notes</p>
+            <h2>Initial UI scope for the combined engine build.</h2>
+          </div>
+          <ol class="lane-list" id="mesh-features">
+            <li>
+              <strong>Provider registry</strong>
+              A configurable registry for OpenAI, Anthropic, local runners, and memory adapters.
+            </li>
+            <li>
+              <strong>Router policies</strong>
+              Explicit profiles that decide who handles synthesis, code, verification, and publishing.
+            </li>
+            <li>
+              <strong>Session state</strong>
+              A state model that preserves mission, provider assignments, artifacts, and handoff notes.
+            </li>
+            <li>
+              <strong>Admin controls</strong>
+              Toggleable permissions, execution boundaries, audit visibility, and fail-safe stops.
+            </li>
+          </ol>
+        </section>
+      </section>
+    </main>
+
+    <script src="./orchestra.js"></script>
+  </body>
+</html>
