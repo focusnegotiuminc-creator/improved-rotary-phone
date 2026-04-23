@@ -1,6 +1,6 @@
 # Focus Master AI Master Manuscript
 
-- Generated: 2026-04-23T19:34:56.095884+00:00
+- Generated: 2026-03-27T06:38:26.080856+00:00
 - Source: focus_ai/ebooks/*.md
 
 ## Combined Content

@@ -1,10 +1,10 @@
-﻿Subject: Update and Contact Number
+Subject: Update and Contact Number
 
 Hi Tina,
 
 I tried to call on Friday and left a voicemail. I also lost the ability to access my emails for about three days after I dropped my phone from around ten feet while doing a side job. The phone was already malfunctioning, and during the replacement process my temporary number was removed from the temporary device, moved back to my original number, and then my number had to be changed.
 
-My current number is (217) 257-6222.
+My current number is 2172576222.
 
 I have been in contact with Eric Sutter, who is now my new probation officer. He had to reschedule my appointment and told me he would be contacting me today to set a new date. Since we last spoke, I have also seen Chris Flynn.
 
@@ -17,5 +17,4 @@ Please let me know if you need anything else from me.
 Thank you,
 
 Reginald Hilton Jr.
-
 

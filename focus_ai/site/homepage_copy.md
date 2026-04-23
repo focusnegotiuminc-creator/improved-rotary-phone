@@ -9,7 +9,7 @@ Focus Corp acts as the front door for three operating companies: Focus Records L
 
 ### Contact
 Primary company contact: **Alexis Rogers**  
-Call or text: **(217) 257-6222**
+Call us: **2172576222**
 
 ## Company Routing
 - **Focus Records LLC:** creative direction, media systems, artist support, branded rollout strategy.

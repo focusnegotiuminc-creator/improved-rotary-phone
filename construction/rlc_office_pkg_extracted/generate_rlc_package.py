@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import csv
 import json
@@ -846,7 +846,7 @@ def main() -> None:
         CITY OF QUINCY, ILLINOIS - PERMIT APPLICATION DRAFT (NOT OFFICIAL)
         Applicant/Contractor: Royal Lee Construction Solutions LLC
         Address: 3930 New London Gravel Rd, Hannibal, MO 63401
-        Phone: (217) 257-6222
+        Phone: 217-257-6222
         Email: rlcsolutions@proton.me
         License: Hannibal, MO General Contracting License #7411
         MO Registration: LC014481759
@@ -1292,4 +1292,3 @@ def build_blueprint_floor_pdf(path: Path, floor: str) -> None:
 
 if __name__ == "__main__":
     main()
-

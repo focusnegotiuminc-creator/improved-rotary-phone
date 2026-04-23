@@ -78,13 +78,6 @@ def _format_currency(value: float) -> str:
     return f"${value:,.2f}"
 
 
-def _format_phone_display(value: str) -> str:
-    digits = "".join(char for char in value if char.isdigit())
-    if len(digits) == 10:
-        return f"({digits[:3]}) {digits[3:6]}-{digits[6:]}"
-    return value
-
-
 def _ebook_count() -> int:
     return len(list((ROOT / "ebooks").glob("*.md")))
 
@@ -339,10 +332,6 @@ p, li { color: var(--muted); line-height: 1.65; }
 .status-chip { display: inline-flex; align-items: center; min-height: 28px; padding: 0.25rem 0.75rem; border-radius: 999px; background: rgba(62,228,214,0.12); color: var(--teal); font-size: 0.82rem; }
 .metric-strip { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.9rem; }
 .metric-strip span { display: inline-flex; align-items: center; min-height: 34px; padding: 0.25rem 0.8rem; border-radius: 999px; border: 1px solid rgba(124, 200, 255, 0.24); background: rgba(8, 15, 31, 0.5); color: var(--ink); font-size: 0.9rem; }
-.section-copy { max-width: 66ch; margin: 0.55rem 0 0; }
-.panel-stack { display: grid; gap: 1rem; }
-.story-note { margin-top: 0.85rem; padding-left: 1rem; border-left: 3px solid rgba(242, 201, 109, 0.4); color: var(--ink); }
-.support-list li + li { margin-top: 0.32rem; }
 .studio-layout,.drawing-grid { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .studio-panel { min-height: 100%; }
 .studio-label { display: block; color: var(--ink); font-weight: 700; }
@@ -398,8 +387,6 @@ def render_square_panel(catalog: dict) -> str:
 
 def build_pages(catalog: dict) -> dict[str, str]:
     contact = catalog["portal"]["primary_contact"]
-    contact_phone_href = "".join(char for char in contact["phone"] if char.isdigit())
-    contact_phone_display = contact.get("phone_display") or _format_phone_display(contact["phone"])
     ebook_count = _ebook_count()
     rlc_summary = _rlc_bid_summary()
     rlc_checklist = _rlc_checklist_items()
@@ -407,35 +394,16 @@ def build_pages(catalog: dict) -> dict[str, str]:
 <section class="hero-panel">
   <div class="poster">
     <p class="eyebrow">{catalog['portal']['site_name']}</p>
-    <h1>One operating system for revenue, sacred design, mobile delivery, and AI execution.</h1>
+    <h1>One operating system for revenue, design, mobile, and business automation.</h1>
     <p>{catalog['portal']['visual_thesis']}</p>
-    <p>Focus AI routes customers through Focus Records LLC, Royal Lee Construction Solutions LLC, and Focus Negotium Inc with one shared offer ladder, one shared routing contact, and one assistant control plane.</p>
-    <div class="metric-strip">
-      <span>Routing contact {contact['name']}</span>
-      <span>Call or text {contact_phone_display}</span>
-      <span>3 companies, 1 machine</span>
-    </div>
+    <p>Focus AI routes customers through Focus Records LLC, Royal Lee Construction Solutions LLC, and Focus Negotium Inc with one shared offer ladder and one shared assistant control plane.</p>
     <div class="button-row">
       <a class="btn" href="products.html">Enter the revenue ladder</a>
-      <a class="btn secondary" href="tel:{contact_phone_href}">Call {contact_phone_display}</a>
       <a class="btn secondary" href="business_os.html">See the full business OS</a>
       <a class="btn secondary" href="booking.html">Book with {contact['name']}</a>
     </div>
   </div>
-  <section class="feature-panel signal-panel">
-    <p class="eyebrow">Primary routing</p>
-    <h2>{contact['name']}</h2>
-    <p>Use the same routing line for services, product questions, construction scope reviews, and AI engine handoff planning.</p>
-    <div class="button-row">
-      <a class="btn secondary" href="tel:{contact_phone_href}">Call {contact_phone_display}</a>
-      <a class="btn secondary" href="booking.html">Open booking</a>
-    </div>
-    <ul class="kicker-list support-list">
-      <li>Creative planning and release support.</li>
-      <li>Sacred-geometry design and build strategy.</li>
-      <li>Automation, monetization, and premium offer routing.</li>
-    </ul>
-  </section>
+  <div class="orbital-graphic" aria-hidden="true"></div>
 </section>
 """.strip()
 
@@ -444,11 +412,36 @@ def build_pages(catalog: dict) -> dict[str, str]:
 {head_html("TheFocusCorp.com")}
 <body><main>
   {nav_html()}
-  {hero}
+  <section class="hero-panel">
+    <div class="poster">
+      <p class="eyebrow">TheFocusCorp.com</p>
+      <h1>One luminous storefront for the business ladder, the prompt machine, and the daily command center.</h1>
+      <p>{catalog['portal']['visual_thesis']}</p>
+      <p>Focus Records LLC, Royal Lee Construction Solutions LLC, and Focus Negotium Inc now route through one sharper public experience with books, services, prompt tooling, and client-facing package surfaces in one place.</p>
+      <div class="metric-strip">
+        <span>{ebook_count} published books</span>
+        <span>3 operating companies</span>
+        <span>1 no-key prompt studio</span>
+      </div>
+      <div class="button-row">
+        <a class="btn" href="products.html">Shop the live offers</a>
+        <a class="btn secondary" href="machine.html">Open Master Prompt Studio</a>
+        <a class="btn secondary" href="command/">Enter The Eye of Focus</a>
+      </div>
+    </div>
+    <section class="feature-panel">
+      <p class="eyebrow">Fresh live layout</p>
+      <h2>Public commerce, command workflow, and client delivery now feel like one machine instead of scattered projects.</h2>
+      <ul class="kicker-list">
+        <li>Use the storefront to sell books, blueprint packs, and the flagship business engine.</li>
+        <li>Use the browser-side prompt studio to turn one rough task into a stronger execution packet.</li>
+        <li>Use The Eye of Focus to create a daily 11-stage command brief before work starts.</li>
+      </ul>
+    </section>
+  </section>
   <section class="section-block">
-    <p class="eyebrow">Root storefront</p>
-    <h2>The root homepage now carries the same sacred storefront language as the rest of the static launch.</h2>
-    <p class="section-copy">TheFocusCorp.com now opens with the same visual system, contact routing, and offer hierarchy used across the public launch pages, so visitors are not stepping from an old WordPress shell into a different product world.</p>
+    <p class="eyebrow">Three apps, one machine</p>
+    <h2>The front end now routes between commerce, prompts, and execution without breaking the story.</h2>
     <div class="grid-three">{render_system_cards(catalog)}</div>
   </section>
   <section class="section-block">
@@ -463,22 +456,15 @@ def build_pages(catalog: dict) -> dict[str, str]:
         </div>
       </section>
       <section class="feature-panel">
-        <p class="eyebrow">Primary routing</p>
-        <h2>One direct line handles products, services, and engine handoff planning.</h2>
-        <p>Call or text {contact['name']} at {contact_phone_display} to route service questions, book strategy time, or move straight into the premium offer ladder.</p>
+        <p class="eyebrow">Published library</p>
+        <h2>The book catalog is live, styled, and connected to the product ladder.</h2>
+        <p>The library now behaves like a real storefront surface instead of a utility export, while still preserving fast reading pages.</p>
         <div class="button-row">
-          <a class="btn" href="tel:{contact_phone_href}">Call {contact_phone_display}</a>
-          <a class="btn secondary" href="booking.html">Open booking</a>
+          <a class="btn" href="ebooks/index.html">Browse the library</a>
+          <a class="btn secondary" href="{catalog['offers'][0]['checkout_url']}">{catalog['offers'][0]['cta_label']}</a>
         </div>
-        <p class="story-note">Routing stays human-first while the automation layers prepare prompts, content, checkout surfaces, and delivery-ready assets behind the scenes.</p>
       </section>
     </div>
-  </section>
-  <section class="section-block">
-    <p class="eyebrow">Three companies, one design core</p>
-    <h2>Each company keeps its own promise while sharing one visual language and one conversion path.</h2>
-    <p class="section-copy">This keeps the storefront coherent for visitors while preserving the depth needed for media, construction strategy, and monetization work.</p>
-    <div class="grid-three">{render_company_cards(catalog)}</div>
   </section>
   <section class="section-block"><div class="track-grid">{render_track_cards(catalog)}</div></section>
 </main></body></html>
@@ -497,12 +483,10 @@ def build_pages(catalog: dict) -> dict[str, str]:
       <div class="button-row">
         <a class="btn" href="{catalog['offers'][0]['checkout_url']}">{catalog['offers'][0]['cta_label']}</a>
         <a class="btn secondary" href="ebooks/index.html">Browse the library</a>
-        <a class="btn secondary" href="tel:{contact_phone_href}">Call {contact_phone_display}</a>
       </div>
     </div>
     <section class="feature-panel">
       <p class="eyebrow">Offer ladder</p>
-      <p class="small">If you want a guided route instead of a direct checkout, call or text {contact['name']} at {contact_phone_display}.</p>
       <ul class="kicker-list">
         <li>$49 bundle for fast entry and proof of value.</li>
         <li>$299 blueprint pack for practical implementation depth.</li>
@@ -657,14 +641,8 @@ def build_pages(catalog: dict) -> dict[str, str]:
       </div>
     </section>
     <section class="feature-panel">
-      <p class="eyebrow">Human routing stays visible</p>
-      <h2>The launch page keeps one direct contact line in view while the engine stack handles the heavier lift.</h2>
-      <p>Call or text {contact['name']} at {contact_phone_display} if you want the fastest path into booking, construction review, or the premium system.</p>
-      <div class="button-row">
-        <a class="btn secondary" href="tel:{contact_phone_href}">Call {contact_phone_display}</a>
-        <a class="btn secondary" href="booking.html">Open booking</a>
-      </div>
-      <p class="small">Automation stops before legal, payroll, or banking execution.</p>
+      <p class="eyebrow">Readiness-only controls</p>
+      <h2>Automation stops before legal, payroll, or banking execution.</h2>
       <ul class="kicker-list">
         <li>High-risk workflows create readiness packs instead of taking final action.</li>
         <li>Low-risk workflows stay eligible for content, site, and campaign automation.</li>
@@ -684,14 +662,8 @@ def build_pages(catalog: dict) -> dict[str, str]:
       <p class="eyebrow">Full-precedence operating model</p>
       <h1>Equal priority for revenue, design system, mobile shipping, and back-office automation.</h1>
       <p>The public portal lives in <strong>focus_ai</strong>. The internal assistant control plane lives in <strong>FOCUS_MASTER_AI</strong>. They share one catalog, one workflow map, and one operator-safe readiness policy.</p>
-      <div class="metric-strip">
-        <span>Primary routing {contact_phone_display}</span>
-        <span>Shared contact {contact['name']}</span>
-        <span>Readiness-first automation</span>
-      </div>
       <div class="button-row">
         <a class="btn" href="products.html">Go to offers</a>
-        <a class="btn secondary" href="tel:{contact_phone_href}">Call {contact_phone_display}</a>
         <a class="btn secondary" href="data/business_os.json">View shared data</a>
       </div>
     </div>
@@ -729,12 +701,8 @@ def build_pages(catalog: dict) -> dict[str, str]:
       <p class="eyebrow">Primary routing</p>
       <h1>Book with {contact['name']}</h1>
       <p>{contact['name']} is the central routing contact for Focus Records LLC, Royal Lee Construction Solutions LLC, and Focus Negotium Inc.</p>
-      <div class="metric-strip">
-        <span>Call or text {contact_phone_display}</span>
-        <span>Creative, construction, and AI routing</span>
-      </div>
       <div class="button-row">
-        <a class="btn" href="tel:{contact_phone_href}">Call {contact_phone_display}</a>
+        <a class="btn" href="tel:{contact['phone']}">Call {contact['phone']}</a>
         <a class="btn secondary" href="products.html">Review offers first</a>
       </div>
     </div>
@@ -761,21 +729,11 @@ def build_pages(catalog: dict) -> dict[str, str]:
       <h1>Choose the right company path without losing the shared system underneath.</h1>
       <p>Each company has a distinct customer promise while still benefiting from the same design language, offer structure, and assistant workflow foundation.</p>
       <div class="button-row">
-        <a class="btn" href="tel:{contact_phone_href}">Call {contact_phone_display}</a>
         <a class="btn" href="booking.html">Route me through {contact['name']}</a>
         <a class="btn secondary" href="business_os.html">See the operating system</a>
       </div>
     </div>
-    <section class="feature-panel">
-      <p class="eyebrow">Shared contact line</p>
-      <h2>{contact['name']}</h2>
-      <p>Call or text {contact_phone_display} for the fastest route into media support, sacred-geometry construction planning, or business-engine implementation.</p>
-      <ul class="kicker-list support-list">
-        <li>Creative planning and release support.</li>
-        <li>Construction strategy and package review.</li>
-        <li>Automation, prompt systems, and monetization design.</li>
-      </ul>
-    </section>
+    <div class="orbital-graphic" aria-hidden="true"></div>
   </section>
   <section class="section-block"><div class="grid-three">{render_company_cards(catalog)}</div></section>
 </main></body></html>
