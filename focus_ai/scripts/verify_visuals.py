@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "site"
+CONFIG = ROOT / "config" / "business_os.json"
 
 REQUIRED_FILES = [
     SITE / "homepage_copy.md",
@@ -11,10 +13,22 @@ REQUIRED_FILES = [
     SITE / "visual_preview.css",
 ]
 
+CATALOG = json.loads(CONFIG.read_text(encoding="utf-8"))
+CONTACT = CATALOG["portal"]["primary_contact"]
+PHONE_RAW = CONTACT["phone"]
+PHONE_DISPLAY = CONTACT.get("phone_display", PHONE_RAW)
+CONTACT_NAME = CONTACT["name"]
+
 REQUIRED_TOKENS = {
-    SITE / "homepage_copy.md": ["2172576222", "vertical luminous silhouette", "Alexis Rogers"],
-    SITE / "visual_preview.html": ["2172576222", "Abstract vertical alignment energy visual", "Alexis Rogers"],
-    SITE / "change_log.md": ["2172576222", "Alexis Rogers"],
+    SITE / "homepage_copy.md": ["vertical luminous silhouette", CONTACT_NAME],
+    SITE / "visual_preview.html": ["Abstract vertical alignment energy visual", CONTACT_NAME],
+    SITE / "change_log.md": [CONTACT_NAME],
+}
+
+PHONE_TOKEN_FILES = {
+    SITE / "homepage_copy.md",
+    SITE / "visual_preview.html",
+    SITE / "change_log.md",
 }
 
 
@@ -32,6 +46,10 @@ def main() -> int:
         for token in tokens:
             if token not in text:
                 errors.append(f"{file}: missing token '{token}'")
+        if file in PHONE_TOKEN_FILES and PHONE_RAW not in text and PHONE_DISPLAY not in text:
+            errors.append(
+                f"{file}: missing phone token '{PHONE_RAW}' or display token '{PHONE_DISPLAY}'"
+            )
 
     if errors:
         print("Verification errors:")

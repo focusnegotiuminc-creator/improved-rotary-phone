@@ -40,7 +40,7 @@
         <p class="contact-label">Primary routing contact</p>
         <h2>Alexis Rogers</h2>
         <p>Booking, service routing, and first-response coordination for the portal.</p>
-        <p><a href="tel:2172576222">2172576222</a></p>
+        <p><a href="tel:2172576222">(217) 257-6222</a></p>
       </div>
     </div>
   </section>

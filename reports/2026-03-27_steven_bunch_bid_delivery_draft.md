@@ -1,4 +1,4 @@
-# Steven Bunch Bid Delivery Draft
+﻿# Steven Bunch Bid Delivery Draft
 
 Prepared: 2026-03-27
 
@@ -55,7 +55,7 @@ Thank you,
 
 Reginald Hilton Jr.
 Royal Lee Construction Solutions LLC
-217-257-6222
+(217) 257-6222
 rlcsolutions@proton.me
 
 ## Approval Checklist
@@ -64,3 +64,4 @@ rlcsolutions@proton.me
 - confirm current total bid
 - confirm whether to include all blueprint sheets or owner packet only
 - confirm whether Steven should receive text only, email only, or both
+
