@@ -10,11 +10,5 @@
    Checkout: https://buy.stripe.com/4gMbJ0aEd97Y9fT2AA5os04
 
 ## Launch Notes
-- The public site generator now points to the live Stripe checkout links above.
-<<<<<<< HEAD
-- Current local InfinityFree login attempts against `ftpupload.net` fail, so live deployment still depends on corrected hosting credentials or a working repo-side deploy secret.
-- The active public bundle includes product checkout, a funnel path, and direct offer links.
-=======
 - Current local hosting credentials for InfinityFree did not authenticate on 2026-03-27, so live deployment still needs refreshed hosting credentials or a different deploy path.
-- The active site bundle includes `offers.html`, a full funnel path, and direct checkout links for each offer.
->>>>>>> aabaebe29afc010a53b5d42952f7eda4d93cbd29
+- The active public bundle includes product checkout, a funnel path, and direct offer links.

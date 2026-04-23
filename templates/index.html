@@ -1,12 +1,45 @@
 {% extends "base.html" %}
 {% block content %}
 <section class="hero reveal">
-  <p class="kicker">Standard Full Mode</p>
+  <p class="kicker">AI Master Machine</p>
   <h1>Akashic Engine Command Nexus</h1>
   <p class="hero-copy">
-    Launch each AI engine as its own Replit app surface, orchestrate full workflows, and trigger
-    deployment hooks from a unified sacred geometry console.
+    Feed the machine one rough task and it expands that input into a high-quality master prompt,
+    routes the right engines, prepares automation handoffs, and packages a stronger user result.
   </p>
+</section>
+
+<section class="project-spotlight reveal">
+  <div class="spotlight-copy">
+    <p class="kicker">Live Client Package</p>
+    <h2>Royal Lee Construction Solutions - 522 Vermont</h2>
+    <p>
+      Pull the full March 27 bid workflow into one presentation surface with pricing, schematic
+      sheets, takeoff detail, and delivery-ready attachments.
+    </p>
+    <div class="spotlight-actions">
+      <a class="spotlight-link" href="{{ url_for('rlc_bid_package') }}">Open RLC Bid Package</a>
+      <a class="secondary-link" href="{{ url_for('rlc_bid_package') }}#downloads">Go To Downloads</a>
+    </div>
+  </div>
+  <div class="spotlight-metrics">
+    <article>
+      <span>Total Bid</span>
+      <strong>{{ rlc_preview.total_bid_display }}</strong>
+    </article>
+    <article>
+      <span>Materials</span>
+      <strong>{{ rlc_preview.materials_total_display }}</strong>
+    </article>
+    <article>
+      <span>Takeoff Lines</span>
+      <strong>{{ rlc_preview.line_item_count }}</strong>
+    </article>
+    <article>
+      <span>Downloads Ready</span>
+      <strong>{{ rlc_preview.download_count }}</strong>
+    </article>
+  </div>
 </section>
 
 <section class="stats reveal">
@@ -15,25 +48,44 @@
     <p>Engine Apps Ready</p>
   </article>
   <article class="stat-card">
-    <h2>Full</h2>
-    <p>Orchestration Mode</p>
+    <h2>{{ system_status.ready_count }}/{{ system_status.total }}</h2>
+    <p>Connectors Ready</p>
   </article>
   <article class="stat-card">
-    <h2>Replit</h2>
-    <p>Deployment Hook Layer</p>
+    <h2>AI Twin</h2>
+    <p>Video Engine Online</p>
   </article>
+</section>
+
+<section class="connector-wall reveal">
+  <div class="panel-head">
+    <h2>Connector Status</h2>
+    <p>See which remotes, APIs, and automations are configured before you launch the machine.</p>
+  </div>
+  <div class="connector-grid">
+    {% for connector in system_status["items"] %}
+    <article class="connector-card {{ connector.tone }}">
+      <span class="connector-label">{{ connector.label }}</span>
+      <strong>{{ connector.state | upper }}</strong>
+      <p>{{ connector.message }}</p>
+    </article>
+    {% endfor %}
+  </div>
 </section>
 
 <section class="panel reveal" id="full-mode">
   <div class="panel-head">
-    <h2>Run Full Mode</h2>
-    <p>Execute the complete multi-engine pipeline with one command.</p>
+    <h2>Run AI Master Machine</h2>
+    <p>
+      Turn a raw task into a machine-grade prompt packet, route the strongest engine chain, and
+      prepare automation-ready outputs in one run.
+    </p>
   </div>
-  <form id="full-mode-form" class="task-form" data-endpoint="/api/full-mode/run">
+  <form id="full-mode-form" class="task-form" data-endpoint="/api/master-machine/run">
     <label for="full-mode-task">Command</label>
-    <textarea id="full-mode-task" name="task" rows="3">build full automation AI system and deploy architecture</textarea>
+    <textarea id="full-mode-task" name="task" rows="3">take this business task, build the master prompt, run the right engines, add ai twin video prompts, and prepare automation handoffs</textarea>
     <div class="actions">
-      <button type="submit">Run Standard Full Mode</button>
+      <button type="submit">Run AI Master Machine</button>
       <button type="button" class="secondary" id="launch-all-btn">Launch Every Engine</button>
       <button type="button" class="secondary" id="deploy-apps-btn">Deploy Engine Apps</button>
     </div>

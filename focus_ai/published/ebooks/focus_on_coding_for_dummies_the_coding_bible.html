@@ -3,20 +3,120 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Focus On Coding For Dummies The Coding Bible</title>
-  <style>
-    body { font-family: Inter, Arial, sans-serif; margin: 0; background: #0d1023; color: #eef1ff; }
-    main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem; }
-    a { color: #90e4ff; }
-    h1,h2 { color: #ffd882; }
-    p,li { line-height: 1.6; }
-    .nav { margin-bottom: 1.5rem; }
-    .card { background: #151933; border: 1px solid #2b356d; padding: 1rem; border-radius: 12px; }
-  </style>
+  <title>Focus on Coding for Dummies: The Coding Bible</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>:root {
+      --bg-900: #050812;
+      --bg-850: #0a1222;
+      --bg-800: #101a31;
+      --panel: rgba(8, 16, 31, 0.82);
+      --ink: #f6f8ff;
+      --muted: #c1cbe3;
+      --gold: #f2c96d;
+      --sky: #7cc8ff;
+      --ember: #ff9b68;
+      --line: rgba(124, 200, 255, 0.2);
+      --shadow: 0 28px 70px rgba(2, 8, 24, 0.45);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Manrope", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(920px 520px at 14% 8%, rgba(62, 228, 214, 0.14), transparent 60%),
+        radial-gradient(760px 460px at 90% 10%, rgba(242, 201, 109, 0.14), transparent 56%),
+        linear-gradient(160deg, var(--bg-900), var(--bg-850) 50%, var(--bg-800) 100%);
+    }
+    main { max-width: 1080px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+    a { color: var(--sky); text-decoration: none; }
+    h1, h2, h3 { margin: 0; font-family: "Cormorant Garamond", Georgia, serif; color: var(--gold); line-height: 1.05; }
+    p, li { line-height: 1.72; color: var(--muted); }
+    .eyebrow {
+      margin: 0;
+      color: var(--gold);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 0.74rem;
+      font-weight: 700;
+    }
+    .hero, .card, .book-card {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 1.2rem 1.25rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(155deg, rgba(9, 18, 36, 0.84), rgba(15, 30, 58, 0.72));
+      box-shadow: var(--shadow);
+    }
+    .hero {
+      display: grid;
+      gap: 0.85rem;
+    }
+    .cta-row, .meta-row, .catalog-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0.82rem 1.05rem;
+      border-radius: 999px;
+      background: linear-gradient(120deg, var(--gold), #ffd999 52%, var(--ember));
+      color: #1b1420;
+      font-weight: 800;
+    }
+    .btn.secondary {
+      background: rgba(6, 13, 26, 0.54);
+      color: var(--ink);
+      border: 1px solid rgba(124, 200, 255, 0.22);
+    }
+    .meta-row span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0.28rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(124, 200, 255, 0.18);
+      background: rgba(6, 13, 26, 0.58);
+      font-size: 0.88rem;
+    }
+    .price { color: #fff0c1; }
+    article.card h1 { margin-top: 1rem; }
+    article.card h2, article.card h3 { margin-top: 1.25rem; }
+    @media (max-width: 780px) {
+      .catalog-grid { grid-template-columns: 1fr; }
+      .cta-row, .meta-row { flex-direction: column; }
+      .btn { width: 100%; }
+    }</style>
 </head>
 <body>
   <main>
-    <p class="nav"><a href="index.html">Back to eBook library</a></p>
+    <section class="hero">
+  <p class="eyebrow">Builder mindset</p>
+  <h1>Focus on Coding for Dummies: The Coding Bible</h1>
+  <p>A motivational technical primer for turning scattered ideas into working code, systems, and repeatable execution habits.</p>
+  <div class="meta-row">
+    <span class="price">$14.99</span>
+    <span>Direct route 2172576222</span>
+    <span>Published Focus AI library</span>
+  </div>
+  <div class="cta-row">
+    <a class="btn" href="../books.html">Back to book sales page</a>
+    <a class="btn secondary" href="pdfs/focus_on_coding_for_dummies_the_coding_bible.pdf">Download PDF</a>
+    <a class="btn secondary" href="tel:2172576222">Call 2172576222</a>
+  </div>
+  <p><a href="index.html">Back to eBook library</a> · <a href="../products.html">View live offers</a> · <a href="../index.html">Return to TheFocusCorp.com</a></p>
+</section>
     <article class="card"><h1>Focus on Coding for Dummies / The Coding Bible (Draft)</h1>
 <h2>Beginner Path</h2>
 <ul>

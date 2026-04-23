@@ -1,7 +1,11 @@
 ﻿from __future__ import annotations
 
-from core.memory_manager import MemoryManager
-from integrations.openai_client import call_gpt
+try:
+    from FOCUS_MASTER_AI.core.engine_runtime import run_ai_engine
+    from FOCUS_MASTER_AI.core.memory_manager import MemoryManager
+except ImportError:
+    from core.engine_runtime import run_ai_engine
+    from core.memory_manager import MemoryManager
 
 
 def run(task: str) -> dict:
@@ -16,18 +20,8 @@ def run(task: str) -> dict:
             "output": cached,
         }
 
-    prompt = (
-        "Perform concise research planning for this user request. "
-        "Return a practical summary and next actions.\n\n"
-        f"Task: {task}"
-    )
-    output = call_gpt(prompt)
-    memory.set_research_cache(cache_key, output)
-
-    return {
-        "engine": "research",
-        "status": "completed",
-        "cached": False,
-        "output": output,
-    }
+    result = run_ai_engine("research", task)
+    memory.set_research_cache(cache_key, result["output"])
+    result["cached"] = False
+    return result
 

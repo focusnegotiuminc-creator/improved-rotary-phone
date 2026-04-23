@@ -5,9 +5,15 @@ from typing import Any
 
 import requests
 
+try:
+    from FOCUS_MASTER_AI.core.runtime_config import bootstrap_runtime_env, git_remote_healthcheck
+except ImportError:  # pragma: no cover
+    from core.runtime_config import bootstrap_runtime_env, git_remote_healthcheck
+
 
 class GitHubClient:
     def __init__(self) -> None:
+        bootstrap_runtime_env()
         self.token = os.getenv("GITHUB_TOKEN", "").strip()
         self.repo = os.getenv("GITHUB_REPO", "").strip()
         self.base_url = "https://api.github.com"
@@ -20,11 +26,19 @@ class GitHubClient:
 
     def healthcheck(self) -> dict[str, Any]:
         if not self.token or not self.repo:
+            remote = git_remote_healthcheck()
+            if remote.get("reachable"):
+                return {
+                    "ok": False,
+                    "state": "partial",
+                    "message": f"{remote['message']} Add GITHUB_TOKEN to enable API-driven publish actions.",
+                }
             return {
                 "ok": False,
+                "state": "attention",
                 "message": "Set GITHUB_TOKEN and GITHUB_REPO to enable GitHub integration.",
             }
-        return {"ok": True, "message": f"GitHub configured for repo {self.repo}"}
+        return {"ok": True, "state": "ready", "message": f"GitHub configured for repo {self.repo}"}
 
     def create_issue(self, title: str, body: str) -> dict[str, Any]:
         if not self.token or not self.repo:

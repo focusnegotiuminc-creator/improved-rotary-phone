@@ -1,43 +1,236 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>THE EYE OF FOCUS</title>
+    <title>Focus AI Command Platform | The Eye of Focus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="app">
-      <header>
-        <h1>THE EYE OF FOCUS</h1>
-        <p>Daily personal command center for your 11-Stage AI Engine.</p>
-      </header>
-
-      <section class="panel">
-        <h2>Session Setup</h2>
-        <label>
-          Mission
-          <textarea id="mission" rows="3" placeholder="What is today's primary mission?"></textarea>
-        </label>
-        <label>
-          Outcomes
-          <textarea id="outcomes" rows="3" placeholder="List the outcomes you want."></textarea>
-        </label>
-        <label>
-          Constraints
-          <textarea id="constraints" rows="3" placeholder="Define constraints and boundaries."></textarea>
-        </label>
-        <label>
-          Tasks
-          <textarea id="tasks" rows="3" placeholder="Add concrete tasks for this session."></textarea>
-        </label>
-        <button id="generate">Generate Engine Brief</button>
+    <div class="ambient-field" aria-hidden="true"></div>
+    <main class="platform-shell">
+      <section class="hero-band">
+        <div class="hero-copy">
+          <p class="eyebrow">Focus AI Command Platform</p>
+          <h1>THE EYE OF FOCUS</h1>
+          <p class="lede">
+            Build the clean operator brief before you touch code, launches, design, or delivery.
+            This platform turns rough intent into a structured 11-stage packet you can copy into
+            Codex, ChatGPT, Replit, or your next deployment handoff without losing the story.
+          </p>
+          <div class="hero-actions">
+            <a class="action-link primary" href="../machine.html">Open Master Prompt Studio</a>
+            <a class="action-link" href="../booking.html">Route Through Alexis Rogers</a>
+          </div>
+          <div class="hero-metrics">
+            <span>11-stage engine brief</span>
+            <span>Preset operator modes</span>
+            <span>Book, service, and launch routing</span>
+          </div>
+        </div>
+        <div class="hero-aside">
+          <div class="geometry-lantern" aria-hidden="true"></div>
+          <article class="signal-card">
+            <p class="mini-label">Visual Thesis</p>
+            <h2>Quiet authority, luminous sacred geometry, and execution-first clarity.</h2>
+          </article>
+          <article class="signal-card">
+            <p class="mini-label">Best For</p>
+            <h2>Launch work, coding pushes, storefront updates, publishing, and daily handoff.</h2>
+          </article>
+          <article class="signal-card">
+            <p class="mini-label">Primary Route</p>
+            <h2>Call or text 2172576222 when the session needs a real operator.</h2>
+          </article>
+        </div>
       </section>
 
-      <section class="panel">
-        <h2>11-Stage Engine Output</h2>
-        <pre id="output"></pre>
-        <button id="copy">Copy to Clipboard</button>
+      <section class="workspace-grid">
+        <section class="workspace-panel composer-panel">
+          <div class="panel-head">
+            <p class="eyebrow">Session Composer</p>
+            <h2>Frame the mission before execution starts.</h2>
+            <p class="panel-copy">
+              Pick a preset if it helps, then tune the session details until the brief feels ready
+              to hand off.
+            </p>
+          </div>
+
+          <div class="preset-strip" aria-label="Preset sessions">
+            <button type="button" class="preset-button" data-preset="launch">Launch</button>
+            <button type="button" class="preset-button" data-preset="build">Build</button>
+            <button type="button" class="preset-button" data-preset="storefront">Storefront</button>
+            <button type="button" class="preset-button" data-preset="content">Content</button>
+          </div>
+
+          <div class="input-stack">
+            <label>
+              <span>Mission</span>
+              <textarea
+                id="mission"
+                rows="3"
+                placeholder="What is the mission that matters most in this session?"
+              ></textarea>
+            </label>
+            <label>
+              <span>Outcome Stack</span>
+              <textarea
+                id="outcomes"
+                rows="4"
+                placeholder="List the outcomes you want. One line per target works best."
+              ></textarea>
+            </label>
+            <label>
+              <span>Constraints</span>
+              <textarea
+                id="constraints"
+                rows="3"
+                placeholder="Name the non-negotiables, risk boundaries, and quality standards."
+              ></textarea>
+            </label>
+            <label>
+              <span>Task Cluster</span>
+              <textarea
+                id="tasks"
+                rows="4"
+                placeholder="Add the concrete work items for this session. One line per task is ideal."
+              ></textarea>
+            </label>
+          </div>
+
+          <div class="inline-grid">
+            <label>
+              <span>Focus Lens</span>
+              <select id="lens">
+                <option value="Launch orchestration">Launch orchestration</option>
+                <option value="Engineering execution">Engineering execution</option>
+                <option value="Storefront conversion">Storefront conversion</option>
+                <option value="Content production">Content production</option>
+                <option value="Operations stabilization">Operations stabilization</option>
+              </select>
+            </label>
+            <label>
+              <span>Delivery Surface</span>
+              <input
+                id="surface"
+                type="text"
+                value="Codex + GitHub + live site"
+                placeholder="Where will this brief be executed?"
+              />
+            </label>
+          </div>
+
+          <div class="button-row">
+            <button id="generate">Generate Command Brief</button>
+            <button id="reset" class="secondary" type="button">Reset Session</button>
+          </div>
+        </section>
+
+        <section class="workspace-panel output-panel">
+          <div class="panel-head">
+            <p class="eyebrow">Engine Output</p>
+            <h2>Copy this directly into the next execution environment.</h2>
+          </div>
+          <div class="session-summary" id="session-summary"></div>
+          <pre id="output">Generate the brief to populate the 11-stage packet.</pre>
+          <div class="button-row">
+            <button id="copy" class="secondary" type="button">Copy Brief</button>
+            <button id="download" class="secondary" type="button">Download Markdown</button>
+          </div>
+        </section>
+
+        <aside class="workspace-panel rail-panel">
+          <div class="panel-head">
+            <p class="eyebrow">Live Diagnostics</p>
+            <h2>Session pressure and stage posture.</h2>
+          </div>
+
+          <div class="diagnostic-grid">
+            <article>
+              <span>Mission</span>
+              <strong id="mission-state">Not set</strong>
+            </article>
+            <article>
+              <span>Outcomes</span>
+              <strong id="outcome-count">0</strong>
+            </article>
+            <article>
+              <span>Tasks</span>
+              <strong id="task-count">0</strong>
+            </article>
+            <article>
+              <span>Surface</span>
+              <strong id="surface-state">Not set</strong>
+            </article>
+          </div>
+
+          <div class="rail-copy">
+            The stage order stays fixed so the brief can move from raw intent to verifiable
+            delivery without losing continuity.
+          </div>
+
+          <ol class="stage-list" id="stage-list"></ol>
+        </aside>
+      </section>
+
+      <section class="support-grid">
+        <article class="support-panel">
+          <p class="eyebrow">What This Unlocks</p>
+          <h2>One session can now move from prompt framing to live deployment language.</h2>
+          <p>
+            Use this when you want one coherent brief to span coding, design, publishing, testing,
+            and operator handoff instead of re-explaining the same work in every tool.
+          </p>
+        </article>
+        <article class="support-panel">
+          <p class="eyebrow">Carry Forward</p>
+          <h2>Save the strongest decisions, not just the final output.</h2>
+          <p>
+            The brief is designed to preserve mission, constraints, and next actions so tomorrow's
+            session starts with momentum instead of reconstruction.
+          </p>
+        </article>
+        <article class="support-panel">
+          <p class="eyebrow">Routing Note</p>
+          <h2>Need human help instead of another tool hop?</h2>
+          <p>
+            Use the booking route on the main site or call the Focus line directly to turn a stuck
+            session into a guided execution plan.
+          </p>
+        </article>
+      </section>
+
+      <section class="support-grid">
+        <article class="support-panel">
+          <p class="eyebrow">Storefront Link</p>
+          <h2>The command layer now sits inside the same sacred storefront as the books and services.</h2>
+          <p>
+            Use this page when you need the execution brief, then jump back into the books,
+            service pages, or the main homepage without losing continuity.
+          </p>
+        </article>
+        <article class="support-panel">
+          <p class="eyebrow">Company Routes</p>
+          <h2>Focus Records, Royal Lee Construction, and Focus Negotium all feed the same operator core.</h2>
+          <p>
+            That means the brief can stay stable even when the work shifts from campaigns to
+            construction strategy to business-system architecture.
+          </p>
+        </article>
+        <article class="support-panel">
+          <p class="eyebrow">Field Signal</p>
+          <h2>Use the platform for clarity first, then let the build move with precision.</h2>
+          <p>
+            The aim is a calmer, more elevated workflow: fewer resets, cleaner handoffs, and a
+            stronger sense of direction from the first prompt to the final release.
+          </p>
+        </article>
       </section>
     </main>
 
