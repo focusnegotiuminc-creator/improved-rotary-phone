@@ -6,6 +6,8 @@ import os
 import shutil
 import stat
 import sys
+from io import StringIO
+import csv
 from html import escape
 from pathlib import Path
 
@@ -29,6 +31,9 @@ ROOT_HTACCESS = """DirectoryIndex index.html index.php
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /
+RewriteRule ^command(/.*)?$ - [R=404,L]
+RewriteRule ^machine\\.html$ - [R=404,L]
+RewriteRule ^master_prompt_studio\\.js$ - [R=404,L]
 RewriteRule ^index\\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
@@ -36,6 +41,17 @@ RewriteRule ^ - [L]
 RewriteRule . /index.php [L]
 </IfModule>
 """
+HOLDING_DIAGRAM_PATH = "generated/corporate/holding_structure.svg"
+FOCUS_RECORDS_POSTERS = [
+    "generated/focus-records/release_identity_board.svg",
+    "generated/focus-records/firefly_campaign_board.svg",
+    "generated/focus-records/licensing_market_board.svg",
+]
+RLC_CONCEPT_STUDIES = [
+    "generated/architecture/courtyard_residence_study.svg",
+    "generated/architecture/hexagonal_estate_plan.svg",
+    "generated/architecture/development_cluster_study.svg",
+]
 
 
 def copy_tree(src: Path, dst: Path) -> None:
@@ -148,22 +164,21 @@ def head_html(title: str, description: str) -> str:
 def nav_html() -> str:
     links = [
         ("index.html", "Home"),
-        ("landing.html", "Landing"),
         ("services.html", "Services"),
-        ("focus-records.html", "Focus Records"),
-        ("royal-lee-construction.html", "RLC"),
-        ("focus-negotium.html", "Focus Negotium"),
+        ("store.html", "Store"),
         ("books.html", "Books"),
+        ("structure.html", "Structure"),
+        ("focus-negotium.html", "Focus Negotium"),
+        ("focus-records.html", "Focus Records"),
+        ("royal-lee-construction.html", "Construction"),
         ("ebooks/index.html", "Library"),
-        ("machine.html", "Prompt Studio"),
-        ("command/", "Command"),
         ("booking.html", "Booking"),
     ]
     items = "".join(f'<a href="{href}">{label}</a>' for href, label in links)
     return (
         '<header class="site-header">'
         '<div class="brand-lockup"><span class="brand-mark"></span><div>'
-        '<p class="eyebrow">TheFocusCorp.com</p><strong>Focus AI Sacred Operating System</strong>'
+        '<p class="eyebrow">TheFocusCorp.com</p><strong>The Focus Corporation | Businesses, Services, and Store</strong>'
         f"</div></div><nav class=\"top-nav\">{items}</nav></header>"
     )
 
@@ -186,9 +201,325 @@ def render_sacred_visual() -> str:
 """.strip()
 
 
+def _brand_poster_svg(title: str, subtitle: str, accent_a: str, accent_b: str, kicker: str) -> str:
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="960" viewBox="0 0 1400 960" role="img" aria-labelledby="title desc">
+  <title>{escape(title)}</title>
+  <desc>{escape(subtitle)}</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#08111f" />
+      <stop offset="100%" stop-color="#111d33" />
+    </linearGradient>
+    <linearGradient id="beam" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="{accent_a}" stop-opacity="0" />
+      <stop offset="50%" stop-color="{accent_a}" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="{accent_b}" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <rect width="1400" height="960" rx="40" fill="url(#bg)" />
+  <circle cx="1090" cy="210" r="190" fill="{accent_a}" opacity="0.13" />
+  <circle cx="1180" cy="660" r="250" fill="{accent_b}" opacity="0.12" />
+  <circle cx="970" cy="470" r="260" fill="none" stroke="{accent_a}" stroke-opacity="0.18" stroke-width="2" />
+  <circle cx="970" cy="470" r="190" fill="none" stroke="{accent_b}" stroke-opacity="0.2" stroke-width="2" />
+  <circle cx="970" cy="470" r="118" fill="none" stroke="#f2c96d" stroke-opacity="0.32" stroke-width="2" />
+  <path d="M170 260 H1230" stroke="url(#beam)" stroke-width="2" />
+  <path d="M150 560 H1260" stroke="url(#beam)" stroke-width="1.5" opacity="0.75" />
+  <path d="M760 110 L1180 820" stroke="{accent_a}" stroke-opacity="0.16" stroke-width="2" />
+  <path d="M520 90 L1180 840" stroke="{accent_b}" stroke-opacity="0.16" stroke-width="2" />
+  <rect x="96" y="96" width="1208" height="768" rx="28" fill="none" stroke="#7cc8ff" stroke-opacity="0.18" />
+  <text x="140" y="178" fill="#f2c96d" font-family="Manrope, Arial, sans-serif" font-size="28" letter-spacing="8">{escape(kicker.upper())}</text>
+  <text x="140" y="316" fill="#f6f8ff" font-family="Cormorant Garamond, Georgia, serif" font-size="88" font-weight="700">{escape(title)}</text>
+  <text x="140" y="386" fill="#d5def0" font-family="Manrope, Arial, sans-serif" font-size="30">{escape(subtitle)}</text>
+  <text x="140" y="770" fill="#eef4ff" font-family="Manrope, Arial, sans-serif" font-size="24">The Focus Corporation</text>
+  <text x="140" y="814" fill="#b8c9e8" font-family="Manrope, Arial, sans-serif" font-size="20">Creative campaign concept board</text>
+</svg>
+""".strip()
+
+
+def _architecture_study_svg(title: str, subtitle: str, figure_label: str, accent: str) -> str:
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1080" viewBox="0 0 1600 1080" role="img" aria-labelledby="title desc">
+  <title>{escape(title)}</title>
+  <desc>{escape(subtitle)}</desc>
+  <rect width="1600" height="1080" fill="#f4efe4" />
+  <rect x="72" y="72" width="1456" height="936" fill="none" stroke="#202226" stroke-width="3" />
+  <g stroke="#c5b59a" stroke-width="1">
+    <path d="M160 180 H1440" /><path d="M160 260 H1440" /><path d="M160 340 H1440" /><path d="M160 420 H1440" />
+    <path d="M160 500 H1440" /><path d="M160 580 H1440" /><path d="M160 660 H1440" /><path d="M160 740 H1440" />
+    <path d="M160 820 H1440" /><path d="M160 900 H1440" />
+    <path d="M220 150 V930" /><path d="M360 150 V930" /><path d="M500 150 V930" /><path d="M640 150 V930" />
+    <path d="M780 150 V930" /><path d="M920 150 V930" /><path d="M1060 150 V930" /><path d="M1200 150 V930" /><path d="M1340 150 V930" />
+  </g>
+  <g fill="none" stroke="#111" stroke-width="5">
+    <path d="M310 290 L620 190 L930 290 L1040 505 L930 720 L620 820 L310 720 L200 505 Z" />
+    <path d="M620 190 V820" />
+    <path d="M310 290 L930 720" />
+    <path d="M930 290 L310 720" />
+    <rect x="560" y="420" width="120" height="170" rx="8" />
+    <rect x="760" y="420" width="120" height="170" rx="8" />
+    <path d="M1040 505 H1270" />
+    <path d="M620 820 V930" />
+    <path d="M620 930 H980" />
+    <path d="M980 820 V930" />
+    <circle cx="620" cy="505" r="208" stroke="{accent}" stroke-width="3" opacity="0.55" />
+    <circle cx="620" cy="505" r="120" stroke="{accent}" stroke-width="3" opacity="0.55" />
+  </g>
+  <g font-family="Helvetica, Arial, sans-serif" fill="#202226">
+    <text x="130" y="130" font-size="22">{escape(figure_label)}</text>
+    <text x="130" y="188" font-size="48">{escape(title)}</text>
+    <text x="130" y="232" font-size="22">{escape(subtitle)}</text>
+    <text x="1120" y="230" font-size="20">N</text>
+    <path d="M1110 310 L1135 250 L1160 310 Z" fill="#202226" />
+    <path d="M1135 250 V360" stroke="#202226" stroke-width="3" />
+    <text x="1120" y="404" font-size="18">North</text>
+    <text x="1120" y="488" font-size="18">Concept use: residential / development planning</text>
+    <text x="1120" y="522" font-size="18">Drafted by Reginald Hilton</text>
+    <text x="1120" y="556" font-size="18">Verify field dimensions before fabrication</text>
+    <text x="1120" y="720" font-size="18">Scale reference</text>
+    <path d="M1110 750 H1400" stroke="#202226" stroke-width="3" />
+    <path d="M1110 740 V760" stroke="#202226" stroke-width="3" />
+    <path d="M1255 740 V760" stroke="#202226" stroke-width="3" />
+    <path d="M1400 740 V760" stroke="#202226" stroke-width="3" />
+    <text x="1110" y="785" font-size="16">0'</text>
+    <text x="1242" y="785" font-size="16">20'</text>
+    <text x="1382" y="785" font-size="16">40'</text>
+  </g>
+</svg>
+""".strip()
+
+
+def _holding_structure_svg() -> str:
+    return """<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title>Focus Negotium holding structure</title>
+  <desc>Parent-company relationship between Focus Negotium Inc and its affiliate operating companies.</desc>
+  <rect width="1600" height="900" fill="#08111f" />
+  <rect x="110" y="92" width="1380" height="716" rx="34" fill="none" stroke="#7cc8ff" stroke-opacity="0.2" stroke-width="2" />
+  <circle cx="800" cy="225" r="150" fill="#3ee4d6" opacity="0.12" />
+  <circle cx="800" cy="225" r="108" fill="none" stroke="#f2c96d" stroke-opacity="0.42" stroke-width="2" />
+  <path d="M800 348 V495" stroke="#f2c96d" stroke-width="4" stroke-linecap="round" />
+  <path d="M520 495 H1080" stroke="#7cc8ff" stroke-width="4" stroke-linecap="round" />
+  <path d="M520 495 V590" stroke="#7cc8ff" stroke-width="4" stroke-linecap="round" />
+  <path d="M1080 495 V590" stroke="#7cc8ff" stroke-width="4" stroke-linecap="round" />
+  <rect x="545" y="145" width="510" height="170" rx="28" fill="#0d1b33" stroke="#3ee4d6" stroke-opacity="0.4" />
+  <rect x="210" y="590" width="500" height="165" rx="24" fill="#0d1b33" stroke="#7cc8ff" stroke-opacity="0.35" />
+  <rect x="890" y="590" width="500" height="165" rx="24" fill="#0d1b33" stroke="#f2c96d" stroke-opacity="0.35" />
+  <text x="800" y="188" text-anchor="middle" fill="#f2c96d" font-family="Manrope, Arial, sans-serif" font-size="26" letter-spacing="8">PARENT COMPANY</text>
+  <text x="800" y="244" text-anchor="middle" fill="#f6f8ff" font-family="Cormorant Garamond, Georgia, serif" font-size="74" font-weight="700">Focus Negotium Inc</text>
+  <text x="800" y="286" text-anchor="middle" fill="#d4dff2" font-family="Manrope, Arial, sans-serif" font-size="24">Real estate development, property management, business infrastructure, and executive operations</text>
+  <text x="460" y="635" text-anchor="middle" fill="#f6f8ff" font-family="Cormorant Garamond, Georgia, serif" font-size="56" font-weight="700">Focus Records LLC</text>
+  <text x="460" y="676" text-anchor="middle" fill="#d4dff2" font-family="Manrope, Arial, sans-serif" font-size="22">Affiliate media company</text>
+  <text x="460" y="713" text-anchor="middle" fill="#d4dff2" font-family="Manrope, Arial, sans-serif" font-size="20">Release systems, visual campaigns, catalog packaging, licensing, and artist commerce</text>
+  <text x="1140" y="635" text-anchor="middle" fill="#f6f8ff" font-family="Cormorant Garamond, Georgia, serif" font-size="50" font-weight="700">Royal Lee Construction Solutions LLC</text>
+  <text x="1140" y="676" text-anchor="middle" fill="#d4dff2" font-family="Manrope, Arial, sans-serif" font-size="22">Affiliate construction company</text>
+  <text x="1140" y="713" text-anchor="middle" fill="#d4dff2" font-family="Manrope, Arial, sans-serif" font-size="20">Sacred-geometry concept studies, development planning, preconstruction, and owner-facing strategy</text>
+  <text x="800" y="844" text-anchor="middle" fill="#b6cae7" font-family="Manrope, Arial, sans-serif" font-size="18">One holding company, two affiliate operating companies, one coordinated public storefront</text>
+</svg>
+""".strip()
+
+
+def generated_public_assets() -> dict[str, str]:
+    return {
+        HOLDING_DIAGRAM_PATH: _holding_structure_svg(),
+        FOCUS_RECORDS_POSTERS[0]: _brand_poster_svg(
+            "Release Identity Board",
+            "Positioning, cover direction, and launch-world visual language for artists and branded drops.",
+            "#7cc8ff",
+            "#3ee4d6",
+            "Focus Records LLC",
+        ),
+        FOCUS_RECORDS_POSTERS[1]: _brand_poster_svg(
+            "Firefly Campaign Board",
+            "Campaign art direction for promo stills, launch visuals, and social-first release sequencing.",
+            "#f2c96d",
+            "#7cc8ff",
+            "Adobe-ready visual lane",
+        ),
+        FOCUS_RECORDS_POSTERS[2]: _brand_poster_svg(
+            "Licensing Marketplace Board",
+            "Beat-store, licensing, and digital catalog framing for future public product drops.",
+            "#ff9b68",
+            "#3ee4d6",
+            "Commerce expansion",
+        ),
+        RLC_CONCEPT_STUDIES[0]: _architecture_study_svg(
+            "Sanctuary Courtyard Residence",
+            "A geometric courtyard home concept balancing circulation, light, and private retreat space.",
+            "Concept Study A",
+            "#b08a3b",
+        ),
+        RLC_CONCEPT_STUDIES[1]: _architecture_study_svg(
+            "Hexagonal Estate Plan",
+            "A sacred-geometry estate concept with radial zoning and owner-facing ceremonial arrival logic.",
+            "Concept Study B",
+            "#7c6a3a",
+        ),
+        RLC_CONCEPT_STUDIES[2]: _architecture_study_svg(
+            "Development Cluster Study",
+            "A multi-structure development concept study for shared amenities, circulation, and site hierarchy.",
+            "Concept Study C",
+            "#8b6b4c",
+        ),
+    }
+
+
+def write_generated_assets() -> None:
+    for relative_path, content in generated_public_assets().items():
+        target = PUBLIC / relative_path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(content, encoding="utf-8")
+
+
+def render_program_cards(company: dict) -> str:
+    programs = company.get("programs", [])
+    if not programs:
+        return ""
+    cards = "\n".join(
+        f"""
+<article class="feature-panel glow-card">
+  <p class="eyebrow">Sector coverage</p>
+  <h3>{escape(program['title'])}</h3>
+  <p>{escape(program['summary'])}</p>
+</article>
+""".strip()
+        for program in programs
+    )
+    return f"""
+<section class="section-block">
+  <p class="eyebrow">Where this company works best</p>
+  <h2>High-level lanes that define the public offer.</h2>
+  <div class="grid-three">{cards}</div>
+</section>
+""".strip()
+
+
+def render_company_notes(company: dict) -> str:
+    notes = company.get("notes", [])
+    if not notes:
+        return ""
+    items = "".join(f"<li>{escape(note)}</li>" for note in notes)
+    return f"""
+<section class="section-block">
+  <p class="eyebrow">Professional notes</p>
+  <section class="feature-panel glow-card">
+    <ul class="detail-list">{items}</ul>
+  </section>
+</section>
+""".strip()
+
+
+def render_focus_negotium_section() -> str:
+    return f"""
+<section class="section-block split-band">
+  <figure class="drawing-frame">
+    <img src="{HOLDING_DIAGRAM_PATH}" alt="Holding-company structure showing Focus Negotium Inc with affiliate companies Focus Records LLC and Royal Lee Construction Solutions LLC" />
+    <figcaption>Focus Negotium Inc operates as the parent company, with affiliate media and construction companies supporting the larger portfolio.</figcaption>
+  </figure>
+  <section class="feature-panel glow-card">
+    <p class="eyebrow">Corporate relationship</p>
+    <h2>The holding-company lane keeps services organized without confusing the client path.</h2>
+    <ul class="detail-list">
+      <li>Focus Negotium Inc leads executive business services, development strategy, and portfolio operations.</li>
+      <li>Focus Records LLC contracts for media, release, and branded campaign work as an affiliate company.</li>
+      <li>Royal Lee Construction Solutions LLC contracts for sacred-geometry planning, concept studies, and construction strategy as an affiliate company.</li>
+      <li>The public site keeps one shared storefront and one routing line while preserving distinct company pages.</li>
+    </ul>
+  </section>
+</section>
+""".strip()
+
+
+def render_focus_records_section() -> str:
+    figures = "\n".join(
+        f"""
+<figure class="drawing-frame">
+  <img src="{path}" alt="Focus Records campaign concept board" />
+  <figcaption>{caption}</figcaption>
+</figure>
+""".strip()
+        for path, caption in [
+            (FOCUS_RECORDS_POSTERS[0], "Release identity concept board for public launch positioning and cover-direction alignment."),
+            (FOCUS_RECORDS_POSTERS[1], "Firefly-ready campaign board for promo visuals, social motion, and release-world atmosphere."),
+            (FOCUS_RECORDS_POSTERS[2], "Licensing and beat-store concept board for future audio-product and catalog-commerce drops."),
+        ]
+    )
+    return f"""
+<section class="section-block">
+  <p class="eyebrow">Campaign concept boards</p>
+  <h2>Visual direction for release work, branded drops, and future music-product sales.</h2>
+  <div class="grid-three">{figures}</div>
+</section>
+<section class="section-block split-band">
+  <section class="feature-panel glow-card">
+    <p class="eyebrow">Current delivery</p>
+    <ul class="detail-list">
+      <li>Launch pages, cover-direction systems, branded campaign assets, and release sequencing.</li>
+      <li>Artist, founder, and product storytelling tuned for public-facing conversion and recognition.</li>
+      <li>Catalog packaging that supports immediate release work and longer-term licensing value.</li>
+    </ul>
+  </section>
+  <section class="feature-panel glow-card">
+    <p class="eyebrow">Next commerce lane</p>
+    <h2>Beat sales and licensing are being staged for public release.</h2>
+    <p>The site is now ready to add Suno-adjacent beat products, producer packs, and licensing offers once the final catalog assets are ready for sale.</p>
+  </section>
+</section>
+""".strip()
+
+
+def render_rlc_section() -> str:
+    gallery = "\n".join(
+        f"""
+<figure class="drawing-frame">
+  <img src="{path}" alt="{alt}" />
+  <figcaption>{caption}</figcaption>
+</figure>
+""".strip()
+        for path, alt, caption in [
+            ("rlc/first_floor.svg", "First floor office schematic", "Existing office-package schematic preserved inside the construction portfolio."),
+            ("rlc/second_floor.svg", "Second floor office schematic", "Second-floor schematic from the existing package, ready for owner review."),
+            (RLC_CONCEPT_STUDIES[0], "Sacred geometry residence concept study", "Concept Study A: a courtyard residence drafted by Reginald Hilton."),
+            (RLC_CONCEPT_STUDIES[1], "Hexagonal estate concept study", "Concept Study B: an estate plan drafted by Reginald Hilton."),
+            (RLC_CONCEPT_STUDIES[2], "Development cluster concept study", "Concept Study C: a development cluster drafted by Reginald Hilton."),
+        ]
+    )
+    return f"""
+<section class="section-block">
+  <p class="eyebrow">Drafted concept studies</p>
+  <h2>Presentation-grade sacred-geometry studies for homes, sites, and development work.</h2>
+  <div class="drawing-grid">{gallery}</div>
+</section>
+<section class="section-block split-band">
+  <section class="feature-panel glow-card">
+    <p class="eyebrow">Presentation use</p>
+    <ul class="detail-list">
+      <li>Use concept studies to align ownership, development intent, and design direction before full drafting begins.</li>
+      <li>Bring sacred geometry into the planning conversation without sacrificing buildability, scale logic, or budget framing.</li>
+      <li>Move from concept studies into scope planning, owner representation, and contractor-facing package refinement.</li>
+    </ul>
+  </section>
+  <section class="feature-panel glow-card">
+    <p class="eyebrow">Important note</p>
+    <p>These visuals are concept studies prepared for presentation and project development. Licensed professionals should verify field dimensions, structural loads, and permit requirements prior to fabrication or construction.</p>
+    <div class="button-row"><a class="btn secondary" href="rlc-office-package.html">Open the RLC package</a></div>
+  </section>
+</section>
+""".strip()
+
+
+def render_company_extensions(company: dict) -> str:
+    if company["id"] == "focus-negotium":
+        return render_focus_negotium_section()
+    if company["id"] == "focus-records":
+        return render_focus_records_section()
+    if company["id"] == "royal-lee-construction":
+        return render_rlc_section()
+    return ""
+
+
 def render_offer_cards(catalog: dict) -> str:
     cards = []
     for offer in catalog.get("offers", []):
+        cta = offer["cta_label"] if offer.get("checkout_url") else "Book to purchase"
+        href = offer.get("checkout_url") or "booking.html"
         cards.append(
             f"""
 <article class="offer-card glow-card">
@@ -197,10 +528,10 @@ def render_offer_cards(catalog: dict) -> str:
   <p>{escape(offer['summary'])}</p>
   <div class="meta-row">
     <span class="price-pill">{_format_currency(float(offer['price_usd']))}</span>
-    <span class="micro-note">Implementation-ready</span>
+    <span class="micro-note">Secure checkout path</span>
   </div>
   <div class="button-row">
-    <a class="btn" href="{escape(offer['checkout_url'])}">{escape(offer['cta_label'])}</a>
+    <a class="btn" href="{escape(href)}">{escape(cta)}</a>
   </div>
 </article>
 """.strip()
@@ -246,6 +577,7 @@ def render_company_cards(catalog: dict) -> str:
   <p class="eyebrow">{escape(company['eyebrow'])}</p>
   <h3>{escape(company['name'])}</h3>
   <p>{escape(company['description'])}</p>
+  <p class="micro-note">{escape(company.get('relationship_note', ''))}</p>
   <ul class="detail-list">{bullets}</ul>
   <div class="button-row">
     <a class="btn secondary" href="{escape(company['slug'])}">Open {escape(company['name'])}</a>
@@ -277,6 +609,7 @@ def render_company_service_rows() -> str:
   <p class="eyebrow">{escape(company['name'])}</p>
   <h2>{escape(company['headline'])}</h2>
   <p class="section-copy">{escape(company['description'])}</p>
+  <p class="micro-note">{escape(company.get('relationship_note', ''))}</p>
   <div class="service-stack">{services}</div>
   <div class="button-row"><a class="btn secondary" href="{escape(company['slug'])}">Open company page</a></div>
 </section>
@@ -288,25 +621,25 @@ def render_company_service_rows() -> str:
 def render_system_cards() -> str:
     items = [
         {
-            "eyebrow": "Sacred storefront",
-            "title": "Root experience",
-            "summary": "A static-first homepage that immediately explains the offers, books, services, and routing across the three companies.",
+            "eyebrow": "Storefront",
+            "title": "Business-first homepage",
+            "summary": "A clear public homepage that introduces the three companies, the store, and the service path without exposing internal tools.",
             "href": "index.html",
-            "cta": "See the root experience",
+            "cta": "See the homepage",
         },
         {
-            "eyebrow": "Prompt activation",
-            "title": "Master Prompt Studio",
-            "summary": "Transform rough intent into a stronger multi-engine packet with platform-ready next steps.",
-            "href": "machine.html",
-            "cta": "Open prompt studio",
+            "eyebrow": "Store",
+            "title": "Storefront and offers",
+            "summary": "A customer-facing store for books, digital bundles, and higher-tier business offers.",
+            "href": "store.html",
+            "cta": "Open the store",
         },
         {
-            "eyebrow": "Operator platform",
-            "title": "The Eye of Focus",
-            "summary": "Run the AI engine in a cleaner command environment with presets, stage logic, and export-ready briefs.",
-            "href": "command/",
-            "cta": "Enter command mode",
+            "eyebrow": "Structure",
+            "title": "Business structure",
+            "summary": "Show how the companies, services, and customer journey fit together across one shared public experience.",
+            "href": "structure.html",
+            "cta": "See the structure",
         },
     ]
     return "\n".join(
@@ -364,24 +697,97 @@ def render_connector_cards(catalog: dict) -> str:
     return "\n".join(cards)
 
 
-def render_square_panel(catalog: dict) -> str:
-    square = catalog["portal"]["payment_processors"]["square"]
+def render_stripe_panel(catalog: dict) -> str:
+    stripe = catalog["portal"]["payment_processors"]["stripe"]
     buttons = []
-    if square.get("payment_links_url"):
-        buttons.append(f'<a class="btn secondary" href="{escape(square["payment_links_url"])}">Square payment links</a>')
-    if square.get("buy_button_url"):
-        buttons.append(f'<a class="btn secondary" href="{escape(square["buy_button_url"])}">Square buy button</a>')
+    for offer in catalog.get("offers", [])[:2]:
+        if offer.get("checkout_url"):
+            buttons.append(
+                f'<a class="btn secondary" href="{escape(offer["checkout_url"])}">{escape(offer["title"])}</a>'
+            )
     if not buttons:
-        buttons.append(f'<a class="btn secondary" href="{escape(square["setup_url"])}">Square setup path</a>')
+        buttons.append('<a class="btn secondary" href="booking.html">Book to purchase</a>')
     return f"""
 <section class="feature-panel glow-card">
-  <p class="eyebrow">Square-ready payments</p>
-  <h2>Square support stays wired for direct checkout expansion.</h2>
-  <p>{escape(square['summary'])}</p>
-  <p class="micro-note">Status: {escape(square['status'])}</p>
+  <p class="eyebrow">Stripe checkout</p>
+  <h2>Public payments route through secure Stripe links instead of a separate storefront platform.</h2>
+  <p>{escape(stripe['summary'])}</p>
+  <p class="micro-note">Status: {escape(stripe['status'])}</p>
   <div class="button-row">{''.join(buttons)}</div>
 </section>
 """.strip()
+
+
+def public_store_catalog(catalog: dict) -> dict:
+    phone = _phone_digits(catalog["portal"]["primary_contact"]["phone"])
+    return {
+        "brand": catalog["portal"]["brand"],
+        "site_name": catalog["portal"]["site_name"],
+        "phone": phone,
+        "companies": [
+            {
+                "name": company["name"],
+                "slug": company["slug"],
+                "headline": company["headline"],
+                "description": company["description"],
+                "relationship_note": company.get("relationship_note", ""),
+                "programs": company.get("programs", []),
+                "services": company["services"],
+            }
+            for company in COMPANY_PROFILES
+        ],
+        "books": [
+            {
+                "title": book["title"],
+                "slug": book["slug"],
+                "price_usd": book["price_usd"],
+                "tag": book["tag"],
+                "summary": book["summary"],
+                "reading_url": f"ebooks/{book['slug']}.html",
+                "pdf_url": f"ebooks/pdfs/{book['slug']}.pdf",
+            }
+            for book in BOOK_CATALOG
+        ],
+        "offers": [
+            {
+                "title": offer["title"],
+                "price_usd": offer["price_usd"],
+                "summary": offer["summary"],
+                "checkout_url": offer["checkout_url"],
+                "cta_label": offer["cta_label"],
+            }
+            for offer in catalog.get("offers", [])
+        ],
+    }
+
+
+def build_stripe_csv(catalog: dict) -> str:
+    buffer = StringIO()
+    writer = csv.writer(buffer)
+    writer.writerow(
+        [
+            "Slug",
+            "Title",
+            "Type",
+            "Price USD",
+            "Checkout URL",
+            "Summary",
+        ]
+    )
+
+    for offer in catalog.get("offers", []):
+        writer.writerow(
+            [
+                offer["id"].replace("_", "-"),
+                offer["title"],
+                "Digital Offer",
+                f"{float(offer['price_usd']):.2f}",
+                offer.get("checkout_url", ""),
+                offer["summary"],
+            ]
+        )
+
+    return buffer.getvalue()
 
 
 def render_company_page(company: dict, contact_name: str, phone: str) -> str:
@@ -402,8 +808,9 @@ def render_company_page(company: dict, contact_name: str, phone: str) -> str:
     proof_points = "".join(f"<li>{escape(item)}</li>" for item in company["proof_points"])
     description = (
         f"{company['description']} This page carries the dedicated service structure, pricing, and routing "
-        "while still connecting back into the larger Focus AI operating system."
+        "while still connecting back into the larger public storefront."
     )
+    relationship_note = company.get("relationship_note", "This company sits inside the wider Focus Corporation public experience.")
     return f"""<!doctype html>
 <html lang="en">
 {head_html(company['name'], description)}
@@ -418,8 +825,8 @@ def render_company_page(company: dict, contact_name: str, phone: str) -> str:
         <p>{escape(company['description'])}</p>
         <div class="metric-strip">
           <span>Direct route {phone}</span>
-          <span>Akashic execution language</span>
-          <span>Premium service architecture</span>
+          <span>{escape(company['eyebrow'])}</span>
+          <span>Professional pricing and delivery structure</span>
         </div>
         <div class="button-row">
           <a class="btn" href="tel:{phone}">Call {phone}</a>
@@ -435,9 +842,9 @@ def render_company_page(company: dict, contact_name: str, phone: str) -> str:
         <ul class="detail-list">{proof_points}</ul>
       </section>
       <section class="feature-panel glow-card">
-        <p class="eyebrow">Shared operating note</p>
-        <h2>This company is distinct, but it still lives inside one Focus AI system.</h2>
-        <p>That means stronger routing, cleaner offers, reusable operating prompts, and a single customer-facing quality bar across every deliverable.</p>
+        <p class="eyebrow">Shared structure note</p>
+        <h2>This company is distinct, but it still sits inside one shared customer experience.</h2>
+        <p>{escape(relationship_note)}</p>
       </section>
     </section>
     <section class="section-block">
@@ -445,6 +852,9 @@ def render_company_page(company: dict, contact_name: str, phone: str) -> str:
       <h2>Choose the level of support that matches the decision in front of you.</h2>
       <div class="offer-grid">{services}</div>
     </section>
+    {render_program_cards(company)}
+    {render_company_extensions(company)}
+    {render_company_notes(company)}
   </main>
 </body>
 </html>
@@ -785,65 +1195,65 @@ def build_pages(catalog: dict) -> dict[str, str]:
 
     home_page = f"""<!doctype html>
 <html lang="en">
-{head_html('TheFocusCorp.com', 'Sacred geometry storefront for Focus AI, books, services, and the command platform.')}
+{head_html('TheFocusCorp.com', 'Businesses, services, books, and storefront structure across The Focus Corporation.')}
 <body>
   <main>
     {nav_html()}
     <section class="hero-panel luminous-hero">
       <div class="poster panel-flow">
-        <p class="eyebrow">Sacred geometry storefront</p>
-        <h1>An akashic operating system for books, services, launches, and AI execution.</h1>
-        <p class="lede">TheFocusCorp.com now opens as one coherent sacred storefront: mobile-friendly, animation-aware, and structured to move visitors from curiosity into book sales, service routing, and the live command platform.</p>
-        <p>Every part of the experience points back to one direct route, one premium quality bar, and one operating system shared across Focus Records LLC, Royal Lee Construction Solutions LLC, and Focus Negotium Inc.</p>
+        <p class="eyebrow">The Focus Corporation</p>
+        <h1>One holding company, two affiliate operating companies, and one clear path into books, services, development, and premium support.</h1>
+        <p class="lede">TheFocusCorp.com is the public home of Focus Negotium Inc, Focus Records LLC, and Royal Lee Construction Solutions LLC, organized as a mobile-friendly corporate storefront with clearer routing into the right company, the right service, and the right next step.</p>
+        <p>The experience stays elevated and easy to use so visitors can understand the structure quickly, review pricing, and move from first visit into a real engagement without confusion.</p>
         <div class="metric-strip">
           <span>Call or text {phone}</span>
           <span>{ebook_count} published books</span>
-          <span>3 companies under one system</span>
+          <span>Parent company + 2 affiliates</span>
         </div>
         <div class="button-row">
-          <a class="btn" href="books.html">Shop the books</a>
+          <a class="btn" href="store.html">Open the store</a>
           <a class="btn secondary" href="services.html">Explore services</a>
-          <a class="btn secondary" href="command/">Open command platform</a>
+          <a class="btn secondary" href="structure.html">View the structure</a>
           <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
         </div>
       </div>
       <section class="hero-visual-panel glow-card">{render_sacred_visual()}</section>
     </section>
     <section class="section-block">
-      <p class="eyebrow">Three company paths</p>
-      <h2>One visual language, three specialized businesses, and a direct service ladder.</h2>
-      <p class="section-copy">The homepage now carries the complete company architecture instead of forcing visitors to piece it together from separate environments.</p>
+      <p class="eyebrow">Holding company and affiliates</p>
+      <h2>One public standard across corporate services, media work, and construction strategy.</h2>
+      <p class="section-copy">The homepage carries the parent-company structure and the affiliate roles clearly so visitors can move into the right sector without losing the bigger picture.</p>
       <div class="grid-three">{render_company_cards(catalog)}</div>
     </section>
     <section class="section-block catalog-band">
       <section class="feature-panel glow-card">
-        <p class="eyebrow">Book storefront</p>
-        <h2>Every core book now has a visible price, reading page, and printable PDF path.</h2>
-        <p>Use the books to bring visitors into the Focus language quickly, then route them into the higher-ticket operating system offers when they are ready for implementation.</p>
+        <p class="eyebrow">Storefront</p>
+        <h2>The store now combines books, premium offers, and secure Stripe checkout in one place.</h2>
+        <p>Use the storefront to present the books clearly, route buyers into the right service tier, and move qualified clients into deeper work without adding a second platform.</p>
         <div class="button-row">
-          <a class="btn" href="books.html">Browse book sales page</a>
-          <a class="btn secondary" href="ebooks/index.html">Open reading library</a>
+          <a class="btn" href="store.html">Browse the store</a>
+          <a class="btn secondary" href="ebooks/index.html">Open the library</a>
         </div>
       </section>
       <section class="feature-panel glow-card">
         <p class="eyebrow">Routing line</p>
         <h2>{escape(contact_name)}</h2>
-        <p>For guided service routing, custom builds, or help choosing the right offer, call or text {phone}.</p>
+        <p>For service routing, store questions, development planning, or help choosing the right package, call or text {phone}.</p>
         <div class="detail-list">
-          <p><strong>Books</strong> Start with the book shelf and the digital library.</p>
-          <p><strong>Services</strong> Move into company-specific strategy or build work.</p>
-          <p><strong>Platform</strong> Use the command environment to frame the next execution packet.</p>
+          <p><strong>Books</strong> Start with the book shelf and digital library.</p>
+          <p><strong>Services</strong> Move into company-specific strategy, media work, development, or build planning.</p>
+          <p><strong>Structure</strong> Review how the parent company and affiliates fit together.</p>
         </div>
       </section>
     </section>
     <section class="section-block">
       <p class="eyebrow">Service architecture</p>
-      <h2>Global standardized pricing across every company path.</h2>
+      <h2>Reasonable global standardized pricing across every company path.</h2>
       <div class="detail-grid">{render_company_service_rows()}</div>
     </section>
     <section class="section-block">
-      <p class="eyebrow">Core systems</p>
-      <h2>The root experience now points directly into the products, the platform, and the operational spine.</h2>
+      <p class="eyebrow">Public site structure</p>
+      <h2>The homepage now points directly into the services, the store, and the holding-company structure.</h2>
       <div class="grid-three">{render_system_cards()}</div>
     </section>
   </main>
@@ -853,22 +1263,22 @@ def build_pages(catalog: dict) -> dict[str, str]:
 
     landing_page = f"""<!doctype html>
 <html lang="en">
-{head_html('Focus AI Sacred Landing', 'Launch-facing page for sacred geometry books, offers, and services.')}
+{head_html('The Focus Corporation Landing', 'Launch-facing page for the businesses, books, store, and services on TheFocusCorp.com.')}
 <body>
   <main>
     {nav_html()}
     <section class="hero-panel luminous-hero">
       <div class="poster panel-flow">
         <p class="eyebrow">Launch page</p>
-        <h1>Enter the Focus field without losing the practical next step.</h1>
-        <p class="lede">This landing page keeps the sacred-geometry atmosphere, but it is still grounded in direct offers, visible pricing, and clear routing.</p>
+        <h1>Enter the brand without losing the practical next step.</h1>
+        <p class="lede">This landing page keeps the sacred-geometry atmosphere while staying grounded in visible pricing, corporate structure, clear routing, and a business-first public experience.</p>
         <div class="metric-strip">
           <span>{phone}</span>
-          <span>Books + services + platform</span>
+          <span>Books + services + holdings</span>
           <span>Mobile-first storefront</span>
         </div>
         <div class="button-row">
-          <a class="btn" href="products.html">Enter the offer ladder</a>
+          <a class="btn" href="store.html">Enter the storefront</a>
           <a class="btn secondary" href="books.html">See the books</a>
           <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
         </div>
@@ -885,35 +1295,35 @@ def build_pages(catalog: dict) -> dict[str, str]:
 
     services_page = f"""<!doctype html>
 <html lang="en">
-{head_html('Focus AI Services', 'Company pages and service pricing across the Focus AI ecosystem.')}
+{head_html('Services Across Three Companies', 'Company pages and service pricing across The Focus Corporation.')}
 <body>
   <main>
     {nav_html()}
     <section class="hero-panel luminous-hero">
       <div class="poster panel-flow">
         <p class="eyebrow">Service routing</p>
-        <h1>Choose the right company path without losing the unified customer experience.</h1>
-        <p class="lede">Every service page now reflects the same sacred storefront language, mobile behavior, and pricing discipline while preserving what makes each company distinct.</p>
+        <h1>Choose the right company path without losing the larger corporate structure behind it.</h1>
+        <p class="lede">Every service page keeps the same mobile behavior, visual discipline, and pricing clarity while still distinguishing the parent company from its affiliate operating companies.</p>
         <div class="button-row">
           <a class="btn" href="tel:{phone}">Call {phone}</a>
           <a class="btn secondary" href="booking.html">Book with {escape(contact_name)}</a>
-          <a class="btn secondary" href="focus-negotium.html">Open Focus Negotium</a>
+          <a class="btn secondary" href="structure.html">See the structure</a>
         </div>
       </div>
       <section class="feature-panel glow-card">
         <p class="eyebrow">Shared route</p>
         <h2>{escape(contact_name)}</h2>
-        <p>Use {phone} for creative campaigns, sacred-geometry build strategy, or premium operations architecture.</p>
+        <p>Use {phone} for corporate setup, development planning, media rollout, sacred-geometry build strategy, or storefront support.</p>
         <ul class="detail-list">
-          <li>Focus Records LLC for campaign and creative launch work.</li>
-          <li>Royal Lee Construction Solutions LLC for build strategy and geometric planning.</li>
-          <li>Focus Negotium Inc for offer systems, automation, and monetization design.</li>
+          <li>Focus Negotium Inc for holdings, business services, real estate, property operations, and websites.</li>
+          <li>Focus Records LLC for release work, cover direction, campaign assets, and catalog packaging.</li>
+          <li>Royal Lee Construction Solutions LLC for concept studies, development strategy, and preconstruction planning.</li>
         </ul>
       </section>
     </section>
     <section class="section-block">
       <p class="eyebrow">Company service matrix</p>
-      <h2>Reasonable global standardized pricing with deeper company pages behind each path.</h2>
+      <h2>Reasonable global standardized pricing with deeper company pages behind each sector.</h2>
       <div class="detail-grid">{render_company_service_rows()}</div>
     </section>
   </main>
@@ -923,15 +1333,15 @@ def build_pages(catalog: dict) -> dict[str, str]:
 
     products_page = f"""<!doctype html>
 <html lang="en">
-{head_html('Focus AI Products and Offers', 'Books, bundle offers, and implementation products on TheFocusCorp.com.')}
+{head_html('The Focus Corporation Store', 'Books, digital collections, and premium offers on TheFocusCorp.com.')}
 <body>
   <main>
     {nav_html()}
     <section class="hero-panel luminous-hero">
       <div class="poster panel-flow">
-        <p class="eyebrow">Live revenue ladder</p>
-        <h1>Move from books and digital assets into blueprint-level implementation and the full business engine.</h1>
-        <p class="lede">The store now combines individual book pricing with the larger Focus AI offer ladder, so customers can start small or move directly into a premium build.</p>
+        <p class="eyebrow">Storefront</p>
+        <h1>Move from books and digital products into premium service, development, and business support.</h1>
+        <p class="lede">The store combines individual book pricing with Stripe-connected offers so customers can start small, purchase a structured package, or move directly into a premium buildout.</p>
         <div class="button-row">
           <a class="btn" href="books.html">Shop books</a>
           <a class="btn secondary" href="ebooks/index.html">Read the library</a>
@@ -944,7 +1354,7 @@ def build_pages(catalog: dict) -> dict[str, str]:
           <li>Individual books starting at {_format_currency(min(book['price_usd'] for book in BOOK_CATALOG))}</li>
           <li>{_format_currency(float(catalog['offers'][0]['price_usd']))} bundle entry offer</li>
           <li>{_format_currency(float(catalog['offers'][1]['price_usd']))} blueprint depth offer</li>
-          <li>{_format_currency(float(catalog['offers'][2]['price_usd']))} flagship business engine</li>
+          <li>{_format_currency(float(catalog['offers'][2]['price_usd']))} signature business buildout</li>
         </ul>
       </section>
     </section>
@@ -961,11 +1371,11 @@ def build_pages(catalog: dict) -> dict[str, str]:
         <p class="eyebrow">What buyers unlock</p>
         <ul class="detail-list">
           <li>Published teachings, frameworks, and sacred-geometry language.</li>
-          <li>Reusable system prompts, service routing, and operator structure.</li>
+          <li>Digital resources, service routing, and clear package structure.</li>
           <li>One clear progression from knowledge product to custom implementation.</li>
         </ul>
       </section>
-      {render_square_panel(catalog)}
+      {render_stripe_panel(catalog)}
     </section>
   </main>
 </body>
@@ -998,7 +1408,7 @@ def build_pages(catalog: dict) -> dict[str, str]:
     </section>
     <section class="section-block">
       <p class="eyebrow">Book shelf</p>
-      <h2>Current Focus AI titles and prices.</h2>
+      <h2>Current titles and prices.</h2>
       <div class="book-grid">{render_book_cards(phone)}</div>
     </section>
   </main>
@@ -1008,35 +1418,42 @@ def build_pages(catalog: dict) -> dict[str, str]:
 
     business_os_page = f"""<!doctype html>
 <html lang="en">
-{head_html('Focus AI Business Operating System', 'Workflow stages, connected platforms, and the operating-system spine behind the storefront.')}
+{head_html('Business Structure | The Focus Corporation', 'The public structure behind the businesses, services, and store on TheFocusCorp.com.')}
 <body>
   <main>
     {nav_html()}
     <section class="hero-panel luminous-hero">
       <div class="poster panel-flow">
-        <p class="eyebrow">Business operating system</p>
-        <h1>The operational spine behind the storefront, services, books, and AI engine.</h1>
-        <p class="lede">The sacred experience is only useful if the execution system underneath it is clear. This page shows the stage flow, the platform surfaces, and the connectors that support delivery.</p>
+        <p class="eyebrow">Business structure</p>
+        <h1>The structure behind the holding company, the affiliate companies, the services, and the storefront.</h1>
+        <p class="lede">This page explains how Focus Negotium Inc holds the affiliate companies, how the public storefront is organized, and how customers can move from the first visit into the right book, service, development project, or premium package.</p>
         <div class="button-row">
-          <a class="btn" href="command/">Open command platform</a>
-          <a class="btn secondary" href="machine.html">Use prompt studio</a>
+          <a class="btn" href="services.html">Explore services</a>
+          <a class="btn secondary" href="store.html">Open the store</a>
           <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
         </div>
       </div>
       <section class="hero-visual-panel glow-card">{render_sacred_visual()}</section>
     </section>
     <section class="section-block">
-      <p class="eyebrow">Workflow stages</p>
-      <h2>Stage logic for how Focus AI moves from intake to verified release.</h2>
-      <div class="stage-grid">{render_stage_cards(catalog)}</div>
+      <p class="eyebrow">Company roles</p>
+      <h2>The parent company leads the portfolio while the affiliates stay specialized.</h2>
+      <div class="grid-three">{render_company_cards(catalog)}</div>
+    </section>
+    {render_focus_negotium_section()}
+    <section class="section-block">
+      <p class="eyebrow">Customer path</p>
+      <h2>A simple public structure from first visit to paid engagement.</h2>
+      <div class="stage-grid">
+        <article class="stage-card glow-card"><p class="eyebrow">Step 1</p><h3>Discover the parent structure</h3><p>Visitors land on the homepage, understand the holding company, and see the affiliate sectors clearly.</p></article>
+        <article class="stage-card glow-card"><p class="eyebrow">Step 2</p><h3>Browse the store</h3><p>The storefront presents books, premium offers, and secure Stripe checkout with visible pricing.</p></article>
+        <article class="stage-card glow-card"><p class="eyebrow">Step 3</p><h3>Review sector services</h3><p>Each company page explains the service tiers, pricing, and the best use cases for that specific business lane.</p></article>
+        <article class="stage-card glow-card"><p class="eyebrow">Step 4</p><h3>Route through one contact</h3><p>The shared routing line keeps the customer experience simple while the underlying company structure stays organized.</p></article>
+      </div>
     </section>
     <section class="section-block">
-      <p class="eyebrow">Operating surfaces</p>
+      <p class="eyebrow">Store collections</p>
       <div class="grid-three">{render_system_cards()}</div>
-    </section>
-    <section class="section-block">
-      <p class="eyebrow">Connected platforms</p>
-      <div class="detail-grid">{render_connector_cards(catalog)}</div>
     </section>
   </main>
 </body>
@@ -1045,7 +1462,7 @@ def build_pages(catalog: dict) -> dict[str, str]:
 
     booking_page = f"""<!doctype html>
 <html lang="en">
-{head_html(f'Book with {contact_name}', 'Book with the primary Focus AI routing contact for services, builds, and product guidance.')}
+{head_html(f'Book with {contact_name}', 'Book with the primary routing contact for services, storefront questions, and business guidance.')}
 <body>
   <main>
     {nav_html()}
@@ -1053,10 +1470,10 @@ def build_pages(catalog: dict) -> dict[str, str]:
       <div class="poster panel-flow">
         <p class="eyebrow">Primary routing</p>
         <h1>Book with {escape(contact_name)}</h1>
-        <p class="lede">Use one direct routing line for company selection, project framing, service clarity, book questions, or AI-engine planning.</p>
+        <p class="lede">Use one direct routing line for company selection, project framing, service clarity, development questions, and storefront support.</p>
         <div class="metric-strip">
           <span>Call or text {phone}</span>
-          <span>Creative, construction, and AI routing</span>
+          <span>Corporate, media, and construction routing</span>
         </div>
         <div class="button-row">
           <a class="btn" href="tel:{phone}">Call {phone}</a>
@@ -1069,61 +1486,10 @@ def build_pages(catalog: dict) -> dict[str, str]:
         <ul class="detail-list">
           <li>Choosing the right company and service tier.</li>
           <li>Moving from book interest into deeper implementation.</li>
-          <li>Routing a live project into the command or build flow.</li>
+          <li>Routing a live project into the right business or storefront path.</li>
         </ul>
       </section>
     </section>
-  </main>
-</body>
-</html>
-"""
-
-    machine_page = f"""<!doctype html>
-<html lang="en">
-{head_html('Master Prompt Studio', 'Prompt compiler for translating rough intent into a stage-aware execution packet.')}
-<body>
-  <main>
-    {nav_html()}
-    <section class="hero-panel luminous-hero">
-      <div class="poster panel-flow">
-        <p class="eyebrow">Master Prompt Studio</p>
-        <h1>Turn rough intent into a stronger execution packet before the build starts.</h1>
-        <p class="lede">This studio stays browser-native so the prompt layer is always available, even before every remote connector is fully configured.</p>
-        <div class="metric-strip">
-          <span>Engine sequencing</span>
-          <span>Connector-aware outputs</span>
-          <span>Sacred execution framing</span>
-        </div>
-        <div class="button-row">
-          <a class="btn" href="command/">Open command platform</a>
-          <a class="btn secondary" href="products.html">Return to products</a>
-        </div>
-      </div>
-      <section class="feature-panel glow-card">
-        <p class="eyebrow">What it creates</p>
-        <ul class="detail-list">
-          <li>A primary engine recommendation based on the task itself.</li>
-          <li>A deliberate engine chain instead of one flat response.</li>
-          <li>A reusable master prompt plus action checklist and connector targets.</li>
-        </ul>
-      </section>
-    </section>
-    <section class="section-block split-band">
-      <section class="feature-panel glow-card">
-        <label class="eyebrow" for="studio-task">Raw task</label>
-        <textarea id="studio-task" style="width:100%;min-height:240px;padding:1rem;border-radius:20px;border:1px solid rgba(124,200,255,0.18);background:rgba(6,13,26,0.58);color:var(--ink);font:inherit;">Take the next Focus task, refine the prompt, route the right engines, include AI twin support when helpful, and prepare the cleanest next actions.</textarea>
-        <div class="button-row" style="margin-top:0.9rem;">
-          <button class="btn" id="studio-generate" type="button">Compile prompt packet</button>
-          <button class="btn secondary" id="studio-copy" type="button">Copy packet</button>
-          <button class="btn secondary" id="studio-download" type="button">Download markdown</button>
-        </div>
-      </section>
-      <section class="feature-panel glow-card">
-        <p class="eyebrow">Compiled packet</p>
-        <pre id="studio-output" style="margin:0;min-height:340px;padding:1rem;border-radius:20px;background:rgba(4,10,22,0.9);color:#edf4ff;overflow:auto;font-family:Consolas,monospace;white-space:pre-wrap;">Generate the packet to fill this panel.</pre>
-      </section>
-    </section>
-    <script src="master_prompt_studio.js"></script>
   </main>
 </body>
 </html>
@@ -1173,7 +1539,7 @@ def build_pages(catalog: dict) -> dict[str, str]:
 
     email_automation = f"""<!doctype html>
 <html lang="en">
-{head_html('Email Automation Sequence', 'Follow-up sequence for moving readers into Focus AI offers.')}
+{head_html('Email Follow-Up Sequence', 'Follow-up sequence for moving readers into the public store and service offers.')}
 <body>
   <main>
     {nav_html()}
@@ -1193,7 +1559,7 @@ def build_pages(catalog: dict) -> dict[str, str]:
       <article class="stage-card glow-card"><p class="eyebrow">Email 2</p><h3>Why most systems fail</h3><p>Frame the cost of confusion, then return to the bundle.</p></article>
       <article class="stage-card glow-card"><p class="eyebrow">Email 3</p><h3>Architecture changes everything</h3><p>Move into the blueprint pack.</p></article>
       <article class="stage-card glow-card"><p class="eyebrow">Email 4</p><h3>System over inspiration</h3><p>Show the value of deeper operating materials.</p></article>
-      <article class="stage-card glow-card"><p class="eyebrow">Email 5</p><h3>Ready for the full engine?</h3><p>Present the business engine as the flagship step.</p></article>
+      <article class="stage-card glow-card"><p class="eyebrow">Email 5</p><h3>Ready for the signature buildout?</h3><p>Present the flagship buildout as the premium next step.</p></article>
     </section>
   </main>
 </body>
@@ -1205,10 +1571,11 @@ def build_pages(catalog: dict) -> dict[str, str]:
         "landing.html": landing_page,
         "services.html": services_page,
         "products.html": products_page,
+        "store.html": products_page,
         "books.html": books_page,
         "business_os.html": business_os_page,
+        "structure.html": business_os_page,
         "booking.html": booking_page,
-        "machine.html": machine_page,
         "rlc-office-package.html": rlc_page,
         "funnel_landing.html": landing_page,
         "delivery.html": books_page,
@@ -1231,18 +1598,29 @@ def build() -> int:
     PUBLIC.mkdir(parents=True, exist_ok=True)
 
     copy_tree(PUBLISHED, PUBLIC / "ebooks")
-    copy_tree(COMMAND_APP, PUBLIC / "command")
     copy_tree(RLC_OUTPUT, PUBLIC / "rlc")
+    write_generated_assets()
 
     (PUBLIC / "funnel.css").write_text(build_css(catalog), encoding="utf-8")
-    if MASTER_PROMPT_SCRIPT.exists():
-        shutil.copy2(MASTER_PROMPT_SCRIPT, PUBLIC / "master_prompt_studio.js")
 
     data_dir = PUBLIC / "data"
     data_dir.mkdir(parents=True, exist_ok=True)
-    (data_dir / "business_os.json").write_text(json.dumps(public_catalog(catalog), indent=2), encoding="utf-8")
-    if ENGINE_STAGES.exists():
-        shutil.copy2(ENGINE_STAGES, data_dir / "stages.json")
+    public_catalog = public_store_catalog(catalog)
+    (data_dir / "store_catalog.json").write_text(
+        json.dumps(public_catalog, indent=2), encoding="utf-8"
+    )
+    (data_dir / "business_os.json").write_text(
+        json.dumps(public_catalog, indent=2), encoding="utf-8"
+    )
+
+    stripe_dir = ROOT / "published" / "stripe"
+    stripe_dir.mkdir(parents=True, exist_ok=True)
+    (stripe_dir / "stripe_offer_catalog.csv").write_text(build_stripe_csv(catalog), encoding="utf-8")
+    (stripe_dir / "README.txt").write_text(
+        "Stripe-focused offer export generated from the public store catalog. "
+        "Use stripe_offer_catalog.csv as the local manifest for secure checkout links and offer inventory.\n",
+        encoding="utf-8",
+    )
 
     pages = build_pages(catalog)
     for page_name, page_content in pages.items():

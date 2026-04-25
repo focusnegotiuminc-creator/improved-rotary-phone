@@ -36,8 +36,8 @@ def test_offers_and_mobile_config_endpoints(tmp_path, monkeypatch):
     mobile_response = client.get("/v1/mobile/config")
     assert mobile_response.status_code == 200
     payload = mobile_response.get_json()
-    assert payload["app"]["app_name"] == "Focus AI"
-    assert payload["portal"]["site_name"] == "Focus AI Business Operating System"
+    assert payload["app"]["app_name"] == "Focus Operations"
+    assert payload["portal"]["site_name"] == "The Focus Corporation | Businesses, Services, and Store"
 
 
 def test_high_risk_task_creates_readiness_pack(tmp_path, monkeypatch):
@@ -79,5 +79,5 @@ def test_public_site_build_exports_business_os_bundle():
     business_os_json = (public_dir / "data" / "business_os.json").read_text(encoding="utf-8")
 
     assert (public_dir / "business_os.html").exists()
-    assert "Focus AI Business Engine" in products_html
-    assert '"site_name": "Focus AI Business Operating System"' in business_os_json
+    assert "Stripe-connected offers" in products_html
+    assert '"site_name": "The Focus Corporation | Businesses, Services, and Store"' in business_os_json

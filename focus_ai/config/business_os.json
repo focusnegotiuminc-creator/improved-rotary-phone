@@ -1,7 +1,7 @@
 {
   "portal": {
-    "brand": "Focus AI",
-    "site_name": "Focus AI Business Operating System",
+    "brand": "The Focus Corporation",
+    "site_name": "The Focus Corporation | Businesses, Services, and Store",
     "domain": "https://thefocuscorp.com",
     "primary_contact": {
       "name": "Alexis Rogers",
@@ -16,30 +16,30 @@
     ],
     "tracks": [
       {
-        "id": "revenue",
-        "title": "Revenue Rollout",
-        "summary": "Monetize the portal, funnel, and product ladder with live checkout links and campaign assets."
+        "id": "holdings",
+        "title": "Holdings and Corporate Services",
+        "summary": "Present the parent-company structure, entity support, and executive business services with a clear route into paid work."
       },
       {
-        "id": "design-system",
-        "title": "Design-System Expansion",
-        "summary": "Use one sacred-geometry design core with company accent layers across web, app, and campaigns."
+        "id": "real-estate",
+        "title": "Real Estate and Development",
+        "summary": "Frame development, property-management, and sacred-geometry planning services in a way investors, owners, and operators can understand quickly."
+      },
+      {
+        "id": "media",
+        "title": "Media, Release, and Commerce",
+        "summary": "Support branded rollout, catalog packaging, cover-art direction, and future music-product sales without confusing the public message."
       },
       {
         "id": "mobile",
-        "title": "Customer Mobile App",
-        "summary": "Ship a customer-facing iPhone experience for offers, intake, and library access."
-      },
-      {
-        "id": "back-office",
-        "title": "Back-Office Automation",
-        "summary": "Route leads, content, campaigns, hours, payroll readiness, and deploy checks through one assistant layer."
+        "title": "Client Access and Checkout",
+        "summary": "Keep the site mobile-friendly, the routing simple, and the storefront connected to secure Stripe checkout."
       }
     ],
     "payment_processors": {
       "stripe": {
         "status": "live",
-        "summary": "Stripe payment links are live on the public site."
+        "summary": "Secure Stripe checkout links are live for public offers and storefront purchases."
       },
       "square": {
         "status": "ready_for_links",
@@ -131,51 +131,51 @@
   },
   "companies": [
     {
+      "id": "focus-negotium",
+      "name": "Focus Negotium Inc",
+      "tagline": "Parent company for corporate structure, real estate development, property management, and executive business services.",
+      "accent_key": "focus-negotium",
+      "capabilities": [
+        "Holding-company oversight",
+        "Real estate development",
+        "Property management systems",
+        "Entity and business infrastructure"
+      ]
+    },
+    {
       "id": "focus-records",
       "name": "Focus Records LLC",
-      "tagline": "Creative direction, release support, and audience-facing rollout.",
+      "tagline": "Affiliate media company for release systems, campaign assets, catalog packaging, and creative commerce.",
       "accent_key": "focus-records",
       "capabilities": [
         "Creative direction",
         "Release support",
-        "Branded content systems",
-        "Audience growth campaigns"
+        "Visual campaign development",
+        "Catalog and licensing setup"
       ]
     },
     {
       "id": "royal-lee-construction",
       "name": "Royal Lee Construction Solutions LLC",
-      "tagline": "Sacred geometry build consulting, design planning, and construction strategy.",
+      "tagline": "Affiliate construction company for sacred geometry planning, concept studies, and preconstruction strategy.",
       "accent_key": "royal-lee-construction",
       "capabilities": [
         "Sacred geometry consulting",
-        "Layout and build strategy",
-        "Construction planning",
-        "Execution support"
-      ]
-    },
-    {
-      "id": "focus-negotium",
-      "name": "Focus Negotium Inc",
-      "tagline": "Negotiation, automation design, monetization systems, and business operations.",
-      "accent_key": "focus-negotium",
-      "capabilities": [
-        "Offer architecture",
-        "Automation planning",
-        "Negotiation support",
-        "Business operating systems"
+        "Residential concept studies",
+        "Development planning",
+        "Owner-facing construction strategy"
       ]
     }
   ],
   "offers": [
     {
       "id": "ebook-bundle",
-      "title": "Focus AI eBook Bundle",
+      "title": "Focus Book Collection",
       "price_usd": 49,
       "default_checkout_url": "https://buy.stripe.com/bJe7sKh2B6ZQ8bP4II5os02",
       "checkout_url_env": "FOCUS_BOOK_BUNDLE_URL",
-      "cta_label": "Buy the Focus AI eBook Bundle",
-      "summary": "Published eBooks, sacred geometry guides, and practical business assets for a fast-start conversion path.",
+      "cta_label": "Buy the Focus Book Collection",
+      "summary": "Published eBooks, sacred geometry guides, and practical business materials for a faster entry into the library and storefront.",
       "company_ids": [
         "focus-records",
         "focus-negotium"
@@ -183,12 +183,12 @@
     },
     {
       "id": "blueprint-pack",
-      "title": "Focus AI Blueprint Pack",
+      "title": "Business Blueprint Pack",
       "price_usd": 299,
       "default_checkout_url": "https://buy.stripe.com/cNi4gy27H83U4ZD3EE5os03",
       "checkout_url_env": "FOCUS_BLUEPRINT_PACK_URL",
       "cta_label": "Buy the Blueprint Pack",
-      "summary": "Strategy assets, implementation guides, and build-ready operating materials for turning ideas into products.",
+      "summary": "Strategy assets, development notes, and structured business materials for moving from idea to a more organized execution plan.",
       "company_ids": [
         "focus-negotium",
         "royal-lee-construction"
@@ -196,12 +196,12 @@
     },
     {
       "id": "business-engine",
-      "title": "Focus AI Business Engine",
+      "title": "Signature Business Buildout",
       "price_usd": 5000,
       "default_checkout_url": "https://buy.stripe.com/4gMbJ0aEd97Y9fT2AA5os04",
       "checkout_url_env": "FOCUS_BUSINESS_ENGINE_URL",
-      "cta_label": "Buy the Business Engine",
-      "summary": "Flagship offer for prompts, workflows, design system, and launch support with readiness-first operating controls.",
+      "cta_label": "Buy the Signature Business Buildout",
+      "summary": "A flagship engagement for corporate structure, storefront clarity, affiliate coordination, and premium business execution.",
       "company_ids": [
         "focus-records",
         "royal-lee-construction",
@@ -490,7 +490,7 @@
     }
   ],
   "mobile": {
-    "app_name": "Focus AI",
+    "app_name": "Focus Operations",
     "bundle_seed": "com.thefocuscorp.focusai",
     "minimum_os": "iOS 17.0",
     "features": [
@@ -499,7 +499,7 @@
       "Library access links",
       "Service intake",
       "Push-ready notification model",
-      "AI-guided product path selection"
+      "Guided product path selection"
     ],
     "content_library_path": "/ebooks/index.html",
     "offers_path": "/products.html",
