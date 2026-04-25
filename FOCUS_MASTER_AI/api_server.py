@@ -25,6 +25,10 @@ def create_app() -> Flask:
     def operator_console():
         return app.send_static_file("operator_console.html")
 
+    @app.get("/private-console")
+    def private_console():
+        return app.send_static_file("private_console.html")
+
     @app.get("/health")
     def health():
         return jsonify(business_os.build_status()), 200

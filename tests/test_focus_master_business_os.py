@@ -39,6 +39,10 @@ def test_offers_and_mobile_config_endpoints(tmp_path, monkeypatch):
     assert payload["app"]["app_name"] == "Focus Operations"
     assert payload["portal"]["site_name"] == "The Focus Corporation | Businesses, Services, and Store"
 
+    private_console = client.get("/private-console")
+    assert private_console.status_code == 200
+    assert "Focus Private Operations Console" in private_console.get_data(as_text=True)
+
 
 def test_high_risk_task_creates_readiness_pack(tmp_path, monkeypatch):
     monkeypatch.setenv("FOCUS_MASTER_RUNTIME_DIR", str(tmp_path / "runtime"))
