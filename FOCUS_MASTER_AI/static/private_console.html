@@ -1,0 +1,397 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Focus Private Operations Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/private_console.css" />
+    <style>
+      .private-shell {
+        width: min(1440px, 94vw);
+        margin: 0 auto;
+        padding: clamp(1rem, 3vw, 2rem) 0 3rem;
+        display: grid;
+        gap: 1rem;
+      }
+
+      .private-hero,
+      .private-card,
+      .business-card,
+      .integration-card {
+        border: 1px solid rgba(129, 201, 255, 0.2);
+        border-radius: 28px;
+        background: linear-gradient(155deg, rgba(9, 18, 36, 0.84), rgba(14, 29, 56, 0.74));
+        box-shadow: var(--shadow);
+      }
+
+      .private-hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+        gap: 1rem;
+        padding: clamp(1.3rem, 3vw, 2.3rem);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .private-hero::before {
+        content: "";
+        position: absolute;
+        inset: auto -12% 62% auto;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(242, 201, 109, 0.16), transparent 68%);
+        pointer-events: none;
+      }
+
+      .private-grid,
+      .business-grid,
+      .integration-grid,
+      .summary-grid {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .private-grid {
+        grid-template-columns: minmax(320px, 0.98fr) minmax(0, 1.12fr);
+        align-items: start;
+      }
+
+      .business-grid,
+      .integration-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .private-card,
+      .business-card,
+      .integration-card {
+        padding: 1.05rem;
+      }
+
+      .business-card,
+      .integration-card {
+        cursor: pointer;
+        transition: transform 180ms ease, border-color 180ms ease, filter 180ms ease;
+      }
+
+      .business-card:hover,
+      .integration-card:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.05);
+      }
+
+      .business-card.active,
+      .integration-card.active {
+        border-color: rgba(242, 201, 109, 0.42);
+        background: linear-gradient(155deg, rgba(18, 28, 48, 0.94), rgba(20, 35, 62, 0.82));
+      }
+
+      .panel-head,
+      .control-stack,
+      .hero-copy,
+      .hero-aside,
+      .summary-grid,
+      .support-list {
+        display: grid;
+        gap: 0.9rem;
+      }
+
+      .control-stack textarea,
+      .control-stack input,
+      .control-stack select {
+        width: 100%;
+        margin-top: 0.45rem;
+        padding: 0.9rem 0.95rem;
+        border-radius: 18px;
+        border: 1px solid rgba(129, 201, 255, 0.22);
+        background: rgba(5, 12, 24, 0.74);
+        color: var(--text);
+        font: inherit;
+      }
+
+      .control-stack textarea {
+        min-height: 110px;
+        resize: vertical;
+      }
+
+      .support-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .support-list li {
+        border-radius: 20px;
+        border: 1px solid rgba(129, 201, 255, 0.12);
+        background: rgba(6, 12, 24, 0.56);
+        padding: 0.9rem;
+      }
+
+      .support-list strong {
+        display: block;
+        color: #fff0c5;
+        margin-bottom: 0.25rem;
+      }
+
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .summary-grid article {
+        border-radius: 20px;
+        border: 1px solid rgba(129, 201, 255, 0.12);
+        background: rgba(6, 12, 24, 0.56);
+        padding: 0.9rem;
+      }
+
+      .summary-grid span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+
+      .summary-grid strong {
+        display: block;
+        margin-top: 0.2rem;
+        font-size: 1rem;
+      }
+
+      .workspace-output {
+        margin: 0;
+        min-height: 540px;
+        padding: 1rem;
+        border-radius: 22px;
+        border: 1px solid rgba(129, 201, 255, 0.16);
+        background: rgba(4, 10, 22, 0.92);
+        color: #edf4ff;
+        font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+        font-size: 0.92rem;
+        line-height: 1.62;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .hero-actions,
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .private-note {
+        border-left: 3px solid rgba(242, 201, 109, 0.42);
+        padding-left: 0.9rem;
+      }
+
+      @media (max-width: 1080px) {
+        .private-hero,
+        .private-grid,
+        .business-grid,
+        .integration-grid,
+        .summary-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .hero-actions,
+        .button-row {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ambient-field" aria-hidden="true"></div>
+    <main class="private-shell">
+      <section class="private-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Private Operations Console</p>
+          <h1>Run daily business work from one private control surface.</h1>
+          <p class="lede">
+            This console is for internal use only. It organizes websites, storefronts, client
+            routing, media campaigns, development packets, and integration-driven workflows without
+            exposing any of the internal tooling on the public site.
+          </p>
+          <div class="hero-actions">
+            <a class="action-link primary" href="/operator">Open Operator Console</a>
+            <a class="action-link" href="/v1/workflows" target="_blank" rel="noreferrer">View Workflow Catalog</a>
+          </div>
+          <div class="hero-metrics">
+            <span>Private-only UI</span>
+            <span>Business workflow routing</span>
+            <span>Integration-aware planning</span>
+          </div>
+        </div>
+        <div class="hero-aside">
+          <article class="signal-card">
+            <p class="mini-label">Best use</p>
+            <h2>Website builds, development packets, release campaigns, storefront updates, and client delivery.</h2>
+          </article>
+          <article class="signal-card">
+            <p class="mini-label">Control posture</p>
+            <h2>Operator-reviewed workflows with clear approvals, auditability, and bounded automation.</h2>
+          </article>
+          <article class="signal-card private-note">
+            <p class="mini-label">Boundary</p>
+            <h2>This is a private orchestration surface, not a public page and not an unrestricted model shell.</h2>
+          </article>
+        </div>
+      </section>
+
+      <section class="private-card">
+        <div class="panel-head">
+          <p class="eyebrow">Business routing</p>
+          <h2>Choose the company lane that owns this mission.</h2>
+        </div>
+        <div class="business-grid" id="business-grid">
+          <article class="business-card active" data-business="focus-negotium">
+            <p class="eyebrow">Parent company</p>
+            <h3>Focus Negotium Inc</h3>
+            <p>Corporate services, real estate development, property systems, websites, and operating infrastructure.</p>
+          </article>
+          <article class="business-card" data-business="focus-records">
+            <p class="eyebrow">Affiliate media lane</p>
+            <h3>Focus Records LLC</h3>
+            <p>Release systems, visual campaigns, catalog packaging, cover-art direction, and digital music commerce.</p>
+          </article>
+          <article class="business-card" data-business="royal-lee-construction">
+            <p class="eyebrow">Affiliate construction lane</p>
+            <h3>Royal Lee Construction Solutions LLC</h3>
+            <p>Sacred-geometry concept studies, development planning, preconstruction, and owner-facing build strategy.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="private-card">
+        <div class="panel-head">
+          <p class="eyebrow">Integration registry</p>
+          <h2>Toggle the tools this run is allowed to touch.</h2>
+        </div>
+        <div class="integration-grid" id="integration-grid">
+          <article class="integration-card active" data-integration="github">
+            <p class="eyebrow">Code + repos</p>
+            <h3>GitHub</h3>
+            <p>Pushes, PR flow, release notes, branch work, and deployment tracking.</p>
+          </article>
+          <article class="integration-card active" data-integration="stripe">
+            <p class="eyebrow">Payments</p>
+            <h3>Stripe</h3>
+            <p>Checkout links, service-offer routing, pricing assets, and store updates.</p>
+          </article>
+          <article class="integration-card active" data-integration="adobe">
+            <p class="eyebrow">Creative suite</p>
+            <h3>Adobe CC</h3>
+            <p>Visual direction, campaign art, PDF packets, and future design-app workflows.</p>
+          </article>
+          <article class="integration-card" data-integration="figma">
+            <p class="eyebrow">Design system</p>
+            <h3>Figma</h3>
+            <p>Layout references, component planning, and design-system alignment for interfaces.</p>
+          </article>
+          <article class="integration-card" data-integration="airtable">
+            <p class="eyebrow">Ops data</p>
+            <h3>Airtable</h3>
+            <p>Structured records for client onboarding, services, and business operations.</p>
+          </article>
+          <article class="integration-card" data-integration="media">
+            <p class="eyebrow">Media pipeline</p>
+            <h3>Canva / HeyGen / Suno</h3>
+            <p>Campaign resizing, video explainer prep, and future beat-catalog packaging.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="private-grid">
+        <section class="private-card">
+          <div class="panel-head">
+            <p class="eyebrow">Mission builder</p>
+            <h2>Frame the internal run before execution begins.</h2>
+            <p class="panel-copy">This creates a private execution brief for day-to-day business operations and service delivery.</p>
+          </div>
+          <div class="control-stack">
+            <label>
+              <span>Workflow type</span>
+              <select id="workflow">
+                <option>Website Design and Deployment</option>
+                <option>Storefront and Stripe Offers</option>
+                <option>Real Estate Development Packet</option>
+                <option>Property Management Setup</option>
+                <option>Release Campaign and Media Packaging</option>
+                <option>Client Intake and Service Routing</option>
+              </select>
+            </label>
+            <label>
+              <span>Mission</span>
+              <textarea id="mission" placeholder="What needs to get done in this run?"></textarea>
+            </label>
+            <label>
+              <span>Deliverables</span>
+              <textarea id="deliverables" placeholder="List the exact outputs you want. One line per deliverable works best."></textarea>
+            </label>
+            <label>
+              <span>Constraints</span>
+              <textarea id="constraints" placeholder="List the boundaries, quality requirements, and things we cannot break."></textarea>
+            </label>
+            <label>
+              <span>Source assets or context</span>
+              <textarea id="context" placeholder="List files, URLs, live pages, campaign references, drawings, or customer details needed for the run."></textarea>
+            </label>
+          </div>
+          <div class="button-row">
+            <button id="generate">Generate Private Runbook</button>
+            <button id="reset" class="secondary" type="button">Reset</button>
+          </div>
+        </section>
+
+        <section class="private-card">
+          <div class="panel-head">
+            <p class="eyebrow">Generated runbook</p>
+            <h2>Copy this into the next private execution environment.</h2>
+          </div>
+          <div class="summary-grid" id="summary-grid"></div>
+          <pre class="workspace-output" id="output">Generate the private runbook to populate this panel.</pre>
+          <div class="button-row">
+            <button id="copy" class="secondary" type="button">Copy Runbook</button>
+            <button id="download" class="secondary" type="button">Download Markdown</button>
+          </div>
+        </section>
+      </section>
+
+      <section class="private-card">
+        <div class="panel-head">
+          <p class="eyebrow">Private workflow posture</p>
+          <h2>The console is optimized for real business execution.</h2>
+        </div>
+        <ul class="support-list">
+          <li>
+            <strong>Website design and deployment</strong>
+            Build, review, and publish customer-facing pages while preserving mobile quality and clean routing.
+          </li>
+          <li>
+            <strong>Real estate and construction delivery</strong>
+            Organize concept studies, owner packets, property-management systems, and development summaries.
+          </li>
+          <li>
+            <strong>Media and catalog work</strong>
+            Plan cover direction, rollout assets, licensing pages, and future beat-store product releases.
+          </li>
+          <li>
+            <strong>Business services and operations</strong>
+            Package entity support, websites, storefronts, routing systems, and client-onboarding infrastructure.
+          </li>
+        </ul>
+      </section>
+    </main>
+    <script src="/static/private_console.js"></script>
+  </body>
+</html>
+
