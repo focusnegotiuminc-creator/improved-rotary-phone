@@ -1,0 +1,157 @@
+[
+  {
+    "id": "knowledge_base",
+    "label": "Knowledge Base Router",
+    "role": "Stages research, notes, claims, and operating knowledge into structured storage.",
+    "analogs": [
+      "Notion",
+      "GitHub",
+      "Airtable"
+    ],
+    "execution_mode": "planned"
+  },
+  {
+    "id": "github_workspace",
+    "label": "GitHub Workspace",
+    "role": "Repo state, issues, pull requests, and publish handoff.",
+    "analogs": [
+      "GitHub"
+    ],
+    "execution_mode": "connector"
+  },
+  {
+    "id": "automation_router",
+    "label": "Automation Router",
+    "role": "Webhook-ready automation continuation for follow-up tasks.",
+    "analogs": [
+      "Make",
+      "Zapier"
+    ],
+    "execution_mode": "connector"
+  },
+  {
+    "id": "creative_studio",
+    "label": "Creative Studio",
+    "role": "Campaign visual direction, PDF packets, layouts, and design prompts.",
+    "analogs": [
+      "Adobe CC",
+      "Canva",
+      "Figma"
+    ],
+    "execution_mode": "planned"
+  },
+  {
+    "id": "figma_canvas",
+    "label": "Interface Canvas",
+    "role": "Interface diagrams, component planning, and design-system translation.",
+    "analogs": [
+      "Figma"
+    ],
+    "execution_mode": "planned"
+  },
+  {
+    "id": "stripe_catalog",
+    "label": "Offer and Checkout Catalog",
+    "role": "Service offers, pricing ladders, and checkout routing.",
+    "analogs": [
+      "Stripe"
+    ],
+    "execution_mode": "planned"
+  },
+  {
+    "id": "geometry_lab",
+    "label": "Geometry Lab",
+    "role": "Geometry studies, drafting instructions, proportions, and layout logic.",
+    "analogs": [
+      "GeoGebra",
+      "Desmos",
+      "CAD tooling"
+    ],
+    "execution_mode": "planned"
+  },
+  {
+    "id": "construction_specs",
+    "label": "Construction Specs",
+    "role": "Owner packets, build sequencing, and implementation notes.",
+    "analogs": [
+      "Construction documentation stack"
+    ],
+    "execution_mode": "planned"
+  },
+  {
+    "id": "publishing_router",
+    "label": "Publishing Router",
+    "role": "Manuscript packaging, digital publishing, and release distribution prep.",
+    "analogs": [
+      "Amazon KDP",
+      "Gumroad",
+      "Google Drive"
+    ],
+    "execution_mode": "planned"
+  },
+  {
+    "id": "media_pipeline",
+    "label": "Media Pipeline",
+    "role": "Video, music, rollout assets, and catalog packaging.",
+    "analogs": [
+      "Suno",
+      "HeyGen",
+      "Canva"
+    ],
+    "execution_mode": "planned"
+  },
+  {
+    "id": "task_hub",
+    "label": "Task Hub",
+    "role": "Task prioritization, work queues, and operator planning overlays.",
+    "analogs": [
+      "Notion",
+      "Trello",
+      "Monday",
+      "ClickUp"
+    ],
+    "execution_mode": "planned"
+  },
+  {
+    "id": "calendar_optimizer",
+    "label": "Calendar Optimizer",
+    "role": "Scheduling, priority windows, and follow-up timing.",
+    "analogs": [
+      "Clockwise",
+      "Calendar automation"
+    ],
+    "execution_mode": "planned"
+  },
+  {
+    "id": "crm_bridge",
+    "label": "CRM Bridge",
+    "role": "Lead routing, sales notes, and enrichment follow-up.",
+    "analogs": [
+      "Salesforce",
+      "Clay",
+      "Mailchimp"
+    ],
+    "execution_mode": "planned"
+  },
+  {
+    "id": "artifact_archive",
+    "label": "Artifact Archive",
+    "role": "Structured storage for generated run outputs and delivery bundles.",
+    "analogs": [
+      "GitHub",
+      "Drive",
+      "Airtable"
+    ],
+    "execution_mode": "planned"
+  },
+  {
+    "id": "remote_runner",
+    "label": "Remote Runner",
+    "role": "Pushes remote code-execution handoffs for long-running jobs.",
+    "analogs": [
+      "Replit",
+      "Railway"
+    ],
+    "execution_mode": "connector"
+  }
+]

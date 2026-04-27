@@ -313,6 +313,27 @@
       <section class="private-grid">
         <section class="private-card">
           <div class="panel-head">
+            <p class="eyebrow">Runtime status</p>
+            <h2>See provider, connector, and engine readiness before execution.</h2>
+          </div>
+          <div class="summary-grid" id="runtime-summary"></div>
+          <ul class="support-list" id="provider-status"></ul>
+        </section>
+
+        <section class="private-card">
+          <div class="panel-head">
+            <p class="eyebrow">Recent runs</p>
+            <h2>Review the latest private missions and their outcomes.</h2>
+          </div>
+          <ul class="support-list" id="recent-runs">
+            <li><strong>No runs yet.</strong><span>Launch the first mission to populate this panel.</span></li>
+          </ul>
+        </section>
+      </section>
+
+      <section class="private-grid">
+        <section class="private-card">
+          <div class="panel-head">
             <p class="eyebrow">Mission builder</p>
             <h2>Frame the internal run before execution begins.</h2>
             <p class="panel-copy">This creates a private execution brief for day-to-day business operations and service delivery.</p>
@@ -327,8 +348,26 @@
                 <option>Property Management Setup</option>
                 <option>Release Campaign and Media Packaging</option>
                 <option>Client Intake and Service Routing</option>
+                <option>Sacred Geometry Book Research and Publishing</option>
+                <option>Executive Planning and Prioritization</option>
               </select>
             </label>
+            <label>
+              <span>Workflow stack</span>
+              <select id="stack-id">
+                <option value="">Auto-select best stack</option>
+              </select>
+            </label>
+              <label>
+                <span>Preferred provider</span>
+                <select id="preferred-provider">
+                  <option value="">Auto-select best configured provider</option>
+                  <option value="ollama">Local Ollama</option>
+                  <option value="openai">OpenAI</option>
+                  <option value="anthropic">Anthropic</option>
+                  <option value="gemini">Gemini</option>
+                </select>
+              </label>
             <label>
               <span>Mission</span>
               <textarea id="mission" placeholder="What needs to get done in this run?"></textarea>
@@ -345,20 +384,32 @@
               <span>Source assets or context</span>
               <textarea id="context" placeholder="List files, URLs, live pages, campaign references, drawings, or customer details needed for the run."></textarea>
             </label>
+            <label>
+              <span>
+                <input id="execute-automation" type="checkbox" checked />
+                Allow automation engine to fire connector actions when relevant
+              </span>
+            </label>
           </div>
           <div class="button-row">
             <button id="generate">Generate Private Runbook</button>
+            <button id="launch" type="button">Launch Private Engine</button>
+            <button id="queue" class="secondary" type="button">Queue Background Run</button>
             <button id="reset" class="secondary" type="button">Reset</button>
           </div>
         </section>
 
         <section class="private-card">
           <div class="panel-head">
-            <p class="eyebrow">Generated runbook</p>
-            <h2>Copy this into the next private execution environment.</h2>
+            <p class="eyebrow">Generated runbook and execution output</p>
+            <h2>Generate the brief, launch the run, and review the final summary here.</h2>
           </div>
           <div class="summary-grid" id="summary-grid"></div>
+          <div class="summary-grid" id="run-metadata"></div>
           <pre class="workspace-output" id="output">Generate the private runbook to populate this panel.</pre>
+          <ul class="support-list" id="artifact-list">
+            <li><strong>No artifacts yet.</strong><span>Launch or queue a run to generate stored outputs.</span></li>
+          </ul>
           <div class="button-row">
             <button id="copy" class="secondary" type="button">Copy Runbook</button>
             <button id="download" class="secondary" type="button">Download Markdown</button>

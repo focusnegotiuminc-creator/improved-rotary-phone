@@ -1,0 +1,73 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Focus: Private Console API",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/FOCUS_MASTER_AI/api_server.py"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Focus: Test Suite",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "-m",
+        "pytest",
+        "-q",
+        "${workspaceFolder}/tests",
+        "-o",
+        "cache_dir=${workspaceFolder}/.pytest_cache/vscode"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Focus: Build Master Archive",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/scripts/build_master_archive.py"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Focus: Export Runtime Manifests",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/scripts/export_runtime_manifests.py"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Flux: Public QA",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/marketing/fluxcrave/verify_flux_public.py"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

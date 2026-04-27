@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Focus Private Console API",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/FOCUS_MASTER_AI/api_server.py",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    }
+  ]
+}

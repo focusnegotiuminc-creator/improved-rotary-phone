@@ -5,9 +5,11 @@ from dotenv import load_dotenv
 
 try:
     from FOCUS_MASTER_AI.core.business_os import BusinessOperatingSystem
+    from FOCUS_MASTER_AI.core.operator_runtime import OperatorRuntime
     from FOCUS_MASTER_AI.main import execute_command
 except ImportError:
     from core.business_os import BusinessOperatingSystem
+    from core.operator_runtime import OperatorRuntime
     from main import execute_command
 
 
@@ -15,7 +17,9 @@ def create_app() -> Flask:
     load_dotenv()
     app = Flask(__name__)
     business_os = BusinessOperatingSystem()
+    operator_runtime = OperatorRuntime()
     app.config["BUSINESS_OS"] = business_os
+    app.config["OPERATOR_RUNTIME"] = operator_runtime
 
     @app.get("/")
     def home():
@@ -32,6 +36,55 @@ def create_app() -> Flask:
     @app.get("/health")
     def health():
         return jsonify(business_os.build_status()), 200
+
+    @app.get("/v1/private/runtime")
+    def private_runtime_status():
+        return jsonify({"ok": True, "runtime": operator_runtime.status()}), 200
+
+    @app.get("/v1/private/runs")
+    def private_runs():
+        limit = request.args.get("limit", default=20, type=int)
+        return jsonify({"ok": True, "runs": operator_runtime.list_runs(limit=limit)}), 200
+
+    @app.get("/v1/private/runs/<run_id>")
+    def private_run_detail(run_id: str):
+        run = operator_runtime.get_run(run_id)
+        if run is None:
+            return jsonify({"ok": False, "error": "run not found"}), 404
+        return jsonify({"ok": True, "run": run}), 200
+
+    @app.get("/v1/private/runs/<run_id>/artifacts")
+    def private_run_artifacts(run_id: str):
+        run = operator_runtime.get_run(run_id)
+        if run is None:
+            return jsonify({"ok": False, "error": "run not found"}), 404
+        return jsonify({"ok": True, "artifacts": operator_runtime.list_artifacts(run_id)}), 200
+
+    @app.post("/v1/private/runs")
+    def create_private_run():
+        payload = request.get_json(silent=True) or {}
+        try:
+            run = operator_runtime.create_run(payload)
+        except ValueError as exc:
+            return jsonify({"ok": False, "error": str(exc)}), 400
+        return jsonify({"ok": True, "run": run}), 201
+
+    @app.post("/v1/private/jobs")
+    def create_private_job():
+        payload = request.get_json(silent=True) or {}
+        try:
+            run = operator_runtime.submit_run(payload)
+        except ValueError as exc:
+            return jsonify({"ok": False, "error": str(exc)}), 400
+        return jsonify({"ok": True, "run": run}), 202
+
+    @app.get("/v1/private/stacks")
+    def private_stacks():
+        return jsonify({"ok": True, "stacks": operator_runtime.status()["stacks"]}), 200
+
+    @app.get("/v1/private/tools")
+    def private_tools():
+        return jsonify({"ok": True, "tools": operator_runtime.status()["tools"]}), 200
 
     @app.post("/run")
     def run_task():

@@ -16,10 +16,21 @@ except ImportError:
     from integrations.replit_runner import trigger_replit
 
 
-def run_ai_engine(engine_key: str, task: str, *, execute_automation: bool = False) -> dict[str, Any]:
+def run_ai_engine(
+    engine_key: str,
+    task: str,
+    *,
+    execute_automation: bool = False,
+    preferred_provider: str | None = None,
+) -> dict[str, Any]:
     packet = build_master_task_packet(task, preferred_engine=engine_key)
     engine_prompt = build_engine_prompt(packet, engine_key)
-    output = run_llm_or_fallback(engine_prompt, packet, engine_key)
+    generation = run_llm_or_fallback(
+        engine_prompt,
+        packet,
+        engine_key,
+        preferred_provider=preferred_provider,
+    )
 
     result: dict[str, Any] = {
         "engine": engine_key,
@@ -28,9 +39,17 @@ def run_ai_engine(engine_key: str, task: str, *, execute_automation: bool = Fals
         "task": task,
         "task_packet": packet,
         "engine_prompt": engine_prompt,
-        "output": output,
+        "output": generation["content"],
+        "model_execution": {
+            "provider": generation.get("provider", "fallback"),
+            "model": generation.get("model", "templated-fallback"),
+            "mode": generation.get("mode", "fallback"),
+            "attempted": generation.get("attempted", []),
+        },
         "connectors": build_connector_status(),
     }
+    if generation.get("error"):
+        result["model_execution"]["error"] = generation["error"]
 
     if execute_automation or engine_key == "automation":
         route_hint = route_ai(task)

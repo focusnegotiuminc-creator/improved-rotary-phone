@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import sys
+import time
 from pathlib import Path
 
 
@@ -85,3 +86,102 @@ def test_public_site_build_exports_business_os_bundle():
     assert (public_dir / "business_os.html").exists()
     assert "Stripe-connected offers" in products_html
     assert '"site_name": "The Focus Corporation | Businesses, Services, and Store"' in business_os_json
+
+
+def test_private_runtime_status_endpoint(tmp_path, monkeypatch):
+    monkeypatch.setenv("FOCUS_MASTER_RUNTIME_DIR", str(tmp_path / "runtime"))
+    app = create_app()
+    client = app.test_client()
+
+    response = client.get("/v1/private/runtime")
+    assert response.status_code == 200
+    payload = response.get_json()["runtime"]
+    assert payload["service"] == "focus_master_ai_private_runtime"
+    assert any(item["provider"] == "openai" for item in payload["providers"])
+    assert any(engine["id"] == "marketing" for engine in payload["engines"])
+
+
+def test_private_run_creation_and_lookup(tmp_path, monkeypatch):
+    monkeypatch.setenv("FOCUS_MASTER_RUNTIME_DIR", str(tmp_path / "runtime"))
+    app = create_app()
+    client = app.test_client()
+
+    response = client.post(
+        "/v1/private/runs",
+        json={
+            "business": "focus-negotium",
+            "workflow": "Website Design and Deployment",
+            "mission": "Prepare a private execution plan for a service-page refresh and deployment sequence.",
+            "deliverables": ["Updated page map", "Deployment checklist"],
+            "constraints": ["Do not expose internal systems publicly."],
+            "context": ["Live site", "Private repo workspace"],
+            "integrations": ["github", "stripe"],
+            "execute_automation": False,
+        },
+    )
+    assert response.status_code == 201
+    run = response.get_json()["run"]
+    assert run["status"] == "completed"
+    assert run["engine_sequence"]
+    assert "Final Summary" not in run["final_summary"]  # summary body only
+    assert len(run["results"]) >= 1
+
+    detail = client.get(f"/v1/private/runs/{run['id']}")
+    assert detail.status_code == 200
+    detail_run = detail.get_json()["run"]
+    assert detail_run["id"] == run["id"]
+    assert detail_run["final_summary_meta"]["mode"] in {"fallback", "live"}
+    assert len(detail_run["artifacts"]) >= 4
+
+
+def test_private_runtime_catalog_endpoints(tmp_path, monkeypatch):
+    monkeypatch.setenv("FOCUS_MASTER_RUNTIME_DIR", str(tmp_path / "runtime"))
+    app = create_app()
+    client = app.test_client()
+
+    stacks = client.get("/v1/private/stacks")
+    assert stacks.status_code == 200
+    stack_payload = stacks.get_json()["stacks"]
+    assert any(item["id"] == "sacred_geometry_book_stack" for item in stack_payload)
+
+    tools = client.get("/v1/private/tools")
+    assert tools.status_code == 200
+    tool_payload = tools.get_json()["tools"]
+    assert any(item["id"] == "knowledge_base" for item in tool_payload)
+
+
+def test_private_background_job_and_artifacts(tmp_path, monkeypatch):
+    monkeypatch.setenv("FOCUS_MASTER_RUNTIME_DIR", str(tmp_path / "runtime"))
+    app = create_app()
+    client = app.test_client()
+
+    response = client.post(
+        "/v1/private/jobs",
+        json={
+            "business": "focus-records",
+            "workflow": "Release Campaign and Media Packaging",
+            "mission": "Queue a media release brief with rollout notes and asset handoff guidance.",
+            "deliverables": ["campaign summary", "asset list"],
+            "integrations": ["github", "media"],
+            "execute_automation": False,
+        },
+    )
+    assert response.status_code == 202
+    run = response.get_json()["run"]
+
+    deadline = time.time() + 10
+    final_run = None
+    while time.time() < deadline:
+        detail = client.get(f"/v1/private/runs/{run['id']}")
+        assert detail.status_code == 200
+        final_run = detail.get_json()["run"]
+        if final_run["status"] == "completed":
+            break
+        time.sleep(0.25)
+
+    assert final_run is not None
+    assert final_run["status"] == "completed"
+    artifacts = client.get(f"/v1/private/runs/{run['id']}/artifacts")
+    assert artifacts.status_code == 200
+    artifact_payload = artifacts.get_json()["artifacts"]
+    assert any(item["name"] == "final_summary" for item in artifact_payload)

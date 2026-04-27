@@ -4,10 +4,10 @@ from typing import Any
 
 try:
     from FOCUS_MASTER_AI.core.task_classifier import classify_task
-    from FOCUS_MASTER_AI.integrations.openai_client import call_gpt
+    from FOCUS_MASTER_AI.integrations.model_mesh import generate_text
 except ImportError:
     from core.task_classifier import classify_task
-    from integrations.openai_client import call_gpt
+    from integrations.model_mesh import generate_text
 
 
 ENGINE_PROFILES: dict[str, dict[str, Any]] = {
@@ -238,7 +238,7 @@ def build_engine_prompt(packet: dict[str, Any], engine_key: str) -> str:
     )
 
 
-def _fallback_output(packet: dict[str, Any], engine_key: str) -> str:
+def build_fallback_output(packet: dict[str, Any], engine_key: str) -> str:
     profile = ENGINE_PROFILES[engine_key]
     deliverables = "\n".join(f"- {item}" for item in profile["deliverables"])
     automation = "\n".join(f"- {item}" for item in packet["automation_hooks"])
@@ -254,11 +254,19 @@ def _fallback_output(packet: dict[str, Any], engine_key: str) -> str:
     )
 
 
-def run_llm_or_fallback(prompt: str, packet: dict[str, Any], engine_key: str) -> str:
-    output = call_gpt(prompt)
-    if output.startswith("[OpenAI unavailable]") or output.startswith("[OpenAI error]"):
-        return _fallback_output(packet, engine_key)
-    return output
+def run_llm_or_fallback(
+    prompt: str,
+    packet: dict[str, Any],
+    engine_key: str,
+    *,
+    preferred_provider: str | None = None,
+) -> dict[str, Any]:
+    return generate_text(
+        prompt,
+        engine_key=engine_key,
+        preferred_provider=preferred_provider,
+        fallback_text=build_fallback_output(packet, engine_key),
+    )
 
 
 def build_master_task_packet(task: str, preferred_engine: str | None = None) -> dict[str, Any]:
