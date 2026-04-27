@@ -21,6 +21,7 @@ SOURCE = ROOT / "source"
 SECRETS_DIR = ROOT.parents[1] / ".secrets"
 SITE_CSS = ROOT / "site.css"
 SITE_JS = ROOT / "site.js"
+FLYER_SOURCE = SOURCE / "flux_final.png"
 
 BASE_URL = "https://www.fluxcrave.com"
 
@@ -335,13 +336,13 @@ def save_qr_asset(flyer: Image.Image) -> None:
 def write_assets() -> None:
     shutil.copy2(SITE_CSS, DIST / "assets" / "site.css")
     shutil.copy2(SITE_JS, DIST / "assets" / "site.js")
-    shutil.copy2(SOURCE / "flux_3.png", DIST / "assets" / "images" / "flux-flyer.png")
+    shutil.copy2(FLYER_SOURCE, DIST / "assets" / "images" / "flux-flyer.png")
     shutil.copy2(
         SOURCE / "Flux_n_crave_description_and_menu.pdf",
         DIST / "assets" / "Flux_n_crave_description_and_menu.pdf",
     )
 
-    flyer = Image.open(SOURCE / "flux_3.png")
+    flyer = Image.open(FLYER_SOURCE)
     crops = {
         "poster-left.png": (34, 55, 509, 844),
         "poster-right.png": (604, 55, 1089, 844),
