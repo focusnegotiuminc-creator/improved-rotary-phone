@@ -29,3 +29,4 @@ marketing/fluxcrave/dist/
 marketing/fluxcrave/remote_backup_htdocs_*/
 cloudflare/focus-mobile-workbench/node_modules/
 cloudflare/focus-mobile-workbench/.wrangler/
+cloudflare/focus-mobile-workbench/public/archives/

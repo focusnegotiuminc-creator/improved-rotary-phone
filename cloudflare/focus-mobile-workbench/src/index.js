@@ -378,6 +378,19 @@ export default {
       return handleApi(request, env);
     }
 
+    if (url.pathname.startsWith("/archives/")) {
+      if (!(await hasValidSession(request, env))) {
+        return new Response("Authentication required.", {
+          status: 401,
+          headers: {
+            "content-type": "text/plain; charset=utf-8",
+            "cache-control": "no-store",
+          },
+        });
+      }
+      return env.ASSETS.fetch(request);
+    }
+
     if (url.pathname === "/" || url.pathname === "/app") {
       return env.ASSETS.fetch(new Request(new URL("/index.html", request.url), request));
     }

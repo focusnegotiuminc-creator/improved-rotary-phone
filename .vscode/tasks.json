@@ -58,6 +58,41 @@
       "problemMatcher": []
     },
     {
+      "label": "Focus: Sync Archive To Cloudflare",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/scripts/sync_master_archive_to_cloudflare.py",
+        "--archive-root",
+        "C:/Users/reggi/OneDrive/Desktop/FOCUS_MASTER_MASTER_ARCHIVE/current",
+        "--manifests-dir",
+        "C:/Users/reggi/OneDrive/Desktop/FOCUS_MASTER_MASTER_ARCHIVE/current/docs/manifests",
+        "--cloudflare-public-dir",
+        "${workspaceFolder}/cloudflare/focus-mobile-workbench/public",
+        "--dest-subdir",
+        "archives",
+        "--report-file",
+        "${workspaceFolder}/docs/manifests/cloudflare_storage_sync_report.md",
+        "--include-zip",
+        "--zip-dir-name",
+        "apps",
+        "--zip-dir-name",
+        "sites",
+        "--zip-dir-name",
+        "private_console",
+        "--zip-dir-name",
+        "engines",
+        "--zip-dir-name",
+        "integrations",
+        "--zip-dir-name",
+        "artifacts"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Flux: Public QA",
       "type": "shell",
       "command": "python",

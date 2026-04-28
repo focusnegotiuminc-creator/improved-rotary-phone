@@ -17,8 +17,9 @@ Private Cloudflare-hosted mobile operator surface for Focus.
   - stack chooser
   - prompt/workspace editor
   - plugin-bridge registry
-  - task runner
-  - run output panel
+- task runner
+- run output panel
+- private archive delivery under `/archives/*` for sanitized master-archive bundles
 
 ## What it is not
 
@@ -55,3 +56,9 @@ npm run deploy
 ```
 
 If Cloudflare auth is not available in Wrangler yet, complete auth first and then deploy.
+
+## Private archive storage
+
+- Archive snapshots can be synced into the worker asset tree under `/archives/*`
+- Those archive routes are protected by the same app session gate as the private workbench
+- Only sanitized archive outputs should be synced there; live secret files stay in private secret stores only

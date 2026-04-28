@@ -6,6 +6,7 @@ import json
 import shutil
 import zipfile
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable
 
@@ -88,6 +89,30 @@ def _default_paths() -> tuple[Path, Path]:
     return archive_root, manifests_dir
 
 
+def _utc_now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _write_report(report_path: Path, *, dest_dir: Path, copied_files: list[Path], archive_root: Path) -> None:
+    lines = [
+        "# Cloudflare Storage Sync Report",
+        "",
+        f"Generated: {_utc_now()}",
+        "",
+        f"Archive root: `{archive_root}`",
+        f"Cloudflare destination: `{dest_dir}`",
+        "",
+        "This sync stores only the sanitized master archive outputs and keeps them behind the private workbench session gate at `/archives/*`.",
+        "",
+        "| File |",
+        "| --- |",
+    ]
+    for path in copied_files:
+        lines.append(f"| `{path.name}` |")
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Copy build_master_archive outputs into Cloudflare workbench public/assets for deployment."
@@ -119,7 +144,7 @@ def main() -> int:
     parser.add_argument(
         "--include-zip",
         action="store_true",
-        help="If export_bundle is missing, zip apps/ and sites/ directories into Cloudflare.",
+        help="Create zip snapshots for selected archive directories.",
     )
     parser.add_argument(
         "--apps-dir-name",
@@ -132,6 +157,18 @@ def main() -> int:
         type=str,
         default="sites",
         help="Directory name under archive root to zip/copy for local code storage.",
+    )
+    parser.add_argument(
+        "--zip-dir-name",
+        action="append",
+        default=[],
+        help="Additional archive-root directory names to zip into the Cloudflare archive destination. Repeat as needed.",
+    )
+    parser.add_argument(
+        "--report-file",
+        type=Path,
+        default=None,
+        help="Optional report path. Defaults to <manifests-dir>/cloudflare_storage_sync_report.md",
     )
     parser.add_argument(
         "--dry-run",
@@ -163,6 +200,7 @@ def main() -> int:
 
     export_bundle_str = str(manifest.get("export_bundle", "") or "")
     export_bundle_path = Path(export_bundle_str) if export_bundle_str else None
+    copied_files: list[Path] = []
 
     # Required metadata files
     required_manifest_files = [
@@ -180,56 +218,51 @@ def main() -> int:
     for src in required_manifest_files:
         dest = targets.dest_dir / src.name
         _copy_file(src, dest, dry_run=args.dry_run)
+        copied_files.append(dest)
 
     # Copy optional
     for src in optional:
         if src.exists():
             dest = targets.dest_dir / src.name
             _copy_file(src, dest, dry_run=args.dry_run)
+            copied_files.append(dest)
 
     # Copy bundle if available
     if export_bundle_path and export_bundle_path.exists():
         dest = targets.dest_dir / export_bundle_path.name
         _copy_file(export_bundle_path, dest, dry_run=args.dry_run)
+        copied_files.append(dest)
     else:
         if export_bundle_path:
             # export_bundle key exists but file missing
             raise FileNotFoundError(
                 f"Manifest reports export_bundle but file is missing: {export_bundle_path}"
             )
-        # export_bundle is empty string or missing
-        if args.include_zip:
-            # Create a zip artifact so the local code snapshot is still stored on Cloudflare.
-            # We zip apps/ and sites/ directories if present.
-            apps_dir = archive_root / args.apps_dir_name
-            sites_dir = archive_root / args.sites_dir_name
+        if not args.include_zip:
+            raise FileNotFoundError(
+                "No export bundle is available and zip export was not requested."
+            )
 
-            archives: list[Path] = []
-            if apps_dir.exists() and apps_dir.is_dir():
-                archives.append(apps_dir)
-            if sites_dir.exists() and sites_dir.is_dir():
-                archives.append(sites_dir)
+    if args.include_zip:
+        requested_names = list(dict.fromkeys(args.zip_dir_name or [args.apps_dir_name, args.sites_dir_name]))
+        if not requested_names:
+            requested_names = [args.apps_dir_name, args.sites_dir_name]
+        requested_dirs = [archive_root / name for name in requested_names]
+        existing_dirs = [path for path in requested_dirs if path.exists() and path.is_dir()]
+        if not existing_dirs:
+            raise FileNotFoundError(
+                "include-zip enabled but none of the requested archive directories exist: "
+                + ", ".join(str(path) for path in requested_dirs)
+            )
+        for source_dir in existing_dirs:
+            zip_path = targets.dest_dir / f"{source_dir.name}.zip"
+            _zip_dir(source_dir, zip_path, dry_run=args.dry_run)
+            copied_files.append(zip_path)
 
-            if not archives:
-                raise FileNotFoundError(
-                    f"include-zip enabled but neither {apps_dir} nor {sites_dir} exist."
-                )
+    report_path = args.report_file or (manifests_dir / "cloudflare_storage_sync_report.md")
+    if not args.dry_run:
+        _write_report(report_path, dest_dir=targets.dest_dir, copied_files=copied_files, archive_root=archive_root)
 
-            if apps_dir.exists() and apps_dir.is_dir():
-                _zip_dir(
-                    apps_dir,
-                    targets.dest_dir / f"{apps_dir.name}.zip",
-                    dry_run=args.dry_run,
-                )
-            if sites_dir.exists() and sites_dir.is_dir():
-                _zip_dir(
-                    sites_dir,
-                    targets.dest_dir / f"{sites_dir.name}.zip",
-                    dry_run=args.dry_run,
-                )
-
-    # Also store the (possibly updated) manifest itself under dest_dir for easy retrieval
-    # (already copied above, but we keep this step explicit for clarity)
     return 0
 
 
