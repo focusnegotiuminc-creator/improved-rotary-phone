@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -14,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RUNNER = Path(r"C:\Users\reggi\OneDrive\Documents\GitHub\_cloudflare_build\focus-mobile-workbench")
 DEV_VARS = RUNNER / ".dev.vars"
 REPORT = ROOT / "docs" / "manifests" / "focus_mobile_workbench_qa_report.md"
-BASE_URL = "http://127.0.0.1:8787"
+BASE_URL = os.environ.get("FOCUS_MOBILE_WORKBENCH_BASE_URL", "http://127.0.0.1:8787")
 
 
 def load_dev_vars(path: Path) -> dict[str, str]:
@@ -22,7 +23,7 @@ def load_dev_vars(path: Path) -> dict[str, str]:
     for line in path.read_text(encoding="utf-8").splitlines():
         if "=" in line:
             key, value = line.split("=", 1)
-            values[key] = value
+            values[key.lstrip("\ufeff")] = value
     return values
 
 
@@ -34,7 +35,10 @@ def request_json(
     payload: dict[str, object] | None = None,
 ) -> tuple[int, dict[str, object]]:
     body = None
-    headers = {"content-type": "application/json"}
+    headers = {
+        "content-type": "application/json",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
+    }
     if payload is not None:
         body = json.dumps(payload).encode("utf-8")
     request = urllib.request.Request(
@@ -47,7 +51,11 @@ def request_json(
         with opener.open(request, timeout=20) as response:
             return response.status, json.loads(response.read().decode("utf-8"))
     except urllib.error.HTTPError as exc:
-        return exc.code, json.loads(exc.read().decode("utf-8"))
+        raw = exc.read().decode("utf-8")
+        try:
+            return exc.code, json.loads(raw)
+        except json.JSONDecodeError:
+            return exc.code, {"ok": False, "raw": raw}
 
 
 def write_report(lines: list[str]) -> None:
@@ -128,6 +136,7 @@ def main() -> int:
         "# Focus Mobile Workbench QA Report",
         "",
         f"Generated: {timestamp}",
+        f"Base URL: `{BASE_URL}`",
         "",
         "| Check | Result | Detail |",
         "| --- | --- | --- |",
