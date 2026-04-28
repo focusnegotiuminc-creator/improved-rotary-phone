@@ -1,0 +1,4 @@
+PRIVATE_APP_PASSWORD=replace-with-private-passphrase
+APP_SESSION_SECRET=replace-with-long-random-secret
+OPENAI_API_KEY=replace-with-runtime-key
+OPENAI_MODEL=gpt-4.1-mini

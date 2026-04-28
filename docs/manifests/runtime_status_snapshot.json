@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-04-27T20:04:25.426601+00:00",
+  "generated_at_utc": "2026-04-28T04:33:00.490525+00:00",
   "providers": [
     {
       "provider": "ollama",
@@ -7,7 +7,7 @@
       "key_name": "OLLAMA_BASE_URL",
       "default_model": "llama3.1:8b",
       "state": "attention",
-      "message": "Ollama is not reachable: HTTPConnectionPool(host='127.0.0.1', port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=11434) at 0x14e2ea76cf0>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.2)'))"
+      "message": "Ollama is not reachable: HTTPConnectionPool(host='127.0.0.1', port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=11434) at 0x281b33cdbe0>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.2)'))"
     },
     {
       "provider": "openai",

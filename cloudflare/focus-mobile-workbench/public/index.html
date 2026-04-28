@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Focus Mobile Workbench is a private, mobile-first operator console for internal workflow routing, stack selection, and run execution."
+    />
+    <title>Focus Mobile Workbench</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-a" aria-hidden="true"></div>
+    <div class="ambient ambient-b" aria-hidden="true"></div>
+    <main class="app-shell">
+      <section class="login-panel" id="login-panel">
+        <div class="login-card">
+          <p class="microcopy">Private operator surface</p>
+          <h1>Focus Mobile Workbench</h1>
+          <p class="lede">
+            A mobile-first command surface for internal website work, business routing, publishing,
+            and private execution planning.
+          </p>
+          <label class="field">
+            <span>Passphrase</span>
+            <input
+              id="login-password"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Enter the private app passphrase"
+            />
+          </label>
+          <div class="button-row">
+            <button id="login-button" class="primary" type="button">Unlock workbench</button>
+          </div>
+          <p id="login-message" class="status-copy" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section class="workspace hidden" id="workspace">
+        <header class="topbar">
+          <div class="brand-block">
+            <p class="microcopy">Private app</p>
+            <h1>Focus Mobile Workbench</h1>
+          </div>
+          <div class="topbar-actions">
+            <span class="chip" id="runtime-chip">Checking runtime…</span>
+            <button id="refresh-button" class="ghost" type="button">Refresh</button>
+            <button id="logout-button" class="ghost" type="button">Lock</button>
+          </div>
+        </header>
+
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="microcopy">Mobile operator workspace</p>
+            <h2>Run private stacks from iPhone-friendly panels without dragging extra file churn onto the laptop.</h2>
+            <p>
+              This is a VS Code-inspired workbench, not a literal clone. It gives us a clean
+              prompt editor, bridge registry, stack switcher, and execution panel in one mobile-safe surface.
+            </p>
+          </div>
+          <div class="hero-metrics" id="hero-metrics">
+            <article>
+              <span>Stacks</span>
+              <strong id="metric-stacks">0</strong>
+            </article>
+            <article>
+              <span>Bridges</span>
+              <strong id="metric-bridges">0</strong>
+            </article>
+            <article>
+              <span>Providers</span>
+              <strong id="metric-providers">0</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="grid-shell">
+          <aside class="sidebar card">
+            <div class="panel-head">
+              <p class="microcopy">Workflow stacks</p>
+              <h3>Choose the lane</h3>
+            </div>
+            <div class="stack-list" id="stack-list"></div>
+
+            <div class="panel-head section-gap">
+              <p class="microcopy">Bridge registry</p>
+              <h3>Enable the right tools</h3>
+            </div>
+            <div class="bridge-list" id="bridge-list"></div>
+
+            <div class="panel-head section-gap">
+              <p class="microcopy">Prompt templates</p>
+              <h3>Seed the document</h3>
+            </div>
+            <div class="template-list" id="template-list"></div>
+          </aside>
+
+          <section class="editor-shell">
+            <article class="card form-card">
+              <div class="panel-head">
+                <p class="microcopy">Mission builder</p>
+                <h3>Compose the run</h3>
+              </div>
+
+              <div class="field-grid">
+                <label class="field">
+                  <span>Mission</span>
+                  <textarea
+                    id="mission-input"
+                    placeholder="What needs to get done in this run?"
+                  ></textarea>
+                </label>
+                <label class="field">
+                  <span>Workspace note</span>
+                  <textarea
+                    id="document-input"
+                    placeholder="Paste notes, requirements, file references, or a prompt template here."
+                  ></textarea>
+                </label>
+              </div>
+
+              <div class="toolbar-row">
+                <label class="field compact">
+                  <span>Provider</span>
+                  <select id="provider-select">
+                    <option value="fallback">Fallback planner</option>
+                    <option value="openai">OpenAI</option>
+                  </select>
+                </label>
+                <label class="field compact">
+                  <span>Template insert</span>
+                  <select id="template-select">
+                    <option value="">Choose a template</option>
+                  </select>
+                </label>
+                <button id="insert-template" class="ghost" type="button">Insert</button>
+              </div>
+
+              <div class="button-row">
+                <button id="run-button" class="primary" type="button">Run mission</button>
+                <button id="copy-button" class="ghost" type="button">Copy output</button>
+                <button id="download-button" class="ghost" type="button">Download markdown</button>
+              </div>
+            </article>
+
+            <article class="card status-card">
+              <div class="panel-head">
+                <p class="microcopy">Execution output</p>
+                <h3>Review the run</h3>
+              </div>
+              <div class="run-meta" id="run-meta">
+                <article>
+                  <span>Status</span>
+                  <strong>Idle</strong>
+                </article>
+                <article>
+                  <span>Provider</span>
+                  <strong>Not selected</strong>
+                </article>
+                <article>
+                  <span>Model</span>
+                  <strong>n/a</strong>
+                </article>
+              </div>
+              <pre class="output-panel" id="output-panel">Log in and run a mission to populate this panel.</pre>
+            </article>
+          </section>
+        </section>
+      </section>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

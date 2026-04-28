@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "focus-mobile-workbench",
+  "main": "./src/index.js",
+  "compatibility_date": "2026-04-27",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "vars": {
+    "APP_NAME": "Focus Mobile Workbench",
+    "DEFAULT_OPENAI_MODEL": "gpt-4.1-mini"
+  }
+}
