@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 from __future__ import annotations
 
 import json
@@ -223,8 +223,8 @@ def build() -> int:
         meta = BOOK_BY_SOURCE.get(md.name, {
             "slug": md.stem,
             "title": md.stem.replace("_", " ").title(),
-            "tag": "Focus AI title",
-            "summary": "Published from the Focus AI library.",
+            "tag": "Published title",
+            "summary": "Published from The Focus Corporation library.",
             "price_usd": 14.99,
         })
         slug = meta["slug"]
@@ -239,14 +239,14 @@ def build() -> int:
   <div class="meta-row">
     <span class="price">{_format_currency(float(meta['price_usd']))}</span>
     <span>Direct route {phone}</span>
-    <span>Published Focus AI library</span>
+    <span>Published library title</span>
   </div>
   <div class="cta-row">
     <a class="btn" href="../books.html">Back to book sales page</a>
     <a class="btn secondary" href="{pdf_href}">Download PDF</a>
     <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
   </div>
-  <p><a href="index.html">Back to eBook library</a> · <a href="../products.html">View live offers</a> · <a href="../index.html">Return to TheFocusCorp.com</a></p>
+  <p><a href="index.html">Back to eBook library</a> · <a href="../store.html">View the store</a> · <a href="../index.html">Return to TheFocusCorp.com</a></p>
 </section>
 """.strip()
         body_html = md_to_html(md.read_text(encoding="utf-8"))
@@ -279,7 +279,7 @@ def build() -> int:
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Focus AI eBook Library</title>
+  <title>The Focus Corporation Library</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -289,8 +289,8 @@ def build() -> int:
   <main>
     <section class="hero">
       <p class="eyebrow">Published eBook library</p>
-      <h1>Read the Focus AI library online or download printable PDFs.</h1>
-      <p>The book storefront now includes visible pricing, downloadable PDFs, and direct routing into the higher-value Focus AI offer ladder.</p>
+      <h1>Read the library online or download printable PDFs.</h1>
+      <p>The library now includes visible pricing, downloadable PDFs, and direct routing into the public store and service offers.</p>
       <div class="meta-row">
         <span>{len(BOOK_CATALOG)} current titles</span>
         <span>Call or text {phone}</span>
@@ -299,9 +299,9 @@ def build() -> int:
       <div class="cta-row">
         <a class="btn" href="../books.html">Open books sales page</a>
         <a class="btn secondary" href="{BOOK_BUNDLE_URL}">Buy the bundle</a>
-        <a class="btn secondary" href="../products.html">Browse live offers</a>
+        <a class="btn secondary" href="../store.html">Browse the store</a>
       </div>
-      <p><a href="../index.html">Return to home</a> · <a href="../services.html">See services</a> · <a href="../command/">Open command platform</a></p>
+      <p><a href="../index.html">Return to home</a> · <a href="../services.html">See services</a> · <a href="../structure.html">See the structure</a></p>
     </section>
     <section class="catalog-grid">{''.join(cards)}</section>
   </main>
@@ -315,3 +315,4 @@ def build() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(build())
+

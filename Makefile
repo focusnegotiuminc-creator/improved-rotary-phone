@@ -1,4 +1,4 @@
-﻿.PHONY: run stage qa visual-check publish sync merge-gh merge-gh-dry-run setup-desktop-ai public-build deploy-infinityfree deploy-replit deploy-thefocuscorp deploy-local-live replit-export final-system live-stack full-check backup verify-live merge-prs go-live install-gh unblock-live setup-autopilot configure-actions
+﻿.PHONY: run stage qa visual-check publish sync merge-gh merge-gh-dry-run merge-gh-cloudflare setup-desktop-ai public-build deploy-infinityfree deploy-replit deploy-thefocuscorp deploy-local-live replit-export final-system live-stack full-check backup verify-live merge-prs go-live install-gh unblock-live setup-autopilot configure-actions fluxcrave-build fluxcrave-deploy
 
 PYTHON := python3
 ifeq ($(OS),Windows_NT)
@@ -37,6 +37,11 @@ merge-gh:
 
 merge-gh-dry-run:
 	$(PYTHON) focus_ai/scripts/merge_github_repositories.py --owner $(OWNER) --dry-run
+
+merge-gh-cloudflare:
+	$(PYTHON) focus_ai/scripts/merge_github_repositories.py --owner $(OWNER)
+	$(PYTHON) scripts/build_master_archive.py
+	$(PYTHON) scripts/sync_master_archive_to_cloudflare.py --include-zip
 
 setup-desktop-ai:
 	$(PYTHON) focus_ai/scripts/setup_desktop_focus_master_ai.py
@@ -88,3 +93,9 @@ setup-autopilot:
 configure-actions:
 	$(PYTHON) focus_ai/scripts/configure_github_actions.py
 
+
+fluxcrave-build:
+	$(PYTHON) marketing/fluxcrave/build_fluxcrave_site.py
+
+fluxcrave-deploy:
+	$(PYTHON) marketing/fluxcrave/deploy_fluxcrave_site.py

@@ -25,6 +25,13 @@ DEFAULT_REMOTE_DIR_CANDIDATES = [
     "htdocs",
     "domains/thefocuscorp.com/public_html",
 ]
+DEFAULT_REMOTE_REMOVE_PATHS = [
+    "command",
+    "machine.html",
+    "master_prompt_studio.js",
+    "data/business_os.json",
+    "data/stages.json",
+]
 DEFAULT_LOGIN_RETRIES = 3
 DEFAULT_LOGIN_RETRY_DELAY = 2.0
 
@@ -34,6 +41,13 @@ def _parse_remote_dir_candidates(raw: str | None) -> list[str]:
         return list(DEFAULT_REMOTE_DIR_CANDIDATES)
     parsed = [item.strip().strip("/") for item in raw.split(",") if item.strip()]
     return parsed or list(DEFAULT_REMOTE_DIR_CANDIDATES)
+
+
+def _parse_remove_paths(raw: str | None) -> list[str]:
+    if raw is None:
+        return list(DEFAULT_REMOTE_REMOVE_PATHS)
+    parsed = [item.strip().strip("/") for item in raw.split(",") if item.strip()]
+    return parsed
 
 
 def _host_candidates(raw_host: str | None) -> list[str]:
@@ -139,6 +153,61 @@ def _mkdirs(ftp: FTP, path: str) -> None:
                 raise
 
 
+def _list_dir(ftp: FTP, remote_dir: str) -> list[str]:
+    start_dir = ftp.pwd()
+    try:
+        ftp.cwd(remote_dir)
+        names = ftp.nlst()
+    finally:
+        try:
+            ftp.cwd(start_dir)
+        except error_perm:
+            pass
+
+    cleaned: list[str] = []
+    for name in names:
+        stripped = name.strip().strip("/")
+        if not stripped or stripped.endswith("/.") or stripped.endswith("/..") or stripped in {".", ".."}:
+            continue
+        if "/" in stripped:
+            cleaned.append(stripped)
+        else:
+            cleaned.append(f"{remote_dir.strip('/')}/{stripped}".strip("/"))
+    return cleaned
+
+
+def _delete_remote_path(ftp: FTP, remote_path: str) -> bool:
+    normalized = remote_path.strip().strip("/")
+    if not normalized:
+        return False
+
+    if _path_exists(ftp, normalized):
+        for child in _list_dir(ftp, normalized):
+            if child == normalized:
+                continue
+            _delete_remote_path(ftp, child)
+        ftp.rmd(normalized)
+        return True
+
+    try:
+        ftp.delete(normalized)
+        return True
+    except error_perm as exc:
+        if str(exc).startswith("550"):
+            return False
+        raise
+
+
+def _cleanup_remote_paths(ftp: FTP, remote_dir: str, relative_paths: list[str]) -> int:
+    removed = 0
+    for rel_path in relative_paths:
+        target = f"{remote_dir.rstrip('/')}/{rel_path.strip('/')}".strip("/")
+        if _delete_remote_path(ftp, target):
+            removed += 1
+            print(f"Removed legacy remote path: {target}")
+    return removed
+
+
 def _upload_dir(ftp: FTP, local_dir: Path, remote_dir: str) -> tuple[int, int]:
     files = 0
     dirs = 0
@@ -174,6 +243,7 @@ def main() -> int:
     remote_dir_candidates = _parse_remote_dir_candidates(
         os.getenv("INFINITYFREE_REMOTE_DIR_CANDIDATES")
     )
+    remote_remove_paths = _parse_remove_paths(os.getenv("INFINITYFREE_REMOVE_PATHS"))
     retry_count = int(os.getenv("INFINITYFREE_LOGIN_RETRIES", str(DEFAULT_LOGIN_RETRIES)))
     retry_delay = float(
         os.getenv("INFINITYFREE_LOGIN_RETRY_DELAY", str(DEFAULT_LOGIN_RETRY_DELAY))
@@ -214,8 +284,13 @@ def main() -> int:
                     remote_dir = _resolve_remote_dir(ftp, remote_dir_setting, remote_dir_candidates)
                     if remote_dir_setting.strip().lower() in {"", "auto", "suggested"}:
                         print(f"Auto-selected remote deploy directory: {remote_dir}")
+                    removed = _cleanup_remote_paths(ftp, remote_dir, remote_remove_paths)
                     files, dirs = _upload_dir(ftp, PUBLIC, remote_dir)
-                    print(f"Uploaded {files} files ({dirs} directories) to {ftp_host}:{remote_dir}")
+                    print(
+                        f"Uploaded {files} files ({dirs} directories) to {ftp_host}:{remote_dir}"
+                    )
+                    if removed:
+                        print(f"Removed {removed} legacy remote paths from {remote_dir}")
                     return 0
             except Exception as exc:  # noqa: BLE001
                 last_error = exc

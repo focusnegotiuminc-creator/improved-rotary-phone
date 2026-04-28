@@ -118,7 +118,7 @@ def paragraphs_from_markdown(markdown: str, title: str, tag: str, price: float, 
 def export_pdf(source_path: Path, out_path: Path, phone: str) -> None:
     meta = BOOK_BY_SOURCE.get(source_path.name, {
         "title": source_path.stem.replace("_", " ").title(),
-        "tag": "Focus AI title",
+        "tag": "Published title",
         "price_usd": 14.99,
     })
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -129,7 +129,7 @@ def export_pdf(source_path: Path, out_path: Path, phone: str) -> None:
         rightMargin=0.75 * inch,
         topMargin=0.75 * inch,
         bottomMargin=0.75 * inch,
-        author="Focus AI",
+        author="The Focus Corporation",
         title=meta["title"],
     )
     story = paragraphs_from_markdown(
