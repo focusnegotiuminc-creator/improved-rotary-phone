@@ -1,10 +1,10 @@
 # GitHub Secret Sync Report
 
-Generated: 2026-04-28T06:16:00+00:00
+Generated: 2026-04-28T20:20:00+00:00
 
 Repository: `focusnegotiuminc-creator/improved-rotary-phone`
 
-Stored secrets: 44
+Stored secrets: 45
 
 - `FLUXCRAVE_ADDRESS_LINE`
 - `FLUXCRAVE_CITY_STATE_ZIP`
@@ -30,6 +30,7 @@ Stored secrets: 44
 - `FOCUS_APP_PATHS`
 - `FOCUS_APP_URL`
 - `FOCUS_MOBILE_WORKBENCH_MODEL`
+- `FOCUS_MOBILE_WORKBENCH_OPENAI_KEY`
 - `FOCUS_MOBILE_WORKBENCH_PASSWORD`
 - `FOCUS_MOBILE_WORKBENCH_SESSION_SECRET`
 - `FOCUS_REQUIRE_ALL_PATHS`
@@ -55,6 +56,7 @@ Latest updates:
 
 - Rotated `FOCUS_MOBILE_WORKBENCH_PASSWORD` on 2026-04-28
 - Rotated `FOCUS_MOBILE_WORKBENCH_SESSION_SECRET` on 2026-04-28
+- Synced `FOCUS_MOBILE_WORKBENCH_OPENAI_KEY` on 2026-04-28
 
 Skipped entries:
 

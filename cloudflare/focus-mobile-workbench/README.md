@@ -43,6 +43,11 @@ Optional:
 - `OPENAI_API_KEY`
 - `OPENAI_MODEL`
 
+Default live model:
+
+- `gpt-4.1`
+- Cloudflare edge fallback live model: `@cf/meta/llama-3.1-8b-instruct`
+
 ## Deploy
 
 ```bash

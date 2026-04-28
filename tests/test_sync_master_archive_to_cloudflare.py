@@ -5,6 +5,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[1]
+
 
 def _run_sync(script_path: Path, args: list[str]) -> subprocess.CompletedProcess[str]:
     cmd = [sys.executable, str(script_path), *args]
@@ -46,7 +48,7 @@ def test_sync_copies_required_files_and_bundle(tmp_path: Path) -> None:
 
     (archive_root / "README_ARCHIVE.md").write_text("readme", encoding="utf-8")
 
-    script_path = Path("scripts/sync_master_archive_to_cloudflare.py")
+    script_path = ROOT / "scripts" / "sync_master_archive_to_cloudflare.py"
     assert script_path.exists(), f"Missing {script_path}"
 
     # Act
@@ -119,7 +121,7 @@ def test_sync_include_zip_when_no_export_bundle(tmp_path: Path) -> None:
 
     (archive_root / "README_ARCHIVE.md").write_text("readme", encoding="utf-8")
 
-    script_path = Path("scripts/sync_master_archive_to_cloudflare.py")
+    script_path = ROOT / "scripts" / "sync_master_archive_to_cloudflare.py"
     assert script_path.exists(), f"Missing {script_path}"
 
     # Act

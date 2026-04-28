@@ -33,6 +33,7 @@ def request_json(
     *,
     method: str = "GET",
     payload: dict[str, object] | None = None,
+    timeout: int = 20,
 ) -> tuple[int, dict[str, object]]:
     body = None
     headers = {
@@ -48,7 +49,7 @@ def request_json(
         method=method,
     )
     try:
-        with opener.open(request, timeout=20) as response:
+        with opener.open(request, timeout=timeout) as response:
             return response.status, json.loads(response.read().decode("utf-8"))
     except urllib.error.HTTPError as exc:
         raw = exc.read().decode("utf-8")
@@ -107,7 +108,7 @@ def main() -> int:
         )
     )
 
-    run_code, run_payload = request_json(
+    fallback_run_code, fallback_run_payload = request_json(
         opener,
         "/api/run",
         method="POST",
@@ -119,17 +120,60 @@ def main() -> int:
             "documentText": "Keep the public site business-facing and list a clean operator follow-up sequence.",
         },
     )
-    run = run_payload.get("run", {}) if isinstance(run_payload, dict) else {}
+    run = fallback_run_payload.get("run", {}) if isinstance(fallback_run_payload, dict) else {}
     checks.append(
         (
             "fallback run execution",
-            run_code == 200
-            and run_payload.get("ok") is True
+            fallback_run_code == 200
+            and fallback_run_payload.get("ok") is True
             and run.get("provider") == "fallback"
             and "Website Delivery Stack" in str(run.get("output", "")),
-            f"status={run_code}, provider={run.get('provider', 'n/a')}",
+            f"status={fallback_run_code}, provider={run.get('provider', 'n/a')}",
         )
     )
+
+    openai_provider = next(
+        (
+            provider
+            for provider in (auth_status_payload.get("providers", []) if isinstance(auth_status_payload, dict) else [])
+            if provider.get("id") == "openai"
+        ),
+        {},
+    )
+    live_provider_id = None
+    provider_list = auth_status_payload.get("providers", []) if isinstance(auth_status_payload, dict) else []
+    workers_ai_provider = next((provider for provider in provider_list if provider.get("id") == "workers_ai"), {})
+    if workers_ai_provider.get("configured") is True:
+        live_provider_id = "workers_ai"
+    elif values.get("OPENAI_API_KEY") and openai_provider.get("configured") is True:
+        live_provider_id = "openai"
+
+    if live_provider_id:
+        live_run_code, live_run_payload = request_json(
+            opener,
+            "/api/run",
+            method="POST",
+            payload={
+                "stackId": "website_delivery_stack",
+                "provider": live_provider_id,
+                "toolIds": ["github_workspace", "artifact_archive"],
+                "prompt": "Summarize the next operator steps for a private business-site update in three concise bullets.",
+                "documentText": "Keep the response private, actionable, and ready for immediate execution.",
+            },
+            timeout=90,
+        )
+        live_run = live_run_payload.get("run", {}) if isinstance(live_run_payload, dict) else {}
+        checks.append(
+            (
+                "live provider run execution",
+                live_run_code == 200
+                and live_run_payload.get("ok") is True
+                and live_run.get("provider") == live_provider_id
+                and live_run.get("mode") == "live"
+                and bool(str(live_run.get("output", "")).strip()),
+                f"status={live_run_code}, provider={live_run.get('provider', 'n/a')}, mode={live_run.get('mode', 'n/a')}",
+            )
+        )
 
     timestamp = datetime.now(timezone.utc).isoformat()
     lines = [

@@ -1,9 +1,9 @@
 # Runtime Catalog
 
-Generated: 2026-04-28T04:33:00.499655+00:00
+Generated: 2026-04-28T20:03:34.700279+00:00
 
 ## Providers
-- `ollama`: attention | model `llama3.1:8b` | Ollama is not reachable: HTTPConnectionPool(host='127.0.0.1', port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=11434) at 0x281b33cdbe0>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.2)'))
+- `ollama`: attention | model `llama3.1:8b` | Ollama is not reachable: HTTPConnectionPool(host='127.0.0.1', port=11434): Max retries exceeded with url: /api/tags (Caused by ConnectTimeoutError(<HTTPConnection(host='127.0.0.1', port=11434) at 0x19f845add30>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.2)'))
 - `openai`: ready | model `gpt-4.1` | Configured for live generation.
 - `anthropic`: attention | model `claude-sonnet-4-20250514` | ANTHROPIC_API_KEY is not configured.
 - `gemini`: attention | model `gemini-2.5-flash` | GOOGLE_API_KEY is not configured.

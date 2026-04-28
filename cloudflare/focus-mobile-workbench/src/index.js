@@ -8,7 +8,9 @@ import { stacks, templates, toolBridges } from "./catalog.js";
  * @property {string} [OPENAI_API_KEY]
  * @property {string} [OPENAI_MODEL]
  * @property {string} [DEFAULT_OPENAI_MODEL]
+ * @property {string} [DEFAULT_CF_AI_MODEL]
  * @property {Object} ASSETS
+ * @property {Object} [AI]
  */
 
 const COOKIE_NAME = "focus_workbench_session";
@@ -224,6 +226,51 @@ async function runWithOpenAI(body, env) {
 }
 
 /**
+ * Run a mission using Cloudflare Workers AI.
+ * @param {Object} body
+ * @param {Env} env
+ * @returns {Promise<Object>}
+ */
+async function runWithWorkersAI(body, env) {
+  if (!env.AI || typeof env.AI.run !== "function") {
+    throw new Error("Workers AI binding is not configured.");
+  }
+
+  const stack = chooseStack(body.stackId);
+  const prompt = [
+    `You are Focus Mobile Workbench, a private operator assistant for internal business execution.`,
+    `Stay within authorized business operations and do not help with policy bypass, payroll tampering, credential exposure, or public-site leakage of private systems.`,
+    `Stack: ${stack.label}`,
+    `Objective: ${stack.objective}`,
+    `Engines: ${stack.engines.join(", ")}`,
+    "",
+    `Mission: ${body.prompt || "No mission entered."}`,
+    "",
+    `Workspace document:`,
+    body.documentText || "No workspace document attached.",
+  ].join("\n");
+
+  const model = env.DEFAULT_CF_AI_MODEL || "@cf/meta/llama-3.1-8b-instruct";
+  const data = await env.AI.run(model, { prompt });
+  const output =
+    typeof data?.response === "string"
+      ? data.response.trim()
+      : typeof data === "string"
+        ? data.trim()
+        : JSON.stringify(data, null, 2);
+
+  return {
+    id: crypto.randomUUID(),
+    createdAt: new Date().toISOString(),
+    mode: "live",
+    provider: "workers_ai",
+    model,
+    stack,
+    output: output || "Workers AI returned an empty response.",
+  };
+}
+
+/**
  * Handle the login flow.
  * @param {Request} request 
  * @param {Env} env 
@@ -285,6 +332,7 @@ async function handleApi(request, env) {
       },
       providers: [
         { id: "fallback", label: "Fallback Planner", configured: true },
+        { id: "workers_ai", label: "Cloudflare Workers AI", configured: Boolean(env.AI) },
         { id: "openai", label: "OpenAI", configured: Boolean(env.OPENAI_API_KEY) },
       ],
       stacks,
@@ -300,10 +348,14 @@ async function handleApi(request, env) {
     }
 
     try {
-      const run =
-        body.provider === "openai" && env.OPENAI_API_KEY
-          ? await runWithOpenAI(body, env)
-          : buildFallbackRun(body);
+      let run;
+      if (body.provider === "workers_ai" && env.AI) {
+        run = await runWithWorkersAI(body, env);
+      } else if (body.provider === "openai" && env.OPENAI_API_KEY) {
+        run = await runWithOpenAI(body, env);
+      } else {
+        run = buildFallbackRun(body);
+      }
       return json({ ok: true, run });
     } catch (error) {
       return json({ ok: false, error: error instanceof Error ? error.message : "Run failed." }, 500);
