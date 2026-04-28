@@ -4,7 +4,7 @@ Generated: 2026-04-27T20:24:26.003852+00:00
 
 Repository: `focusnegotiuminc-creator/improved-rotary-phone`
 
-Stored secrets: 41
+Stored secrets: 44
 
 - `FLUXCRAVE_ADDRESS_LINE`
 - `FLUXCRAVE_CITY_STATE_ZIP`
@@ -29,6 +29,9 @@ Stored secrets: 41
 - `FLUXCRAVE_WWW_DOMAIN`
 - `FOCUS_APP_PATHS`
 - `FOCUS_APP_URL`
+- `FOCUS_MOBILE_WORKBENCH_MODEL`
+- `FOCUS_MOBILE_WORKBENCH_PASSWORD`
+- `FOCUS_MOBILE_WORKBENCH_SESSION_SECRET`
 - `FOCUS_REQUIRE_ALL_PATHS`
 - `GH_PAT`
 - `GH_TOKEN`
