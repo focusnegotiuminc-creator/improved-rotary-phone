@@ -38,4 +38,4 @@ def test_build_public_site_outputs_bundle():
     assert (out / "high_ticket.html").exists()
     assert (out / "email_automation.html").exists()
     assert (out / "ebooks" / "index.html").exists()
-    shutil.rmtree(out, onerror=_on_rm_error)
+    shutil.rmtree(out, ignore_errors=True)

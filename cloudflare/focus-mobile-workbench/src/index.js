@@ -1,5 +1,16 @@
 import { stacks, templates, toolBridges } from "./catalog.js";
 
+/**
+ * @typedef {Object} Env
+ * @property {string} [PRIVATE_APP_PASSWORD]
+ * @property {string} [APP_SESSION_SECRET]
+ * @property {string} [APP_NAME]
+ * @property {string} [OPENAI_API_KEY]
+ * @property {string} [OPENAI_MODEL]
+ * @property {string} [DEFAULT_OPENAI_MODEL]
+ * @property {Object} ASSETS
+ */
+
 const COOKIE_NAME = "focus_workbench_session";
 
 function json(data, status = 200, headers = {}) {
@@ -69,6 +80,11 @@ async function verifyPassword(password, env) {
   return safeEqual(providedHash, expectedHash);
 }
 
+/**
+ * Create a signed session cookie.
+ * @param {Env} env 
+ * @returns {Promise<string>}
+ */
 async function createSessionCookie(env) {
   const secret = env.APP_SESSION_SECRET || env.PRIVATE_APP_PASSWORD || "focus-mobile-workbench";
   const payload = JSON.stringify({
@@ -80,6 +96,12 @@ async function createSessionCookie(env) {
   return `${encoded}.${signature}`;
 }
 
+/**
+ * Check if the request has a valid session cookie.
+ * @param {Request} request 
+ * @param {Env} env 
+ * @returns {Promise<boolean>}
+ */
 async function hasValidSession(request, env) {
   const token = readCookies(request)[COOKIE_NAME];
   if (!token) return false;
@@ -151,6 +173,12 @@ function outputTextFromResponses(data) {
   return blocks.join("\n\n").trim();
 }
 
+/**
+ * Run a mission using OpenAI.
+ * @param {Object} body 
+ * @param {Env} env 
+ * @returns {Promise<Object>}
+ */
 async function runWithOpenAI(body, env) {
   const stack = chooseStack(body.stackId);
   const prompt = [
@@ -195,6 +223,12 @@ async function runWithOpenAI(body, env) {
   };
 }
 
+/**
+ * Handle the login flow.
+ * @param {Request} request 
+ * @param {Env} env 
+ * @returns {Promise<Response>}
+ */
 async function handleLogin(request, env) {
   const body = await request.json().catch(() => ({}));
   if (!(await verifyPassword(body.password || "", env))) {
@@ -220,6 +254,12 @@ function handleLogout() {
   );
 }
 
+/**
+ * Handle the API routes.
+ * @param {Request} request 
+ * @param {Env} env 
+ * @returns {Promise<Response>}
+ */
 async function handleApi(request, env) {
   const url = new URL(request.url);
 
@@ -274,6 +314,12 @@ async function handleApi(request, env) {
 }
 
 export default {
+  /**
+   * Cloudflare Worker fetch handler.
+   * @param {Request} request 
+   * @param {Env} env 
+   * @returns {Promise<Response>}
+   */
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname.startsWith("/api/")) {

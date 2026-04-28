@@ -1,3 +1,11 @@
+/**
+ * @typedef {Object} Stage
+ * @property {number} id
+ * @property {string} name
+ * @property {string} purpose
+ * @property {string} output
+ */
+
 const ENGINE_CONFIG = {
   engineName: '11-Stage AI Engine',
   baseMode: {
@@ -175,6 +183,10 @@ function appliedFocus(stageId, state, outcomes, constraints, tasks) {
   }
 }
 
+/**
+ * Render the stage rail based on engine config.
+ * @param {boolean} activePreset 
+ */
 function renderStageRail(activePreset) {
   const rail = document.getElementById('stage-list');
   rail.innerHTML = '';
