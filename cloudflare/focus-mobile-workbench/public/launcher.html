@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="One-tap launcher for the private Focus console over Tailscale."
+    />
+    <meta name="theme-color" content="#0a1120" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Focus Console" />
+    <link rel="manifest" href="/launcher.webmanifest" />
+    <link rel="apple-touch-icon" href="/assets/focus-console-icon.png" />
+    <link rel="icon" type="image/png" href="/assets/focus-console-icon.png" />
+    <title>Focus Console Launcher</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #07101d;
+        --bg-strong: #0c1730;
+        --panel: rgba(9, 21, 43, 0.92);
+        --line: rgba(146, 174, 255, 0.16);
+        --text: #edf3ff;
+        --muted: #9ab2d4;
+        --accent: #f6c55f;
+        --accent-strong: #ff8a4c;
+        --success: #7ee0bb;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        font-family: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at 18% 18%, rgba(246, 197, 95, 0.14), transparent 32%),
+          radial-gradient(circle at 84% 10%, rgba(89, 137, 255, 0.18), transparent 28%),
+          linear-gradient(180deg, #050b16 0%, #07101d 48%, #09121f 100%);
+        color: var(--text);
+      }
+
+      body {
+        display: grid;
+        place-items: center;
+        padding: 1rem;
+      }
+
+      .card {
+        width: min(480px, 100%);
+        border-radius: 28px;
+        border: 1px solid var(--line);
+        background: linear-gradient(160deg, var(--panel), rgba(8, 18, 37, 0.98));
+        box-shadow: 0 28px 84px rgba(1, 6, 16, 0.42);
+        padding: 1.25rem;
+        display: grid;
+        gap: 1rem;
+      }
+
+      .brand {
+        display: flex;
+        gap: 0.9rem;
+        align-items: center;
+      }
+
+      .brand img {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+        object-fit: cover;
+        border: 1px solid rgba(246, 197, 95, 0.24);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .eyebrow,
+      .step-label {
+        margin: 0;
+        font-size: 0.76rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      h1,
+      h2,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: clamp(1.55rem, 6vw, 2.2rem);
+        line-height: 1.02;
+      }
+
+      .lede,
+      .step p {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .status {
+        border-radius: 18px;
+        border: 1px solid rgba(126, 224, 187, 0.24);
+        background: rgba(6, 21, 22, 0.65);
+        padding: 0.9rem 1rem;
+        display: grid;
+        gap: 0.3rem;
+      }
+
+      .status strong {
+        color: var(--success);
+      }
+
+      .button-row {
+        display: grid;
+        gap: 0.8rem;
+      }
+
+      button,
+      a.button {
+        appearance: none;
+        border: 0;
+        text-decoration: none;
+        text-align: center;
+        border-radius: 999px;
+        padding: 0.95rem 1rem;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+        color: #180f02;
+        font-weight: 700;
+      }
+
+      .ghost {
+        border: 1px solid var(--line);
+        color: var(--text);
+        background: rgba(7, 16, 30, 0.55);
+      }
+
+      .steps {
+        display: grid;
+        gap: 0.8rem;
+      }
+
+      .step {
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: rgba(6, 14, 28, 0.58);
+        padding: 0.9rem;
+      }
+
+      code {
+        word-break: break-word;
+        color: #f9d98b;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      @media (max-width: 520px) {
+        body {
+          padding: 0.75rem;
+        }
+
+        .card {
+          border-radius: 22px;
+          padding: 1rem;
+        }
+
+        .brand {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <div class="brand">
+        <img src="/assets/focus-console-icon.png" alt="Focus Console icon" />
+        <div>
+          <p class="eyebrow">Private tailnet launcher</p>
+          <h1>Focus Console</h1>
+        </div>
+      </div>
+
+      <p class="lede">
+        This launcher is designed for iPhone. Tap once and it hands off into the private console
+        running on your MSI through Tailscale.
+      </p>
+
+      <section class="status" id="status-card">
+        <p class="step-label">Live state</p>
+        <strong id="status-line">Preparing handoff…</strong>
+        <p id="status-detail">Checking the launcher and staging the private console link.</p>
+      </section>
+
+      <div class="button-row">
+        <a class="button primary" id="open-console" href="https://msi.tail894763.ts.net/private-console">
+          Open private console
+        </a>
+        <button class="ghost" id="copy-link" type="button">Copy direct Tailscale link</button>
+      </div>
+
+      <section class="steps">
+        <div class="step">
+          <p class="step-label">One-tap setup</p>
+          <p>
+            On iPhone, open this page once in Safari and use <strong>Share → Add to Home Screen</strong>.
+            After that, the Home Screen icon becomes your one-tap launcher.
+          </p>
+        </div>
+        <div class="step">
+          <p class="step-label">Direct path</p>
+          <p><code id="direct-link">https://msi.tail894763.ts.net/private-console</code></p>
+        </div>
+      </section>
+    </main>
+
+    <script src="/launcher.js"></script>
+  </body>
+</html>

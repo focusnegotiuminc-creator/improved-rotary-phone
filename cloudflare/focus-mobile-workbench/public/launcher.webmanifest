@@ -1,0 +1,17 @@
+{
+  "name": "Focus Console Launcher",
+  "short_name": "Focus Console",
+  "description": "One-tap launcher for the private Focus console over Tailscale.",
+  "start_url": "/launcher.html",
+  "display": "standalone",
+  "background_color": "#07101d",
+  "theme_color": "#0a1120",
+  "icons": [
+    {
+      "src": "/assets/focus-console-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

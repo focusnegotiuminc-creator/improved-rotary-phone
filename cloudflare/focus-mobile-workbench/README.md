@@ -20,6 +20,7 @@ Private Cloudflare-hosted mobile operator surface for Focus.
 - task runner
 - run output panel
 - private archive delivery under `/archives/*` for sanitized master-archive bundles
+- one-tap iPhone launcher at `/launcher.html` for Home Screen use over Tailscale
 
 ## What it is not
 
@@ -56,6 +57,12 @@ npm run deploy
 ```
 
 If Cloudflare auth is not available in Wrangler yet, complete auth first and then deploy.
+
+## iPhone launcher
+
+- Open `/launcher.html` on iPhone once
+- Use `Share -> Add to Home Screen`
+- The installed launcher opens the private console at `https://msi.tail894763.ts.net/private-console`
 
 ## Private archive storage
 
