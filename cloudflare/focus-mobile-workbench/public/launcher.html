@@ -194,21 +194,24 @@
       </div>
 
       <p class="lede">
-        This launcher is designed for iPhone. Tap once and it hands off into the private console
-        running on your MSI through Tailscale.
+        This launcher is designed for iPhone. It opens the remote private workbench first, with a
+        direct Tailscale lane still available when you want the laptop-hosted console itself.
       </p>
 
       <section class="status" id="status-card">
         <p class="step-label">Live state</p>
         <strong id="status-line">Preparing handoff…</strong>
-        <p id="status-detail">Checking the launcher and staging the private console link.</p>
+        <p id="status-detail">Checking the launcher and staging the remote console path.</p>
       </section>
 
       <div class="button-row">
-        <a class="button primary" id="open-console" href="https://msi.tail894763.ts.net/private-console">
-          Open private console
+        <a class="button primary" id="open-remote" href="https://focus-mobile-workbench.thefocuscorp.workers.dev/app">
+          Open remote workbench
         </a>
-        <button class="ghost" id="copy-link" type="button">Copy direct Tailscale link</button>
+        <a class="button ghost" id="open-console" href="https://msi.tail894763.ts.net/private-console">
+          Open direct Tailscale console
+        </a>
+        <button class="ghost" id="copy-link" type="button">Copy remote workbench link</button>
       </div>
 
       <section class="steps">
@@ -216,11 +219,15 @@
           <p class="step-label">One-tap setup</p>
           <p>
             On iPhone, open this page once in Safari and use <strong>Share → Add to Home Screen</strong>.
-            After that, the Home Screen icon becomes your one-tap launcher.
+            After that, the Home Screen icon becomes your one-tap launcher into the remote workbench.
           </p>
         </div>
         <div class="step">
-          <p class="step-label">Direct path</p>
+          <p class="step-label">Primary remote path</p>
+          <p><code id="remote-link">https://focus-mobile-workbench.thefocuscorp.workers.dev/app</code></p>
+        </div>
+        <div class="step">
+          <p class="step-label">Direct Tailscale path</p>
           <p><code id="direct-link">https://msi.tail894763.ts.net/private-console</code></p>
         </div>
       </section>
