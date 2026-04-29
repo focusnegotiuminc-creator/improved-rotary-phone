@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 
@@ -206,4 +208,6 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=False)
+    host = os.getenv("FOCUS_API_HOST", "127.0.0.1").strip() or "127.0.0.1"
+    port = int(os.getenv("FOCUS_API_PORT", "8000") or "8000")
+    app.run(host=host, port=port, debug=False)
