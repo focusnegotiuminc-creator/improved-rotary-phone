@@ -719,6 +719,115 @@ def render_storefront_spotlight(catalog: dict, phone: str) -> str:
 """.strip()
 
 
+def company_theme(company_id: str) -> tuple[str, str]:
+    if company_id == "focus-negotium":
+        return ("#3EE4D6", "rgba(62, 228, 214, 0.2)")
+    if company_id == "focus-records":
+        return ("#7CC8FF", "rgba(124, 200, 255, 0.2)")
+    return ("#F2C96D", "rgba(242, 201, 109, 0.2)")
+
+
+def company_related_books(company_id: str) -> list[dict]:
+    if company_id == "focus-records":
+        wanted = {
+            "focus_on_wtf_you_feel",
+            "focus_on_coding_for_dummies_the_coding_bible",
+        }
+    elif company_id == "royal-lee-construction":
+        wanted = {
+            "the_hidden_truths_of_sacred_geometry",
+            "chakra_system_deep_dive",
+        }
+    else:
+        wanted = {
+            "focus_on_foundation",
+            "the_hidden_truths_of_sacred_geometry",
+        }
+    return [book for book in BOOK_CATALOG if book["slug"] in wanted]
+
+
+def render_company_hero_visual(company: dict) -> str:
+    theme_color, panel_tint = company_theme(company["id"])
+    if company["id"] == "focus-negotium":
+        image = HOLDING_DIAGRAM_PATH
+        title = "Holding structure"
+        caption = "Parent-company structure with affiliate operating companies under one coordinated customer-facing portfolio."
+    elif company["id"] == "focus-records":
+        image = FOCUS_RECORDS_POSTERS[0]
+        title = "Release identity board"
+        caption = "Creative direction board for branded launches, release assets, and public-facing campaign rhythm."
+    else:
+        image = RLC_CONCEPT_STUDIES[0]
+        title = "Concept study"
+        caption = "Presentation-grade concept work for sacred-geometry planning, owner review, and development conversations."
+    return f"""
+<section class="feature-panel hero-visual-panel company-media-card" style="--company-accent: {theme_color}; --company-tint: {panel_tint};">
+  <figure class="company-media-frame">
+    <img src="{image}" alt="{escape(company['name'])} visual preview" />
+  </figure>
+  <div class="company-media-copy">
+    <p class="eyebrow">{escape(title)}</p>
+    <p>{escape(caption)}</p>
+  </div>
+</section>
+""".strip()
+
+
+def render_company_customer_route(company: dict, catalog: dict, phone: str, contact_name: str) -> str:
+    related_offers = [
+        offer for offer in catalog.get("offers", []) if company["id"] in offer.get("company_ids", [])
+    ]
+    primary_offer = related_offers[0] if related_offers else catalog["offers"][0]
+    books = company_related_books(company["id"])
+    first_service = company["services"][0]
+    lowest_price = _format_currency(min(float(service["price_usd"]) for service in company["services"]))
+    service_count = len(company["services"])
+    books_markup = "".join(
+        f"""
+<article class="route-mini-card">
+  <p class="eyebrow">{escape(book['tag'])}</p>
+  <h3>{escape(book['title'])}</h3>
+  <p>{escape(book['summary'])}</p>
+  <div class="meta-row">
+    <span class="price-pill">{_format_currency(float(book['price_usd']))}</span>
+    <span class="micro-note">Book shelf route</span>
+  </div>
+</article>
+""".strip()
+        for book in books
+    )
+    return f"""
+<section class="section-block company-route-band">
+  <section class="feature-panel glow-card">
+    <p class="eyebrow">Best first step</p>
+    <h2>{escape(first_service['title'])}</h2>
+    <p>{escape(first_service['summary'])}</p>
+    <div class="metric-strip">
+      <span>{service_count} structured services</span>
+      <span>Starting at {lowest_price}</span>
+      <span>Direct route {phone}</span>
+    </div>
+    <div class="button-row">
+      <a class="btn" href="booking.html">Book with {escape(contact_name)}</a>
+      <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
+      <a class="btn secondary" href="services.html">See all services</a>
+    </div>
+  </section>
+  <section class="feature-panel glow-card">
+    <p class="eyebrow">Books and shopping</p>
+    <h2>Keep one route from this company page into the shelf, the shop, and secure checkout.</h2>
+    <p>Customers can start with the book shelf, move into the broader shop, or take the direct offer route that best matches this company lane.</p>
+    <div class="mini-grid">{books_markup}</div>
+    <div class="button-row">
+      <a class="btn" href="books.html">Shop books</a>
+      <a class="btn secondary" href="store.html">Open the shop</a>
+      <a class="btn secondary" href="{escape(primary_offer['checkout_url'])}">{escape(primary_offer['cta_label'])}</a>
+    </div>
+  </section>
+</section>
+""".strip()
+
+
 def render_track_cards(catalog: dict) -> str:
     return "\n".join(
         f"""
@@ -854,7 +963,7 @@ def build_stripe_csv(catalog: dict) -> str:
     return buffer.getvalue()
 
 
-def render_company_page(company: dict, contact_name: str, phone: str) -> str:
+def render_company_page(company: dict, contact_name: str, phone: str, catalog: dict) -> str:
     services = "\n".join(
         f"""
 <article class="offer-card glow-card">
@@ -875,10 +984,12 @@ def render_company_page(company: dict, contact_name: str, phone: str) -> str:
         "while still connecting back into the larger public storefront."
     )
     relationship_note = company.get("relationship_note", "This company sits inside the wider Focus Corporation public experience.")
+    lowest_price = _format_currency(min(float(service["price_usd"]) for service in company["services"]))
+    highest_price = _format_currency(max(float(service["price_usd"]) for service in company["services"]))
     return f"""<!doctype html>
 <html lang="en">
 {head_html(company['name'], description)}
-<body>
+<body class="theme-{escape(company['id'])}">
   <main>
     {nav_html()}
     <section class="hero-panel luminous-hero">
@@ -888,18 +999,20 @@ def render_company_page(company: dict, contact_name: str, phone: str) -> str:
         <p class="lede">{escape(company['headline'])}</p>
         <p>{escape(company['description'])}</p>
         <div class="metric-strip">
-          <span>Direct route {phone}</span>
-          <span>{escape(company['eyebrow'])}</span>
-          <span>Professional pricing and delivery structure</span>
+          <span>{len(company['services'])} structured services</span>
+          <span>Starting at {lowest_price}</span>
+          <span>Flagship path {highest_price}</span>
         </div>
         <div class="button-row">
           <a class="btn" href="tel:{phone}">Call {phone}</a>
           <a class="btn secondary" href="booking.html">Book with {escape(contact_name)}</a>
+          <a class="btn secondary" href="store.html">Open the shop</a>
           <a class="btn secondary" href="services.html">See all services</a>
         </div>
       </div>
-      <section class="feature-panel hero-visual-panel">{render_sacred_visual()}</section>
+      {render_company_hero_visual(company)}
     </section>
+    {render_company_customer_route(company, catalog, phone, contact_name)}
     <section class="section-block split-band">
       <section class="feature-panel glow-card">
         <p class="eyebrow">Core proof points</p>
@@ -1198,6 +1311,40 @@ p, li {{ color: var(--muted); line-height: 1.72; }}
 .service-price {{ color: #fff0c1; font-weight: 800; font-size: 1.05rem; }}
 .catalog-band {{ display: grid; gap: 1rem; grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr); }}
 .spotlight-band {{ display: grid; gap: 1rem; grid-template-columns: minmax(0, 1.14fr) minmax(280px, 0.86fr); }}
+.company-route-band {{ display: grid; gap: 1rem; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); }}
+.mini-grid {{ display: grid; gap: 0.9rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }}
+.route-mini-card {{
+  padding: 1rem;
+  border-radius: 22px;
+  border: 1px solid rgba(124, 200, 255, 0.12);
+  background: linear-gradient(155deg, rgba(7, 15, 29, 0.86), rgba(12, 24, 46, 0.74));
+}}
+.company-media-card {{
+  background:
+    linear-gradient(155deg, rgba(7, 15, 29, 0.92), rgba(16, 30, 58, 0.78)),
+    radial-gradient(circle at 20% 18%, var(--company-tint), transparent 36%);
+}}
+.company-media-frame {{
+  margin: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(4, 10, 22, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(124, 200, 255, 0.08);
+}}
+.company-media-frame img {{
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}}
+.company-media-copy {{ padding: 0.1rem 0.2rem 0; }}
+.theme-focus-negotium .site-header,
+.theme-focus-negotium .company-media-card {{ border-color: rgba(62, 228, 214, 0.18); }}
+.theme-focus-records .site-header,
+.theme-focus-records .company-media-card {{ border-color: rgba(124, 200, 255, 0.18); }}
+.theme-royal-lee-construction .site-header,
+.theme-royal-lee-construction .company-media-card {{ border-color: rgba(242, 201, 109, 0.22); }}
 .sacred-visual {{
   position: relative;
   min-height: 360px;
@@ -1275,6 +1422,7 @@ p, li {{ color: var(--muted); line-height: 1.72; }}
   .split-band,
   .catalog-band,
   .spotlight-band,
+  .company-route-band,
   .book-grid,
   .drawing-grid {{ grid-template-columns: 1fr; }}
   .site-header {{ grid-template-columns: 1fr; }}
@@ -1290,6 +1438,7 @@ p, li {{ color: var(--muted); line-height: 1.72; }}
   .btn,
   .top-nav a {{ width: 100%; justify-content: center; }}
   .service-row {{ grid-template-columns: 1fr; }}
+  .mini-grid {{ grid-template-columns: 1fr; }}
   .sacred-visual {{ min-height: 280px; }}
 }}
 """.strip() + "\n"
@@ -1704,7 +1853,7 @@ def build_pages(catalog: dict) -> dict[str, str]:
         "upsell.html": products_page,
         "high_ticket.html": business_os_page,
         "email_automation.html": email_automation,
-        **{company["slug"]: render_company_page(company, contact_name, phone) for company in COMPANY_PROFILES},
+        **{company["slug"]: render_company_page(company, contact_name, phone, catalog) for company in COMPANY_PROFILES},
     }
 
 

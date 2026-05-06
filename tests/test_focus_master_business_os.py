@@ -83,6 +83,8 @@ def test_public_site_build_exports_business_os_bundle():
     landing_html = (public_dir / "landing.html").read_text(encoding="utf-8")
     products_html = (public_dir / "products.html").read_text(encoding="utf-8")
     books_html = (public_dir / "books.html").read_text(encoding="utf-8")
+    focus_negotium_html = (public_dir / "focus-negotium.html").read_text(encoding="utf-8")
+    focus_records_html = (public_dir / "focus-records.html").read_text(encoding="utf-8")
     business_os_json = (public_dir / "data" / "business_os.json").read_text(encoding="utf-8")
 
     assert (public_dir / "business_os.html").exists()
@@ -90,7 +92,10 @@ def test_public_site_build_exports_business_os_bundle():
     assert "sacred-geometry storefront" in home_html
     assert "book shelf" in landing_html
     assert "A sacred-geometry book shelf" in books_html
-    for html in [home_html, landing_html, products_html, books_html]:
+    assert "Open the shop" in focus_negotium_html
+    assert "Books and shopping" in focus_negotium_html
+    assert "Shop books" in focus_records_html
+    for html in [home_html, landing_html, products_html, books_html, focus_negotium_html, focus_records_html]:
         lowered = html.lower()
         assert "ai engine" not in lowered
         assert "openai" not in lowered
