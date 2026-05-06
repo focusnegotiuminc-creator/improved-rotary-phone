@@ -6,6 +6,7 @@ import os
 import shutil
 import stat
 import sys
+import tempfile
 from io import StringIO
 import csv
 from html import escape
@@ -64,6 +65,23 @@ def copy_tree(src: Path, dst: Path) -> None:
             shutil.copytree(item, target, dirs_exist_ok=True)
         else:
             shutil.copy2(item, target)
+
+
+def sync_tree(src: Path, dst: Path) -> None:
+    if not src.exists():
+        return
+    dst.mkdir(parents=True, exist_ok=True)
+    for path in sorted(src.rglob("*")):
+        rel = path.relative_to(src)
+        target = dst / rel
+        if path.is_dir():
+            target.mkdir(parents=True, exist_ok=True)
+            continue
+        target.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            shutil.copy2(path, target)
+        except PermissionError:
+            print(f"Skipped locked file during sync: {target}")
 
 
 def _on_rm_error(func, path, _exc_info):
@@ -165,7 +183,7 @@ def nav_html() -> str:
     links = [
         ("index.html", "Home"),
         ("services.html", "Services"),
-        ("store.html", "Store"),
+        ("store.html", "Shop"),
         ("books.html", "Books"),
         ("structure.html", "Structure"),
         ("focus-negotium.html", "Focus Negotium"),
@@ -178,7 +196,8 @@ def nav_html() -> str:
     return (
         '<header class="site-header">'
         '<div class="brand-lockup"><span class="brand-mark"></span><div>'
-        '<p class="eyebrow">TheFocusCorp.com</p><strong>The Focus Corporation | Businesses, Services, and Store</strong>'
+        '<p class="eyebrow">TheFocusCorp.com</p><strong>The Focus Corporation</strong>'
+        '<p class="micro-note">Books, services, development, media, and secure checkout in one sacred-geometry storefront.</p>'
         f"</div></div><nav class=\"top-nav\">{items}</nav></header>"
     )
 
@@ -361,9 +380,9 @@ def generated_public_assets() -> dict[str, str]:
     }
 
 
-def write_generated_assets() -> None:
+def write_generated_assets(public_dir: Path = PUBLIC) -> None:
     for relative_path, content in generated_public_assets().items():
-        target = PUBLIC / relative_path
+        target = public_dir / relative_path
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(content, encoding="utf-8")
 
@@ -532,6 +551,7 @@ def render_offer_cards(catalog: dict) -> str:
   </div>
   <div class="button-row">
     <a class="btn" href="{escape(href)}">{escape(cta)}</a>
+    <a class="btn secondary" href="books.html">Browse books first</a>
   </div>
 </article>
 """.strip()
@@ -539,14 +559,25 @@ def render_offer_cards(catalog: dict) -> str:
     return "\n".join(cards)
 
 
-def render_book_cards(phone: str, *, compact: bool = False) -> str:
+def render_book_cards(
+    phone: str,
+    *,
+    compact: bool = False,
+    limit: int | None = None,
+    bundle_url: str | None = None,
+) -> str:
     cards = []
-    for book in BOOK_CATALOG:
+    books = BOOK_CATALOG[:limit] if limit is not None else BOOK_CATALOG
+    for book in books:
         links = [
             f'<a class="btn" href="ebooks/{book["slug"]}.html">Read {escape(book["title"])} online</a>',
         ]
-        if not compact:
+        if compact:
+            links.append('<a class="btn secondary" href="books.html">Open full shelf</a>')
+        else:
             links.append(f'<a class="btn secondary" href="ebooks/pdfs/{book["slug"]}.pdf">Download PDF</a>')
+            if bundle_url:
+                links.append(f'<a class="btn secondary" href="{escape(bundle_url)}">Buy the collection</a>')
             links.append(f'<a class="btn secondary" href="tel:{phone}">Call {phone}</a>')
         cards.append(
             f"""
@@ -653,6 +684,39 @@ def render_system_cards() -> str:
 """.strip()
         for item in items
     )
+
+
+def render_storefront_spotlight(catalog: dict, phone: str) -> str:
+    bundle = catalog["offers"][0]
+    return f"""
+<section class="section-block spotlight-band">
+  <section class="feature-panel glow-card">
+    <p class="eyebrow">Featured shelf</p>
+    <h2>Lead with the books, then move readers into the right service or premium offer.</h2>
+    <p class="section-copy">The sacred-geometry shelf stays visible on the public site so first-time visitors can start with the library, the collection bundle, or the premium store without losing the business structure.</p>
+    <div class="book-grid">{render_book_cards(phone, compact=True, limit=3)}</div>
+    <div class="button-row">
+      <a class="btn" href="books.html">Shop the full book shelf</a>
+      <a class="btn secondary" href="ebooks/index.html">Open the library</a>
+    </div>
+  </section>
+  <section class="feature-panel glow-card">
+    <p class="eyebrow">Shopping route</p>
+    <h2>{escape(bundle['title'])}</h2>
+    <p>{escape(bundle['summary'])}</p>
+    <div class="metric-strip">
+      <span>{_format_currency(float(bundle['price_usd']))} collection entry point</span>
+      <span>Secure Stripe checkout</span>
+      <span>Books, offers, and service upgrades</span>
+    </div>
+    <div class="button-row">
+      <a class="btn" href="{escape(bundle['checkout_url'])}">{escape(bundle['cta_label'])}</a>
+      <a class="btn secondary" href="store.html">Open the full shop</a>
+      <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
+    </div>
+  </section>
+</section>
+""".strip()
 
 
 def render_track_cards(catalog: dict) -> str:
@@ -927,6 +991,11 @@ main {{ width: min(1220px, 94vw); margin: 0 auto; padding: 1rem 0 4rem; display:
   align-items: center;
   padding: 0.7rem 0 0.95rem;
   border-bottom: 1px solid rgba(124, 200, 255, 0.16);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(16px);
+  background: linear-gradient(180deg, rgba(5, 8, 18, 0.92), rgba(5, 8, 18, 0.68));
 }}
 .brand-lockup {{ display: inline-flex; align-items: center; gap: 0.85rem; }}
 .brand-mark {{
@@ -948,6 +1017,12 @@ main {{ width: min(1220px, 94vw); margin: 0 auto; padding: 1rem 0 4rem; display:
   background: rgba(7, 15, 29, 0.42);
   color: var(--ink);
   font-size: 0.95rem;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}}
+.top-nav a:hover {{
+  transform: translateY(-1px);
+  border-color: rgba(242, 201, 109, 0.26);
+  background: rgba(10, 22, 42, 0.7);
 }}
 .eyebrow {{
   margin: 0;
@@ -985,6 +1060,17 @@ p, li {{ color: var(--muted); line-height: 1.72; }}
   height: 180px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(242, 201, 109, 0.16), transparent 68%);
+  pointer-events: none;
+}}
+.glow-card::after {{
+  content: "";
+  position: absolute;
+  inset: auto auto 8% 8%;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  border: 1px solid rgba(124, 200, 255, 0.12);
+  opacity: 0.45;
   pointer-events: none;
 }}
 .hero-panel {{
@@ -1066,6 +1152,28 @@ p, li {{ color: var(--muted); line-height: 1.72; }}
 .book-card,
 .service-cluster,
 .drawing-frame {{ padding: 1.15rem; }}
+.offer-card,
+.info-card,
+.track-card,
+.stage-card,
+.book-card,
+.service-cluster,
+.drawing-frame,
+.feature-panel {{
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}}
+.offer-card:hover,
+.info-card:hover,
+.track-card:hover,
+.stage-card:hover,
+.book-card:hover,
+.service-cluster:hover,
+.drawing-frame:hover,
+.feature-panel:hover {{
+  transform: translateY(-4px);
+  border-color: rgba(242, 201, 109, 0.2);
+  box-shadow: 0 34px 84px rgba(2, 8, 24, 0.5);
+}}
 .detail-list {{ margin: 0.35rem 0 0; padding-left: 1.15rem; }}
 .detail-list li + li {{ margin-top: 0.38rem; }}
 .info-card::after {{
@@ -1089,6 +1197,7 @@ p, li {{ color: var(--muted); line-height: 1.72; }}
 }}
 .service-price {{ color: #fff0c1; font-weight: 800; font-size: 1.05rem; }}
 .catalog-band {{ display: grid; gap: 1rem; grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr); }}
+.spotlight-band {{ display: grid; gap: 1rem; grid-template-columns: minmax(0, 1.14fr) minmax(280px, 0.86fr); }}
 .sacred-visual {{
   position: relative;
   min-height: 360px;
@@ -1165,6 +1274,7 @@ p, li {{ color: var(--muted); line-height: 1.72; }}
   .detail-grid,
   .split-band,
   .catalog-band,
+  .spotlight-band,
   .book-grid,
   .drawing-grid {{ grid-template-columns: 1fr; }}
   .site-header {{ grid-template-columns: 1fr; }}
@@ -1202,16 +1312,17 @@ def build_pages(catalog: dict) -> dict[str, str]:
     <section class="hero-panel luminous-hero">
       <div class="poster panel-flow">
         <p class="eyebrow">The Focus Corporation</p>
-        <h1>One holding company, two affiliate operating companies, and one clear path into books, services, development, and premium support.</h1>
-        <p class="lede">TheFocusCorp.com is the public home of Focus Negotium Inc, Focus Records LLC, and Royal Lee Construction Solutions LLC, organized as a mobile-friendly corporate storefront with clearer routing into the right company, the right service, and the right next step.</p>
-        <p>The experience stays elevated and easy to use so visitors can understand the structure quickly, review pricing, and move from first visit into a real engagement without confusion.</p>
+        <h1>A sacred-geometry storefront for books, business services, real estate strategy, media rollout, and construction planning.</h1>
+        <p class="lede">TheFocusCorp.com is the public home of Focus Negotium Inc, Focus Records LLC, and Royal Lee Construction Solutions LLC, shaped as a visually richer business storefront with direct routes into books, shopping, services, and company-specific work.</p>
+        <p>The message stays customer-facing: clear company structure, visible pricing, secure checkout, and a smoother path from first visit into the right paid engagement.</p>
         <div class="metric-strip">
           <span>Call or text {phone}</span>
           <span>{ebook_count} published books</span>
           <span>Parent company + 2 affiliates</span>
         </div>
         <div class="button-row">
-          <a class="btn" href="store.html">Open the store</a>
+          <a class="btn" href="store.html">Open the shop</a>
+          <a class="btn secondary" href="books.html">Shop books</a>
           <a class="btn secondary" href="services.html">Explore services</a>
           <a class="btn secondary" href="structure.html">View the structure</a>
           <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
@@ -1219,6 +1330,7 @@ def build_pages(catalog: dict) -> dict[str, str]:
       </div>
       <section class="hero-visual-panel glow-card">{render_sacred_visual()}</section>
     </section>
+    {render_storefront_spotlight(catalog, phone)}
     <section class="section-block">
       <p class="eyebrow">Holding company and affiliates</p>
       <h2>One public standard across corporate services, media work, and construction strategy.</h2>
@@ -1228,10 +1340,11 @@ def build_pages(catalog: dict) -> dict[str, str]:
     <section class="section-block catalog-band">
       <section class="feature-panel glow-card">
         <p class="eyebrow">Storefront</p>
-        <h2>The store now combines books, premium offers, and secure Stripe checkout in one place.</h2>
-        <p>Use the storefront to present the books clearly, route buyers into the right service tier, and move qualified clients into deeper work without adding a second platform.</p>
+        <h2>The shop now combines books, premium offers, and secure Stripe checkout in one place.</h2>
+        <p>Use the shop to present the books clearly, route buyers into the right service tier, and move qualified clients into deeper work without splitting the public experience across different platforms.</p>
         <div class="button-row">
-          <a class="btn" href="store.html">Browse the store</a>
+          <a class="btn" href="store.html">Browse the shop</a>
+          <a class="btn secondary" href="books.html">Visit the book shelf</a>
           <a class="btn secondary" href="ebooks/index.html">Open the library</a>
         </div>
       </section>
@@ -1270,21 +1383,23 @@ def build_pages(catalog: dict) -> dict[str, str]:
     <section class="hero-panel luminous-hero">
       <div class="poster panel-flow">
         <p class="eyebrow">Launch page</p>
-        <h1>Enter the brand without losing the practical next step.</h1>
-        <p class="lede">This landing page keeps the sacred-geometry atmosphere while staying grounded in visible pricing, corporate structure, clear routing, and a business-first public experience.</p>
+        <h1>Enter the brand, the book shelf, and the shop without losing the practical next step.</h1>
+        <p class="lede">This landing page keeps the sacred-geometry atmosphere while pushing books, shopping, pricing, and company routing closer to the first screen.</p>
         <div class="metric-strip">
           <span>{phone}</span>
           <span>Books + services + holdings</span>
           <span>Mobile-first storefront</span>
         </div>
         <div class="button-row">
-          <a class="btn" href="store.html">Enter the storefront</a>
+          <a class="btn" href="store.html">Enter the shop</a>
           <a class="btn secondary" href="books.html">See the books</a>
+          <a class="btn secondary" href="services.html">See the services</a>
           <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
         </div>
       </div>
       <section class="hero-visual-panel glow-card">{render_sacred_visual()}</section>
     </section>
+    {render_storefront_spotlight(catalog, phone)}
     <section class="section-block">
       <div class="track-grid">{render_track_cards(catalog)}</div>
     </section>
@@ -1341,9 +1456,10 @@ def build_pages(catalog: dict) -> dict[str, str]:
       <div class="poster panel-flow">
         <p class="eyebrow">Storefront</p>
         <h1>Move from books and digital products into premium service, development, and business support.</h1>
-        <p class="lede">The store combines individual book pricing with Stripe-connected offers so customers can start small, purchase a structured package, or move directly into a premium buildout.</p>
+        <p class="lede">The shop combines the book shelf with Stripe-connected offers so customers can start with knowledge products, buy a collection, or move directly into implementation.</p>
         <div class="button-row">
           <a class="btn" href="books.html">Shop books</a>
+          <a class="btn secondary" href="{escape(catalog['offers'][0]['checkout_url'])}">Buy the collection</a>
           <a class="btn secondary" href="ebooks/index.html">Read the library</a>
           <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
         </div>
@@ -1391,11 +1507,12 @@ def build_pages(catalog: dict) -> dict[str, str]:
     <section class="hero-panel luminous-hero">
       <div class="poster panel-flow">
         <p class="eyebrow">Focus Books</p>
-        <h1>A sacred-geometry book shelf with visible pricing, online reading, and printable editions.</h1>
-        <p class="lede">Every current book is now available as a readable web page and as a generated PDF, with pricing displayed clearly and the larger bundle still visible for faster conversion.</p>
+        <h1>A sacred-geometry book shelf with visible pricing, online reading, printable editions, and a clear shopping path.</h1>
+        <p class="lede">Every current title stays readable online and downloadable as PDF, while the collection bundle and the larger shop remain one tap away for faster conversion.</p>
         <div class="button-row">
           <a class="btn" href="ebooks/index.html">Open full library</a>
           <a class="btn secondary" href="{escape(catalog['offers'][0]['checkout_url'])}">Buy the bundle</a>
+          <a class="btn secondary" href="store.html">Open the shop</a>
           <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
         </div>
       </div>
@@ -1409,7 +1526,11 @@ def build_pages(catalog: dict) -> dict[str, str]:
     <section class="section-block">
       <p class="eyebrow">Book shelf</p>
       <h2>Current titles and prices.</h2>
-      <div class="book-grid">{render_book_cards(phone)}</div>
+      <div class="book-grid">{render_book_cards(phone, bundle_url=catalog['offers'][0]['checkout_url'])}</div>
+    </section>
+    <section class="section-block">
+      <p class="eyebrow">Continue shopping</p>
+      <div class="offer-grid">{render_offer_cards(catalog)}</div>
     </section>
   </main>
 </body>
@@ -1593,17 +1714,15 @@ def build() -> int:
         return 1
 
     catalog = load_catalog()
-    if PUBLIC.exists():
-        safe_rmtree(PUBLIC)
-    PUBLIC.mkdir(parents=True, exist_ok=True)
+    staging_dir = Path(tempfile.mkdtemp(prefix="_public_site_staging_", dir=str(ROOT / "published")))
 
-    copy_tree(PUBLISHED, PUBLIC / "ebooks")
-    copy_tree(RLC_OUTPUT, PUBLIC / "rlc")
-    write_generated_assets()
+    copy_tree(PUBLISHED, staging_dir / "ebooks")
+    copy_tree(RLC_OUTPUT, staging_dir / "rlc")
+    write_generated_assets(staging_dir)
 
-    (PUBLIC / "funnel.css").write_text(build_css(catalog), encoding="utf-8")
+    (staging_dir / "funnel.css").write_text(build_css(catalog), encoding="utf-8")
 
-    data_dir = PUBLIC / "data"
+    data_dir = staging_dir / "data"
     data_dir.mkdir(parents=True, exist_ok=True)
     public_catalog = public_store_catalog(catalog)
     (data_dir / "store_catalog.json").write_text(
@@ -1624,9 +1743,11 @@ def build() -> int:
 
     pages = build_pages(catalog)
     for page_name, page_content in pages.items():
-        (PUBLIC / page_name).write_text(page_content, encoding="utf-8")
+        (staging_dir / page_name).write_text(page_content, encoding="utf-8")
 
-    (PUBLIC / ".htaccess").write_text(ROOT_HTACCESS, encoding="utf-8")
+    (staging_dir / ".htaccess").write_text(ROOT_HTACCESS, encoding="utf-8")
+    sync_tree(staging_dir, PUBLIC)
+    safe_rmtree(staging_dir)
     print(f"Built public site at {PUBLIC}")
     return 0
 

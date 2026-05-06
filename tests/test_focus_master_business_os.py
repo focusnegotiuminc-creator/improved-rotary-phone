@@ -79,9 +79,22 @@ def test_public_site_build_exports_business_os_bundle():
     assert module.build() == 0
 
     public_dir = ROOT / "focus_ai" / "published" / "public_site"
+    home_html = (public_dir / "index.html").read_text(encoding="utf-8")
+    landing_html = (public_dir / "landing.html").read_text(encoding="utf-8")
     products_html = (public_dir / "products.html").read_text(encoding="utf-8")
+    books_html = (public_dir / "books.html").read_text(encoding="utf-8")
     business_os_json = (public_dir / "data" / "business_os.json").read_text(encoding="utf-8")
 
     assert (public_dir / "business_os.html").exists()
     assert "Stripe-connected offers" in products_html
+    assert "sacred-geometry storefront" in home_html
+    assert "book shelf" in landing_html
+    assert "A sacred-geometry book shelf" in books_html
+    for html in [home_html, landing_html, products_html, books_html]:
+        lowered = html.lower()
+        assert "ai engine" not in lowered
+        assert "openai" not in lowered
+        assert "anthropic" not in lowered
+        assert "gemini" not in lowered
+        assert "private console" not in lowered
     assert '"site_name": "The Focus Corporation | Businesses, Services, and Store"' in business_os_json
