@@ -3,6 +3,7 @@
 .pytest_cache/
 .pytest_tmp/
 .sixth/
+.edge_verify_profile/
 .env
 .env.*
 .secrets/
@@ -18,6 +19,7 @@ focus_ai/published/shopify/
 focus_ai/published/stripe/
 cloudflare/focus-mobile-workbench/
 marketing/fluxcrave/
+docs/live_*_dom_*.html
 FOCUS_MASTER_AI/outputs/replit_deploy_manifest_*.json
 FOCUS_MASTER_AI/data/business_os_runtime/
 ios/FocusAIApp/FocusAIApp.xcodeproj/

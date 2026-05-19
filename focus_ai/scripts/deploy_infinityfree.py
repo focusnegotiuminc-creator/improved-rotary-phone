@@ -14,8 +14,11 @@ Optional:
 from __future__ import annotations
 
 import os
+import socket
+import subprocess
 import time
 from ftplib import FTP, error_perm
+from ipaddress import ip_address
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,6 +30,7 @@ DEFAULT_REMOTE_DIR_CANDIDATES = [
 ]
 DEFAULT_LOGIN_RETRIES = 3
 DEFAULT_LOGIN_RETRY_DELAY = 2.0
+FALLBACK_DNS_SERVERS = ["8.8.8.8", "1.1.1.1"]
 
 
 def _parse_remote_dir_candidates(raw: str | None) -> list[str]:
@@ -43,11 +47,74 @@ def _host_candidates(raw_host: str | None) -> list[str]:
     for candidate in [h.strip() for h in raw_host.split(",") if h.strip()]:
         if candidate not in candidates:
             candidates.append(candidate)
+        if _is_ip_address(candidate):
+            continue
+        for fallback_ip in _fallback_dns_ips(candidate):
+            if fallback_ip not in candidates:
+                candidates.append(fallback_ip)
         if "." in candidate and not candidate.startswith("ftp."):
             ftp_candidate = f"ftp.{candidate}"
             if ftp_candidate not in candidates:
                 candidates.append(ftp_candidate)
+            for fallback_ip in _fallback_dns_ips(ftp_candidate):
+                if fallback_ip not in candidates:
+                    candidates.append(fallback_ip)
     return candidates
+
+
+def _is_ip_address(value: str) -> bool:
+    try:
+        ip_address(value.strip("[]"))
+    except ValueError:
+        return False
+    return True
+
+
+def _fallback_dns_ips(host: str) -> list[str]:
+    """Resolve FTP hosts when the local resolver is broken.
+
+    Some local Codex/desktop environments can resolve the website domain but fail
+    on InfinityFree's FTP hostname. Python's FTP client cannot use nslookup
+    directly, so this adds public-DNS IP candidates only when normal resolution
+    fails. This keeps the normal hostname path first and avoids hard-coding an
+    InfinityFree IP as the only route.
+    """
+    if _is_ip_address(host):
+        return []
+    try:
+        socket.getaddrinfo(host, 21, proto=socket.IPPROTO_TCP)
+        return []
+    except OSError:
+        pass
+
+    ips: list[str] = []
+    for resolver in FALLBACK_DNS_SERVERS:
+        try:
+            proc = subprocess.run(
+                ["nslookup", host, resolver],
+                capture_output=True,
+                text=True,
+                timeout=8,
+                check=False,
+            )
+        except Exception:
+            continue
+        for raw_line in proc.stdout.splitlines():
+            line = raw_line.strip()
+            if not line.startswith("Address:"):
+                continue
+            value = line.split("Address:", 1)[1].strip()
+            if value == resolver:
+                continue
+            try:
+                ip_address(value)
+            except ValueError:
+                continue
+            if value not in ips:
+                ips.append(value)
+    if ips:
+        print(f"Resolved {host} through fallback DNS because local DNS failed.")
+    return ips
 
 
 def _path_exists(ftp: FTP, remote_path: str) -> bool:

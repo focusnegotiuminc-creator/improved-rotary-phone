@@ -23,6 +23,17 @@ def _candidate_env_files() -> list[Path]:
 
 
 DEFAULT_ENV_FILE = next((path for path in _candidate_env_files() if path.exists()), _candidate_env_files()[0])
+BROKEN_PROXY_VALUES = {"http://127.0.0.1:9", "https://127.0.0.1:9"}
+PROXY_ENV_NAMES = [
+    "HTTP_PROXY",
+    "HTTPS_PROXY",
+    "ALL_PROXY",
+    "GIT_HTTP_PROXY",
+    "GIT_HTTPS_PROXY",
+    "http_proxy",
+    "https_proxy",
+    "all_proxy",
+]
 
 
 def parse_args() -> argparse.Namespace:
@@ -44,6 +55,10 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Skip verify_live_app.py after deployment.",
     )
+    parser.add_argument(
+        "--ftp-host",
+        help="Override INFINITYFREE_FTP_HOST for this run without editing the env file.",
+    )
     return parser.parse_args()
 
 
@@ -57,6 +72,17 @@ def load_env_file(path: Path) -> None:
         key, value = line.split("=", 1)
         if value:
             os.environ.setdefault(key.strip(), value.strip().strip("'").strip('"'))
+
+
+def sanitize_known_broken_proxy_env() -> None:
+    cleared: list[str] = []
+    for name in PROXY_ENV_NAMES:
+        value = os.environ.get(name, "").strip().rstrip("/")
+        if value in BROKEN_PROXY_VALUES:
+            os.environ.pop(name, None)
+            cleared.append(name)
+    if cleared:
+        print(f"Cleared broken local proxy env vars for deploy: {', '.join(sorted(set(cleared)))}")
 
 
 def run_step(label: str, script_path: Path) -> int:
@@ -73,6 +99,9 @@ def run_step(label: str, script_path: Path) -> int:
 def main() -> int:
     args = parse_args()
     env_file = Path(args.env_file)
+    sanitize_known_broken_proxy_env()
+    if args.ftp_host:
+        os.environ["INFINITYFREE_FTP_HOST"] = args.ftp_host
     load_env_file(env_file)
     if env_file.exists():
         print(f"Loaded env file: {env_file}")
