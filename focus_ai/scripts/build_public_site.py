@@ -16,7 +16,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
-from site_catalog import BOOK_CATALOG, COMPANY_PROFILES
+from site_catalog import BOOK_CATALOG, COMPANY_PROFILES, RLC_PROJECT_REFERENCES
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = ROOT.parent
@@ -183,7 +183,7 @@ def nav_html() -> str:
     links = [
         ("index.html", "Home"),
         ("services.html", "Services"),
-        ("store.html", "Shop"),
+        ("store.html", "Store"),
         ("books.html", "Books"),
         ("structure.html", "Structure"),
         ("focus-negotium.html", "Focus Negotium"),
@@ -196,8 +196,7 @@ def nav_html() -> str:
     return (
         '<header class="site-header">'
         '<div class="brand-lockup"><span class="brand-mark"></span><div>'
-        '<p class="eyebrow">TheFocusCorp.com</p><strong>The Focus Corporation</strong>'
-        '<p class="micro-note">Books, services, development, media, and secure checkout in one sacred-geometry storefront.</p>'
+        '<p class="eyebrow">TheFocusCorp.com</p><strong>The Focus Corporation | Businesses, Services, and Store</strong>'
         f"</div></div><nav class=\"top-nav\">{items}</nav></header>"
     )
 
@@ -484,6 +483,28 @@ def render_focus_records_section() -> str:
 """.strip()
 
 
+def render_rlc_project_reference_cards() -> str:
+    cards = "\n".join(
+        f"""
+<article class="feature-panel glow-card">
+  <p class="eyebrow">{escape(project['status'])}</p>
+  <h3>{escape(project['title'])}</h3>
+  <p class="micro-note">{escape(project['location'])}</p>
+  <p>{escape(project['summary'])}</p>
+</article>
+""".strip()
+        for project in RLC_PROJECT_REFERENCES
+    )
+    return f"""
+<section class="section-block">
+  <p class="eyebrow">Construction portfolio history</p>
+  <h2>Current package work and legacy project references stay visible together.</h2>
+  <p class="section-copy">The Royal Lee Construction Solutions page now preserves the Quincy office package alongside the owner-provided institutional and school construction references, including Quincy Veterans Home, Wentzville High School, and Wentzville Middle School.</p>
+  <div class="grid-three">{cards}</div>
+</section>
+""".strip()
+
+
 def render_rlc_section() -> str:
     gallery = "\n".join(
         f"""
@@ -501,6 +522,7 @@ def render_rlc_section() -> str:
         ]
     )
     return f"""
+{render_rlc_project_reference_cards()}
 <section class="section-block">
   <p class="eyebrow">Drafted concept studies</p>
   <h2>Presentation-grade sacred-geometry studies for homes, sites, and development work.</h2>
@@ -551,7 +573,6 @@ def render_offer_cards(catalog: dict) -> str:
   </div>
   <div class="button-row">
     <a class="btn" href="{escape(href)}">{escape(cta)}</a>
-    <a class="btn secondary" href="books.html">Browse books first</a>
   </div>
 </article>
 """.strip()
@@ -684,148 +705,6 @@ def render_system_cards() -> str:
 """.strip()
         for item in items
     )
-
-
-def render_storefront_spotlight(catalog: dict, phone: str) -> str:
-    bundle = catalog["offers"][0]
-    return f"""
-<section class="section-block spotlight-band">
-  <section class="feature-panel glow-card">
-    <p class="eyebrow">Featured shelf</p>
-    <h2>Lead with the books, then move readers into the right service or premium offer.</h2>
-    <p class="section-copy">The sacred-geometry shelf stays visible on the public site so first-time visitors can start with the library, the collection bundle, or the premium store without losing the business structure.</p>
-    <div class="book-grid">{render_book_cards(phone, compact=True, limit=3)}</div>
-    <div class="button-row">
-      <a class="btn" href="books.html">Shop the full book shelf</a>
-      <a class="btn secondary" href="ebooks/index.html">Open the library</a>
-    </div>
-  </section>
-  <section class="feature-panel glow-card">
-    <p class="eyebrow">Shopping route</p>
-    <h2>{escape(bundle['title'])}</h2>
-    <p>{escape(bundle['summary'])}</p>
-    <div class="metric-strip">
-      <span>{_format_currency(float(bundle['price_usd']))} collection entry point</span>
-      <span>Secure Stripe checkout</span>
-      <span>Books, offers, and service upgrades</span>
-    </div>
-    <div class="button-row">
-      <a class="btn" href="{escape(bundle['checkout_url'])}">{escape(bundle['cta_label'])}</a>
-      <a class="btn secondary" href="store.html">Open the full shop</a>
-      <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
-    </div>
-  </section>
-</section>
-""".strip()
-
-
-def company_theme(company_id: str) -> tuple[str, str]:
-    if company_id == "focus-negotium":
-        return ("#3EE4D6", "rgba(62, 228, 214, 0.2)")
-    if company_id == "focus-records":
-        return ("#7CC8FF", "rgba(124, 200, 255, 0.2)")
-    return ("#F2C96D", "rgba(242, 201, 109, 0.2)")
-
-
-def company_related_books(company_id: str) -> list[dict]:
-    if company_id == "focus-records":
-        wanted = {
-            "focus_on_wtf_you_feel",
-            "focus_on_coding_for_dummies_the_coding_bible",
-        }
-    elif company_id == "royal-lee-construction":
-        wanted = {
-            "the_hidden_truths_of_sacred_geometry",
-            "chakra_system_deep_dive",
-        }
-    else:
-        wanted = {
-            "focus_on_foundation",
-            "the_hidden_truths_of_sacred_geometry",
-        }
-    return [book for book in BOOK_CATALOG if book["slug"] in wanted]
-
-
-def render_company_hero_visual(company: dict) -> str:
-    theme_color, panel_tint = company_theme(company["id"])
-    if company["id"] == "focus-negotium":
-        image = HOLDING_DIAGRAM_PATH
-        title = "Holding structure"
-        caption = "Parent-company structure with affiliate operating companies under one coordinated customer-facing portfolio."
-    elif company["id"] == "focus-records":
-        image = FOCUS_RECORDS_POSTERS[0]
-        title = "Release identity board"
-        caption = "Creative direction board for branded launches, release assets, and public-facing campaign rhythm."
-    else:
-        image = RLC_CONCEPT_STUDIES[0]
-        title = "Concept study"
-        caption = "Presentation-grade concept work for sacred-geometry planning, owner review, and development conversations."
-    return f"""
-<section class="feature-panel hero-visual-panel company-media-card" style="--company-accent: {theme_color}; --company-tint: {panel_tint};">
-  <figure class="company-media-frame">
-    <img src="{image}" alt="{escape(company['name'])} visual preview" />
-  </figure>
-  <div class="company-media-copy">
-    <p class="eyebrow">{escape(title)}</p>
-    <p>{escape(caption)}</p>
-  </div>
-</section>
-""".strip()
-
-
-def render_company_customer_route(company: dict, catalog: dict, phone: str, contact_name: str) -> str:
-    related_offers = [
-        offer for offer in catalog.get("offers", []) if company["id"] in offer.get("company_ids", [])
-    ]
-    primary_offer = related_offers[0] if related_offers else catalog["offers"][0]
-    books = company_related_books(company["id"])
-    first_service = company["services"][0]
-    lowest_price = _format_currency(min(float(service["price_usd"]) for service in company["services"]))
-    service_count = len(company["services"])
-    books_markup = "".join(
-        f"""
-<article class="route-mini-card">
-  <p class="eyebrow">{escape(book['tag'])}</p>
-  <h3>{escape(book['title'])}</h3>
-  <p>{escape(book['summary'])}</p>
-  <div class="meta-row">
-    <span class="price-pill">{_format_currency(float(book['price_usd']))}</span>
-    <span class="micro-note">Book shelf route</span>
-  </div>
-</article>
-""".strip()
-        for book in books
-    )
-    return f"""
-<section class="section-block company-route-band">
-  <section class="feature-panel glow-card">
-    <p class="eyebrow">Best first step</p>
-    <h2>{escape(first_service['title'])}</h2>
-    <p>{escape(first_service['summary'])}</p>
-    <div class="metric-strip">
-      <span>{service_count} structured services</span>
-      <span>Starting at {lowest_price}</span>
-      <span>Direct route {phone}</span>
-    </div>
-    <div class="button-row">
-      <a class="btn" href="booking.html">Book with {escape(contact_name)}</a>
-      <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
-      <a class="btn secondary" href="services.html">See all services</a>
-    </div>
-  </section>
-  <section class="feature-panel glow-card">
-    <p class="eyebrow">Books and shopping</p>
-    <h2>Keep one route from this company page into the shelf, the shop, and secure checkout.</h2>
-    <p>Customers can start with the book shelf, move into the broader shop, or take the direct offer route that best matches this company lane.</p>
-    <div class="mini-grid">{books_markup}</div>
-    <div class="button-row">
-      <a class="btn" href="books.html">Shop books</a>
-      <a class="btn secondary" href="store.html">Open the shop</a>
-      <a class="btn secondary" href="{escape(primary_offer['checkout_url'])}">{escape(primary_offer['cta_label'])}</a>
-    </div>
-  </section>
-</section>
-""".strip()
 
 
 def render_track_cards(catalog: dict) -> str:
@@ -963,7 +842,7 @@ def build_stripe_csv(catalog: dict) -> str:
     return buffer.getvalue()
 
 
-def render_company_page(company: dict, contact_name: str, phone: str, catalog: dict) -> str:
+def render_company_page(company: dict, contact_name: str, phone: str) -> str:
     services = "\n".join(
         f"""
 <article class="offer-card glow-card">
@@ -984,12 +863,10 @@ def render_company_page(company: dict, contact_name: str, phone: str, catalog: d
         "while still connecting back into the larger public storefront."
     )
     relationship_note = company.get("relationship_note", "This company sits inside the wider Focus Corporation public experience.")
-    lowest_price = _format_currency(min(float(service["price_usd"]) for service in company["services"]))
-    highest_price = _format_currency(max(float(service["price_usd"]) for service in company["services"]))
     return f"""<!doctype html>
 <html lang="en">
 {head_html(company['name'], description)}
-<body class="theme-{escape(company['id'])}">
+<body>
   <main>
     {nav_html()}
     <section class="hero-panel luminous-hero">
@@ -999,20 +876,18 @@ def render_company_page(company: dict, contact_name: str, phone: str, catalog: d
         <p class="lede">{escape(company['headline'])}</p>
         <p>{escape(company['description'])}</p>
         <div class="metric-strip">
-          <span>{len(company['services'])} structured services</span>
-          <span>Starting at {lowest_price}</span>
-          <span>Flagship path {highest_price}</span>
+          <span>Direct route {phone}</span>
+          <span>{escape(company['eyebrow'])}</span>
+          <span>Professional pricing and delivery structure</span>
         </div>
         <div class="button-row">
           <a class="btn" href="tel:{phone}">Call {phone}</a>
           <a class="btn secondary" href="booking.html">Book with {escape(contact_name)}</a>
-          <a class="btn secondary" href="store.html">Open the shop</a>
           <a class="btn secondary" href="services.html">See all services</a>
         </div>
       </div>
-      {render_company_hero_visual(company)}
+      <section class="feature-panel hero-visual-panel">{render_sacred_visual()}</section>
     </section>
-    {render_company_customer_route(company, catalog, phone, contact_name)}
     <section class="section-block split-band">
       <section class="feature-panel glow-card">
         <p class="eyebrow">Core proof points</p>
@@ -1063,6 +938,7 @@ html {{ scroll-behavior: smooth; }}
 body {{
   margin: 0;
   min-height: 100vh;
+  scroll-padding-top: 88px;
   color: var(--ink);
   font-family: var(--body);
   background:
@@ -1121,8 +997,10 @@ main {{ width: min(1220px, 94vw); margin: 0 auto; padding: 1rem 0 4rem; display:
     repeating-conic-gradient(from 0deg, rgba(124, 200, 255, 0.18) 0deg 18deg, transparent 18deg 36deg),
     rgba(7, 15, 29, 0.92);
   box-shadow: inset 0 0 28px rgba(124, 200, 255, 0.12);
+  animation: pulseHalo 11s ease-in-out infinite;
 }}
-.top-nav {{ display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.85rem; }}
+.top-nav {{ display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.85rem; overflow-x: auto; scrollbar-width: none; }}
+.top-nav::-webkit-scrollbar {{ display: none; }}
 .top-nav a {{
   padding: 0.62rem 0.95rem;
   border-radius: 999px;
@@ -1145,11 +1023,11 @@ main {{ width: min(1220px, 94vw); margin: 0 auto; padding: 1rem 0 4rem; display:
   font-size: 0.76rem;
   font-weight: 800;
 }}
-h1, h2, h3 {{ margin: 0; font-family: var(--display); line-height: 1.02; }}
+h1, h2, h3 {{ margin: 0; font-family: var(--display); line-height: 1.02; color: #f6f8ff; }}
 h1 {{ font-size: clamp(2.7rem, 6vw, 5.8rem); }}
 h2 {{ font-size: clamp(1.75rem, 3.8vw, 3.2rem); }}
 h3 {{ font-size: clamp(1.2rem, 2.4vw, 1.85rem); }}
-p, li {{ color: var(--muted); line-height: 1.72; }}
+p, li {{ color: #c8d6ea; line-height: 1.72; }}
 .lede {{ font-size: clamp(1.08rem, 2vw, 1.24rem); color: #eef4ff; max-width: 62ch; }}
 .hero-panel,
 .feature-panel,
@@ -1201,8 +1079,8 @@ p, li {{ color: var(--muted); line-height: 1.72; }}
 .poster,
 .feature-panel,
 .hero-visual-panel {{ display: grid; gap: 0.85rem; align-content: start; }}
-.hero-visual-panel {{ padding: 1rem; min-height: 100%; }}
-.panel-flow {{ align-content: center; }}
+.hero-visual-panel {{ padding: 1rem; min-height: 100%; animation: floatPanel 10s ease-in-out infinite; }}
+.panel-flow {{ align-content: center; animation: riseIn 760ms ease both; }}
 .metric-strip,
 .button-row,
 .meta-row,
@@ -1233,11 +1111,16 @@ p, li {{ color: var(--muted); line-height: 1.72; }}
   background: linear-gradient(120deg, var(--gold), #ffd999 52%, var(--ember));
   color: #1b1420;
   font-weight: 800;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
 }}
 .btn.secondary {{
   background: rgba(6, 13, 26, 0.54);
   color: var(--ink);
   border-color: rgba(124, 200, 255, 0.22);
+}}
+.btn:hover {{
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px rgba(2, 8, 24, 0.34);
 }}
 .section-block {{ display: grid; gap: 0.9rem; }}
 .section-copy {{ max-width: 68ch; margin: 0; }}
@@ -1274,7 +1157,29 @@ p, li {{ color: var(--muted); line-height: 1.72; }}
 .drawing-frame,
 .feature-panel {{
   transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+  animation: riseIn 680ms ease both;
 }}
+.offer-card:nth-child(2),
+.book-card:nth-child(2),
+.info-card:nth-child(2),
+.track-card:nth-child(2),
+.stage-card:nth-child(2),
+.service-cluster:nth-child(2),
+.drawing-frame:nth-child(2) {{ animation-delay: 90ms; }}
+.offer-card:nth-child(3),
+.book-card:nth-child(3),
+.info-card:nth-child(3),
+.track-card:nth-child(3),
+.stage-card:nth-child(3),
+.service-cluster:nth-child(3),
+.drawing-frame:nth-child(3) {{ animation-delay: 180ms; }}
+.offer-card:nth-child(4),
+.book-card:nth-child(4),
+.info-card:nth-child(4),
+.track-card:nth-child(4),
+.stage-card:nth-child(4),
+.service-cluster:nth-child(4),
+.drawing-frame:nth-child(4) {{ animation-delay: 270ms; }}
 .offer-card:hover,
 .info-card:hover,
 .track-card:hover,
@@ -1311,40 +1216,6 @@ p, li {{ color: var(--muted); line-height: 1.72; }}
 .service-price {{ color: #fff0c1; font-weight: 800; font-size: 1.05rem; }}
 .catalog-band {{ display: grid; gap: 1rem; grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr); }}
 .spotlight-band {{ display: grid; gap: 1rem; grid-template-columns: minmax(0, 1.14fr) minmax(280px, 0.86fr); }}
-.company-route-band {{ display: grid; gap: 1rem; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); }}
-.mini-grid {{ display: grid; gap: 0.9rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }}
-.route-mini-card {{
-  padding: 1rem;
-  border-radius: 22px;
-  border: 1px solid rgba(124, 200, 255, 0.12);
-  background: linear-gradient(155deg, rgba(7, 15, 29, 0.86), rgba(12, 24, 46, 0.74));
-}}
-.company-media-card {{
-  background:
-    linear-gradient(155deg, rgba(7, 15, 29, 0.92), rgba(16, 30, 58, 0.78)),
-    radial-gradient(circle at 20% 18%, var(--company-tint), transparent 36%);
-}}
-.company-media-frame {{
-  margin: 0;
-  border-radius: 24px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(4, 10, 22, 0.72);
-  box-shadow: inset 0 0 0 1px rgba(124, 200, 255, 0.08);
-}}
-.company-media-frame img {{
-  display: block;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-}}
-.company-media-copy {{ padding: 0.1rem 0.2rem 0; }}
-.theme-focus-negotium .site-header,
-.theme-focus-negotium .company-media-card {{ border-color: rgba(62, 228, 214, 0.18); }}
-.theme-focus-records .site-header,
-.theme-focus-records .company-media-card {{ border-color: rgba(124, 200, 255, 0.18); }}
-.theme-royal-lee-construction .site-header,
-.theme-royal-lee-construction .company-media-card {{ border-color: rgba(242, 201, 109, 0.22); }}
 .sacred-visual {{
   position: relative;
   min-height: 360px;
@@ -1412,6 +1283,19 @@ p, li {{ color: var(--muted); line-height: 1.72; }}
 @keyframes slowSpin {{ from {{ transform: rotate(0deg); }} to {{ transform: rotate(360deg); }} }}
 @keyframes pulseCore {{ 0%, 100% {{ transform: scale(1); opacity: 0.92; }} 50% {{ transform: scale(1.08); opacity: 1; }} }}
 @keyframes beamDrift {{ from {{ transform: translateX(-3%); }} to {{ transform: translateX(3%); }} }}
+@keyframes floatPanel {{ 0%, 100% {{ transform: translateY(0); }} 50% {{ transform: translateY(-8px); }} }}
+@keyframes pulseHalo {{ 0%, 100% {{ transform: scale(1); box-shadow: inset 0 0 28px rgba(124, 200, 255, 0.12); }} 50% {{ transform: scale(1.04); box-shadow: inset 0 0 34px rgba(124, 200, 255, 0.18), 0 0 26px rgba(242, 201, 109, 0.12); }} }}
+@keyframes riseIn {{ from {{ opacity: 0; transform: translateY(16px); }} to {{ opacity: 1; transform: translateY(0); }} }}
+@media (prefers-reduced-motion: reduce) {{
+  *,
+  *::before,
+  *::after {{
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }}
+}}
 @media (max-width: 1080px) {{
   .hero-panel,
   .grid-three,
@@ -1422,7 +1306,6 @@ p, li {{ color: var(--muted); line-height: 1.72; }}
   .split-band,
   .catalog-band,
   .spotlight-band,
-  .company-route-band,
   .book-grid,
   .drawing-grid {{ grid-template-columns: 1fr; }}
   .site-header {{ grid-template-columns: 1fr; }}
@@ -1430,15 +1313,33 @@ p, li {{ color: var(--muted); line-height: 1.72; }}
 }}
 @media (max-width: 720px) {{
   main {{ width: min(94vw, 100%); }}
-  .top-nav,
+  .site-header {{ position: static; gap: 0.75rem; }}
   .button-row,
   .metric-strip,
   .meta-row,
   .download-strip {{ flex-direction: column; }}
-  .btn,
-  .top-nav a {{ width: 100%; justify-content: center; }}
+  .top-nav {{
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+  }}
+  .btn {{ width: 100%; justify-content: center; }}
+  .top-nav a {{ width: auto; white-space: nowrap; justify-content: center; flex: 0 0 auto; }}
+  .metric-strip span,
+  .micro-note,
+  .price-pill {{ width: 100%; justify-content: center; }}
+  .hero-panel,
+  .feature-panel,
+  .offer-card,
+  .track-card,
+  .stage-card,
+  .book-card,
+  .service-cluster,
+  .drawing-frame {{ border-radius: 24px; }}
+  .brand-lockup {{ align-items: flex-start; }}
   .service-row {{ grid-template-columns: 1fr; }}
-  .mini-grid {{ grid-template-columns: 1fr; }}
   .sacred-visual {{ min-height: 280px; }}
 }}
 """.strip() + "\n"
@@ -1461,17 +1362,16 @@ def build_pages(catalog: dict) -> dict[str, str]:
     <section class="hero-panel luminous-hero">
       <div class="poster panel-flow">
         <p class="eyebrow">The Focus Corporation</p>
-        <h1>A sacred-geometry storefront for books, business services, real estate strategy, media rollout, and construction planning.</h1>
-        <p class="lede">TheFocusCorp.com is the public home of Focus Negotium Inc, Focus Records LLC, and Royal Lee Construction Solutions LLC, shaped as a visually richer business storefront with direct routes into books, shopping, services, and company-specific work.</p>
-        <p>The message stays customer-facing: clear company structure, visible pricing, secure checkout, and a smoother path from first visit into the right paid engagement.</p>
+        <h1>One holding company, two affiliate operating companies, and one clear path into books, services, development, and premium support.</h1>
+        <p class="lede">TheFocusCorp.com is the public home of Focus Negotium Inc, Focus Records LLC, and Royal Lee Construction Solutions LLC, organized as a mobile-friendly corporate storefront with clearer routing into the right company, the right service, and the right next step.</p>
+        <p>The experience stays elevated and easy to use so visitors can understand the structure quickly, review pricing, and move from first visit into a real engagement without confusion.</p>
         <div class="metric-strip">
           <span>Call or text {phone}</span>
           <span>{ebook_count} published books</span>
           <span>Parent company + 2 affiliates</span>
         </div>
         <div class="button-row">
-          <a class="btn" href="store.html">Open the shop</a>
-          <a class="btn secondary" href="books.html">Shop books</a>
+          <a class="btn" href="store.html">Open the store</a>
           <a class="btn secondary" href="services.html">Explore services</a>
           <a class="btn secondary" href="structure.html">View the structure</a>
           <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
@@ -1479,7 +1379,6 @@ def build_pages(catalog: dict) -> dict[str, str]:
       </div>
       <section class="hero-visual-panel glow-card">{render_sacred_visual()}</section>
     </section>
-    {render_storefront_spotlight(catalog, phone)}
     <section class="section-block">
       <p class="eyebrow">Holding company and affiliates</p>
       <h2>One public standard across corporate services, media work, and construction strategy.</h2>
@@ -1489,11 +1388,10 @@ def build_pages(catalog: dict) -> dict[str, str]:
     <section class="section-block catalog-band">
       <section class="feature-panel glow-card">
         <p class="eyebrow">Storefront</p>
-        <h2>The shop now combines books, premium offers, and secure Stripe checkout in one place.</h2>
-        <p>Use the shop to present the books clearly, route buyers into the right service tier, and move qualified clients into deeper work without splitting the public experience across different platforms.</p>
+        <h2>The store now combines books, premium offers, and secure Stripe checkout in one place.</h2>
+        <p>Use the storefront to present the books clearly, route buyers into the right service tier, and move qualified clients into deeper work without adding a second platform.</p>
         <div class="button-row">
-          <a class="btn" href="store.html">Browse the shop</a>
-          <a class="btn secondary" href="books.html">Visit the book shelf</a>
+          <a class="btn" href="store.html">Browse the store</a>
           <a class="btn secondary" href="ebooks/index.html">Open the library</a>
         </div>
       </section>
@@ -1532,23 +1430,21 @@ def build_pages(catalog: dict) -> dict[str, str]:
     <section class="hero-panel luminous-hero">
       <div class="poster panel-flow">
         <p class="eyebrow">Launch page</p>
-        <h1>Enter the brand, the book shelf, and the shop without losing the practical next step.</h1>
-        <p class="lede">This landing page keeps the sacred-geometry atmosphere while pushing books, shopping, pricing, and company routing closer to the first screen.</p>
+        <h1>Enter the brand without losing the practical next step.</h1>
+        <p class="lede">This landing page keeps the sacred-geometry atmosphere while staying grounded in visible pricing, corporate structure, clear routing, and a business-first public experience.</p>
         <div class="metric-strip">
           <span>{phone}</span>
           <span>Books + services + holdings</span>
           <span>Mobile-first storefront</span>
         </div>
         <div class="button-row">
-          <a class="btn" href="store.html">Enter the shop</a>
+          <a class="btn" href="store.html">Enter the storefront</a>
           <a class="btn secondary" href="books.html">See the books</a>
-          <a class="btn secondary" href="services.html">See the services</a>
           <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
         </div>
       </div>
       <section class="hero-visual-panel glow-card">{render_sacred_visual()}</section>
     </section>
-    {render_storefront_spotlight(catalog, phone)}
     <section class="section-block">
       <div class="track-grid">{render_track_cards(catalog)}</div>
     </section>
@@ -1605,10 +1501,9 @@ def build_pages(catalog: dict) -> dict[str, str]:
       <div class="poster panel-flow">
         <p class="eyebrow">Storefront</p>
         <h1>Move from books and digital products into premium service, development, and business support.</h1>
-        <p class="lede">The shop combines the book shelf with Stripe-connected offers so customers can start with knowledge products, buy a collection, or move directly into implementation.</p>
+        <p class="lede">The store combines individual book pricing with Stripe-connected offers so customers can start small, purchase a structured package, or move directly into a premium buildout.</p>
         <div class="button-row">
           <a class="btn" href="books.html">Shop books</a>
-          <a class="btn secondary" href="{escape(catalog['offers'][0]['checkout_url'])}">Buy the collection</a>
           <a class="btn secondary" href="ebooks/index.html">Read the library</a>
           <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
         </div>
@@ -1656,12 +1551,11 @@ def build_pages(catalog: dict) -> dict[str, str]:
     <section class="hero-panel luminous-hero">
       <div class="poster panel-flow">
         <p class="eyebrow">Focus Books</p>
-        <h1>A sacred-geometry book shelf with visible pricing, online reading, printable editions, and a clear shopping path.</h1>
-        <p class="lede">Every current title stays readable online and downloadable as PDF, while the collection bundle and the larger shop remain one tap away for faster conversion.</p>
+        <h1>A sacred-geometry book shelf with visible pricing, online reading, and printable editions.</h1>
+        <p class="lede">Every current book is now available as a readable web page and as a generated PDF, with pricing displayed clearly and the larger bundle still visible for faster conversion.</p>
         <div class="button-row">
           <a class="btn" href="ebooks/index.html">Open full library</a>
           <a class="btn secondary" href="{escape(catalog['offers'][0]['checkout_url'])}">Buy the bundle</a>
-          <a class="btn secondary" href="store.html">Open the shop</a>
           <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
         </div>
       </div>
@@ -1675,11 +1569,7 @@ def build_pages(catalog: dict) -> dict[str, str]:
     <section class="section-block">
       <p class="eyebrow">Book shelf</p>
       <h2>Current titles and prices.</h2>
-      <div class="book-grid">{render_book_cards(phone, bundle_url=catalog['offers'][0]['checkout_url'])}</div>
-    </section>
-    <section class="section-block">
-      <p class="eyebrow">Continue shopping</p>
-      <div class="offer-grid">{render_offer_cards(catalog)}</div>
+      <div class="book-grid">{render_book_cards(phone)}</div>
     </section>
   </main>
 </body>
@@ -1780,11 +1670,13 @@ def build_pages(catalog: dict) -> dict[str, str]:
           <span>Total bid {rlc_summary.get('Total Bid', '$0.00')}</span>
           <span>Materials {rlc_summary.get('Materials Total', '$0.00')}</span>
           <span>{_rlc_line_item_count()} takeoff lines</span>
+          <span>Call or text {phone}</span>
         </div>
         <div class="button-row">
           <a class="btn" href="rlc/bid_summary.json">Download bid summary</a>
           <a class="btn secondary" href="rlc/material_list.csv">Download material list</a>
           <a class="btn secondary" href="royal-lee-construction.html">Open RLC services</a>
+          <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
         </div>
       </div>
       <section class="feature-panel glow-card">
@@ -1792,6 +1684,7 @@ def build_pages(catalog: dict) -> dict[str, str]:
         <ul class="detail-list">{''.join(f'<li>{escape(item)}</li>' for item in rlc_checklist[:6])}</ul>
       </section>
     </section>
+    {render_rlc_project_reference_cards()}
     <section class="drawing-grid">
       <figure class="drawing-frame">
         <img src="rlc/first_floor.svg" alt="First floor drawing preview" />
@@ -1853,7 +1746,7 @@ def build_pages(catalog: dict) -> dict[str, str]:
         "upsell.html": products_page,
         "high_ticket.html": business_os_page,
         "email_automation.html": email_automation,
-        **{company["slug"]: render_company_page(company, contact_name, phone, catalog) for company in COMPANY_PROFILES},
+        **{company["slug"]: render_company_page(company, contact_name, phone) for company in COMPANY_PROFILES},
     }
 
 

@@ -192,6 +192,7 @@ COMPANY_PROFILES = [
             "Sacred geometry concept studies for homes, developments, and intentional spaces",
             "Preconstruction strategy, scope framing, and owner-ready decision packets",
             "Renovation and new-build planning with presentation-grade visuals",
+            "Portfolio references preserved for Quincy Veterans Home, Wentzville High School, and Wentzville Middle School",
             "Design concepts drafted by Reginald Hilton and prepared for project-level discussion",
         ],
         "programs": [
@@ -243,6 +244,7 @@ COMPANY_PROFILES = [
         "notes": [
             "Concept studies are not stamped construction documents and should be verified by licensed professionals prior to permitting or fabrication.",
             "Royal Lee packages can feed directly into Focus Negotium-led development and property strategies when the project requires both lanes.",
+            "Legacy construction references named by the owner are preserved publicly as portfolio context while detailed project records continue to be organized.",
         ],
     },
 ]
@@ -250,3 +252,31 @@ COMPANY_PROFILES = [
 
 BOOK_BY_SOURCE = {item["source"]: item for item in BOOK_CATALOG}
 COMPANY_BY_ID = {item["id"]: item for item in COMPANY_PROFILES}
+
+
+RLC_PROJECT_REFERENCES = [
+    {
+        "title": "522 Vermont Office Restoration",
+        "location": "Quincy, Illinois",
+        "status": "Documented package",
+        "summary": "Owner-review office renovation package with downloadable bid summary, material takeoff, floor-plan previews, and large-format blueprint PDFs.",
+    },
+    {
+        "title": "Quincy Veterans Home Construction",
+        "location": "Quincy, Illinois",
+        "status": "Legacy portfolio reference",
+        "summary": "Institutional construction reference retained in the Royal Lee Construction Solutions portfolio history for public continuity.",
+    },
+    {
+        "title": "Wentzville High School",
+        "location": "Wentzville, Missouri",
+        "status": "Legacy school reference",
+        "summary": "School-construction reference preserved as part of the broader construction history and public-facing capability story.",
+    },
+    {
+        "title": "Wentzville Middle School",
+        "location": "Wentzville, Missouri",
+        "status": "Legacy school reference",
+        "summary": "Companion school-construction reference preserved with the high-school history so the portfolio remains complete.",
+    },
+]
