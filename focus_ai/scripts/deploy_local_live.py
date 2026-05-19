@@ -59,13 +59,21 @@ def parse_args() -> argparse.Namespace:
         "--ftp-host",
         help="Override INFINITYFREE_FTP_HOST for this run without editing the env file.",
     )
+    parser.add_argument(
+        "--local-dir",
+        help="Override INFINITYFREE_LOCAL_DIR for deploying a specific static bundle.",
+    )
+    parser.add_argument(
+        "--remote-dir",
+        help="Override INFINITYFREE_REMOTE_DIR for deploying to a specific hosted path.",
+    )
     return parser.parse_args()
 
 
 def load_env_file(path: Path) -> None:
     if not path.exists():
         return
-    for raw_line in path.read_text(encoding="utf-8").splitlines():
+    for raw_line in path.read_text(encoding="utf-8-sig").splitlines():
         line = raw_line.strip()
         if not line or line.startswith("#") or "=" not in line:
             continue
@@ -102,6 +110,10 @@ def main() -> int:
     sanitize_known_broken_proxy_env()
     if args.ftp_host:
         os.environ["INFINITYFREE_FTP_HOST"] = args.ftp_host
+    if args.local_dir:
+        os.environ["INFINITYFREE_LOCAL_DIR"] = args.local_dir
+    if args.remote_dir:
+        os.environ["INFINITYFREE_REMOTE_DIR"] = args.remote_dir
     load_env_file(env_file)
     if env_file.exists():
         print(f"Loaded env file: {env_file}")

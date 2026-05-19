@@ -1,0 +1,15 @@
+{
+  "name": "Flux & Crave",
+  "short_name": "FluxCrave",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a120d",
+  "theme_color": "#9d1208",
+  "icons": [
+    {
+      "src": "/assets/images/flux-mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -89,6 +89,15 @@ def test_connect_and_login_retries_before_success(monkeypatch):
     assert attempts["count"] == 3
 
 
+def test_deploy_infinityfree_resolves_custom_local_dir(tmp_path):
+    bundle = tmp_path / "flux" / "dist"
+    bundle.mkdir(parents=True)
+
+    resolved = deploy_infinityfree._resolve_local_dir(str(bundle))
+
+    assert resolved == bundle.resolve()
+
+
 def test_deploy_infinityfree_non_strict_skips_failed_login(monkeypatch, tmp_path, capsys):
     public_dir = tmp_path / "published" / "public_site"
     public_dir.mkdir(parents=True)

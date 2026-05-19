@@ -4,6 +4,7 @@
 .pytest_tmp/
 .sixth/
 .edge_verify_profile/
+.edge_flux_profile*/
 .env
 .env.*
 .secrets/
@@ -18,7 +19,7 @@ focus_ai/published/final_system/
 focus_ai/published/shopify/
 focus_ai/published/stripe/
 cloudflare/focus-mobile-workbench/
-marketing/fluxcrave/
+marketing/fluxcrave/remote_backup_htdocs_2026-04-25/
 docs/live_*_dom_*.html
 FOCUS_MASTER_AI/outputs/replit_deploy_manifest_*.json
 FOCUS_MASTER_AI/data/business_os_runtime/

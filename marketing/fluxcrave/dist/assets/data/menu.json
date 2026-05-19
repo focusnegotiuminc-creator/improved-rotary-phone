@@ -1,0 +1,169 @@
+{
+  "site": "Flux & Crave",
+  "categories": [
+    {
+      "slug": "sandwiches",
+      "title": "Sandwiches & Wraps",
+      "note": "Fast-moving handhelds with crisp texture, bright finishes, and big flavor.",
+      "items": [
+        {
+          "name": "The Flux Capacitor",
+          "description": "Crispy chicken breast fried in coconut oil with Flux Ex sauce and pickles on toasted brioche."
+        },
+        {
+          "name": "The Velocity Sub",
+          "description": "Roasted chicken or smoked turkey breast with bean sprouts, pickled onions, and Flux Fire dusting on a toasted hoagie."
+        },
+        {
+          "name": "The Kinetic Wrap",
+          "description": "Grilled chicken, baby spinach, cucumber ribbons, and Flux Ex spread in a spinach tortilla."
+        },
+        {
+          "name": "The Hummus Pulse Wrap",
+          "description": "House hummus, bean sprouts, shredded purple cabbage, and bell peppers finished with Citrus Spark."
+        },
+        {
+          "name": "Classic Chicken Sub",
+          "description": "A straightforward toasted artisan roll option built for speed."
+        },
+        {
+          "name": "Gutbuster Sub",
+          "description": "A heartier toasted artisan roll built for a bigger appetite."
+        }
+      ]
+    },
+    {
+      "slug": "boxes",
+      "title": "Boxes & Combos",
+      "note": "Carryout-ready builds designed to move hot, fast, and satisfy on the first bite.",
+      "items": [
+        {
+          "name": "The Heavyweight Flux Box",
+          "description": "Choose fried chicken, smoked turkey, or crispy tofu over a bed of fresh-cut Tornado Fries with Flux Ex and Citrus Spark."
+        },
+        {
+          "name": "The Stuffed Tornado Box",
+          "description": "Spiral-cut Tornado Fries stuffed with shredded protein and bean sprouts, dusted in Flux Fire."
+        },
+        {
+          "name": "The Unstuffed Tornado Box",
+          "description": "A mountain of coconut-oil-fried Tornado Fries topped with Flux Fire and a Flux Ex drizzle."
+        },
+        {
+          "name": "Crave Combo",
+          "description": "Choose tenders or whole chicken wings with signature slaw and a Lemon Shaker."
+        },
+        {
+          "name": "Workday Lunch Box",
+          "description": "Weekday lunch special with small slaw and a 12oz Lemon Shaker."
+        },
+        {
+          "name": "Family Crunch Pack",
+          "description": "Twelve tenders or twelve whole chicken wings with large slaw and a 64oz Lemon Shaker."
+        }
+      ]
+    },
+    {
+      "slug": "salads",
+      "title": "Salads & Bowls",
+      "note": "Fresh builds that keep the wellness-forward side of the brand visible without sacrificing flavor.",
+      "items": [
+        {
+          "name": "Holistic Health Salad",
+          "description": "A nutrient-dense base of kale and bean sprouts topped with shredded carrots and radishes."
+        },
+        {
+          "name": "The Alkaline Flux Bowl",
+          "description": "Quinoa, baby spinach, cherry tomatoes, and cucumber ribbons with Citrus Spark vinaigrette."
+        },
+        {
+          "name": "The Crave Cleanse",
+          "description": "Purple cabbage, bell peppers, roasted chickpeas, Flux Fire, and a side of hummus."
+        },
+        {
+          "name": "The Tofu Torque",
+          "description": "Cubed crispy tofu, bean sprouts, kale, and bell peppers with a Flux Ex drizzle."
+        },
+        {
+          "name": "The Gobbler Glow",
+          "description": "Smoked turkey, baby spinach, radishes, and cucumbers with a Citrus Spark spritz."
+        },
+        {
+          "name": "The Sea Moss Super-Bowl",
+          "description": "A powerhouse mix of prep-table vegetables, quinoa, and a two-ounce dollop of raw sea moss gel."
+        },
+        {
+          "name": "House Salad",
+          "description": "Garden salad with cheese and croutons."
+        },
+        {
+          "name": "Full Meal Salad",
+          "description": "Choose grilled or crispy chicken on a full salad build."
+        },
+        {
+          "name": "Exclusive Chopped Salad & Sub Combo",
+          "description": "Half salad and half sub for a quick split-plate lunch."
+        }
+      ]
+    },
+    {
+      "slug": "wings",
+      "title": "Whole Chicken Wings",
+      "note": "Whole chicken wings built to order and packed for pickup or local delivery.",
+      "items": [
+        {
+          "name": "Crispy Tenders - 3 Piece",
+          "description": "All-white meat, hand-breaded."
+        },
+        {
+          "name": "Crispy Tenders - 6 Piece",
+          "description": "All-white meat, hand-breaded."
+        },
+        {
+          "name": "Whole Fried Wings - 3 Piece",
+          "description": "Original, Lemon Pepper, or Teriyaki."
+        },
+        {
+          "name": "Whole Fried Wings - 6 Piece",
+          "description": "Original, Lemon Pepper, or Teriyaki."
+        },
+        {
+          "name": "Whole Fried Wings - Party Platter",
+          "description": "Twenty-four pieces for group orders and game-day runs."
+        }
+      ]
+    },
+    {
+      "slug": "sips",
+      "title": "Sips",
+      "note": "Cold signature pours that finish the order cleanly and keep the brand memorable.",
+      "items": [
+        {
+          "name": "Lemon Shaker 32oz",
+          "description": "Bright, cold, citrus-forward refreshment built for carryout."
+        }
+      ]
+    },
+    {
+      "slug": "apothecary",
+      "title": "Apothecary Boosters",
+      "note": "Herbalist-informed add-ons and wellness-forward extensions that make the brand distinctive.",
+      "items": [
+        {
+          "name": "Flux Sea Moss Gel",
+          "description": "Wild-crafted, multi-mineral sea moss gel in Gold or Purple."
+        },
+        {
+          "name": "Medicinal Herbal Tinctures",
+          "description": "High-potency extracts designed for immunity, energy, or focus."
+        },
+        {
+          "name": "Drink Drop-In",
+          "description": "Add an herbal drop-in to any drink."
+        }
+      ]
+    }
+  ],
+  "address": "3827 Highway MM, Hannibal, MO 63401",
+  "phone": "(573) 719-3159"
+}

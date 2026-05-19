@@ -1,5 +1,5 @@
 ﻿#!/usr/bin/env python3
-"""Deploy focus_ai/published/public_site to InfinityFree over FTP.
+"""Deploy a local static bundle to InfinityFree over FTP.
 
 Required env vars:
 - INFINITYFREE_FTP_HOST
@@ -7,6 +7,7 @@ Required env vars:
 - INFINITYFREE_FTP_PASS
 Optional:
 - INFINITYFREE_FTP_PASS_ALT
+- INFINITYFREE_LOCAL_DIR (default: focus_ai/published/public_site)
 - INFINITYFREE_REMOTE_DIR (default: auto)
 - INFINITYFREE_REMOTE_DIR_CANDIDATES (comma-separated)
 """
@@ -22,6 +23,7 @@ from ipaddress import ip_address
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = ROOT.parent
 PUBLIC = ROOT / "published" / "public_site"
 DEFAULT_REMOTE_DIR_CANDIDATES = [
     "thefocuscorp.com/htdocs",
@@ -38,6 +40,15 @@ def _parse_remote_dir_candidates(raw: str | None) -> list[str]:
         return list(DEFAULT_REMOTE_DIR_CANDIDATES)
     parsed = [item.strip().strip("/") for item in raw.split(",") if item.strip()]
     return parsed or list(DEFAULT_REMOTE_DIR_CANDIDATES)
+
+
+def _resolve_local_dir(raw: str | None) -> Path:
+    if not raw:
+        return PUBLIC
+    candidate = Path(raw).expanduser()
+    if not candidate.is_absolute():
+        candidate = REPO_ROOT / candidate
+    return candidate.resolve()
 
 
 def _host_candidates(raw_host: str | None) -> list[str]:
@@ -229,8 +240,12 @@ def _upload_dir(ftp: FTP, local_dir: Path, remote_dir: str) -> tuple[int, int]:
 
 
 def main() -> int:
-    if not PUBLIC.exists():
-        print("Missing public site bundle. Run: make public-build")
+    local_dir = _resolve_local_dir(os.getenv("INFINITYFREE_LOCAL_DIR"))
+    if not local_dir.exists():
+        if local_dir == PUBLIC:
+            print("Missing public site bundle. Run: make public-build")
+        else:
+            print(f"Missing local deploy bundle: {local_dir}")
         return 1
 
     host = os.getenv("INFINITYFREE_FTP_HOST", "")
@@ -281,7 +296,7 @@ def main() -> int:
                     remote_dir = _resolve_remote_dir(ftp, remote_dir_setting, remote_dir_candidates)
                     if remote_dir_setting.strip().lower() in {"", "auto", "suggested"}:
                         print(f"Auto-selected remote deploy directory: {remote_dir}")
-                    files, dirs = _upload_dir(ftp, PUBLIC, remote_dir)
+                    files, dirs = _upload_dir(ftp, local_dir, remote_dir)
                     print(f"Uploaded {files} files ({dirs} directories) to {ftp_host}:{remote_dir}")
                     return 0
             except Exception as exc:  # noqa: BLE001
