@@ -46,7 +46,7 @@
 <header class="site-header">
   <div class="container header-shell">
     <a class="brand" href="/" aria-label="Flux &amp; Crave home">
-      <img class="brand-wordmark" src="/assets/images/flux-logo-wordmark.png" alt="Flux &amp; Crave logo" width="568" height="108" />
+      <img class="brand-wordmark" src="/assets/images/flux-logo-wordmark-transparent-clean@4x.png" srcset="/assets/images/flux-logo-wordmark-transparent-clean.png 1x, /assets/images/flux-logo-wordmark-transparent-clean@4x.png 4x" alt="Flux &amp; Crave logo" width="2272" height="432" decoding="async" />
     </a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
       <span></span><span></span><span></span>
@@ -98,7 +98,10 @@
       </ul>
     </div>
     <div class="poster-callout reveal">
-      <img src="/assets/images/flux-flyer.png" alt="Flux and Crave flyer" />
+      <picture class="quality-picture">
+        <source type="image/webp" srcset="/assets/images/flux-flyer.webp 1x" />
+        <img src="/assets/images/flux-flyer.png" alt="Flux and Crave flyer" loading="lazy" decoding="async" />
+      </picture>
     </div>
   </div>
 </section>

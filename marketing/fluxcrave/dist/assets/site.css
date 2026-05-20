@@ -46,6 +46,13 @@ a {
 img {
   display: block;
   max-width: 100%;
+  height: auto;
+  image-rendering: auto;
+  backface-visibility: hidden;
+}
+
+picture {
+  display: block;
 }
 
 .container {
@@ -162,6 +169,7 @@ img {
   align-items: center;
   min-width: 0;
   color: var(--text);
+  line-height: 0;
 }
 
 .brand img {
@@ -171,10 +179,17 @@ img {
 .brand-wordmark {
   width: auto;
   height: clamp(3.15rem, 5vw, 4.25rem);
-  max-width: min(18.5rem, 56vw);
+  max-width: min(19.75rem, 58vw);
   object-fit: contain;
   object-position: left center;
-  filter: drop-shadow(0 14px 30px rgba(255, 80, 52, 0.22));
+  background: transparent;
+  filter:
+    brightness(1.22)
+    saturate(1.16)
+    drop-shadow(0 1px 0 rgba(255, 221, 160, 0.22))
+    drop-shadow(0 0 12px rgba(255, 95, 52, 0.2))
+    drop-shadow(0 12px 28px rgba(0, 0, 0, 0.48));
+  transform: translateZ(0);
 }
 
 .site-nav {
@@ -404,6 +419,15 @@ img {
   border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow: 0 18px 55px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  background: rgba(18, 10, 7, 0.28);
+}
+
+.hero-poster img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
 }
 
 .hero-poster-back {
@@ -515,6 +539,8 @@ img {
   padding: 1rem;
 }
 
+.quality-picture,
+.quality-picture img,
 .food-visual img,
 .poster-callout img,
 .visit-panel img,
@@ -522,6 +548,15 @@ img {
 .qr-large {
   width: 100%;
   border-radius: 24px;
+}
+
+.quality-picture {
+  overflow: hidden;
+}
+
+.quality-picture img {
+  object-fit: cover;
+  filter: saturate(1.03) contrast(1.02);
 }
 
 .qr-card img,

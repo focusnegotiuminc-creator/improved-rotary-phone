@@ -1,2 +1,8 @@
 DirectoryIndex index.html index.php
 Options -Indexes
+
+<IfModule mod_mime.c>
+  AddType image/webp .webp
+  AddType image/png .png
+  AddType image/svg+xml .svg
+</IfModule>

@@ -37,7 +37,7 @@
   <header class="site-header app-header">
     <div class="container header-shell">
       <a class="brand" href="/" aria-label="Flux &amp; Crave home">
-        <img class="brand-wordmark" src="/assets/images/flux-logo-wordmark.png" alt="Flux &amp; Crave logo" width="568" height="108" />
+        <img class="brand-wordmark" src="/assets/images/flux-logo-wordmark-transparent-clean@4x.png" srcset="/assets/images/flux-logo-wordmark-transparent-clean.png 1x, /assets/images/flux-logo-wordmark-transparent-clean@4x.png 4x" alt="Flux &amp; Crave logo" width="2272" height="432" decoding="async" />
       </a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
       <nav class="site-nav" id="site-nav">
@@ -50,7 +50,10 @@
     <section class="app-hero">
       <div class="container app-hero-card reveal">
         <div class="app-phone-frame">
-          <img src="/assets/images/poster-right.png" alt="Flux and Crave mobile food poster preview" />
+          <picture class="quality-picture">
+            <source type="image/webp" srcset="/assets/images/poster-right.webp 1x, /assets/images/poster-right@2x.webp 2x" />
+            <img src="/assets/images/poster-right.png" alt="Flux and Crave mobile food poster preview" loading="eager" decoding="async" />
+          </picture>
           <div class="app-phone-bar">Order &bull; Menu &bull; Directions</div>
         </div>
         <div class="app-hero-copy">

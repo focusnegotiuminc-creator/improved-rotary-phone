@@ -1,10 +1,15 @@
-const CACHE_NAME = "flux-crave-mobile-v1";
+const CACHE_NAME = "flux-crave-mobile-v2";
 const CORE_ASSETS = [
   "/", "/app/", "/menu/", "/story/", "/visit/",
   "/assets/site.css", "/assets/site.js", "/assets/app.js", "/assets/data/menu.json",
-  "/assets/images/flux-logo-wordmark.png", "/assets/images/flux-mark.svg",
+  "/assets/images/flux-logo-wordmark-transparent-clean.png",
+  "/assets/images/flux-logo-wordmark-transparent-clean@4x.png",
+  "/assets/images/flux-mark.svg",
   "/assets/images/app-icon-180.png", "/assets/images/app-icon-192.png", "/assets/images/app-icon-512.png",
-  "/assets/images/hero-chicken.png", "/assets/images/hero-wrap.png", "/assets/images/poster-right.png",
+  "/assets/images/hero-chicken.png", "/assets/images/hero-chicken.webp", "/assets/images/hero-chicken@2x.webp",
+  "/assets/images/hero-wrap.png", "/assets/images/hero-wrap.webp", "/assets/images/hero-wrap@2x.webp",
+  "/assets/images/poster-left.png", "/assets/images/poster-left.webp", "/assets/images/poster-left@2x.webp",
+  "/assets/images/poster-right.png", "/assets/images/poster-right.webp", "/assets/images/poster-right@2x.webp",
   "/manifest.webmanifest"
 ];
 

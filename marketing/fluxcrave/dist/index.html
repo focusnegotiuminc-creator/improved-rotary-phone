@@ -46,7 +46,7 @@
 <header class="site-header">
   <div class="container header-shell">
     <a class="brand" href="/" aria-label="Flux &amp; Crave home">
-      <img class="brand-wordmark" src="/assets/images/flux-logo-wordmark.png" alt="Flux &amp; Crave logo" width="568" height="108" />
+      <img class="brand-wordmark" src="/assets/images/flux-logo-wordmark-transparent-clean@4x.png" srcset="/assets/images/flux-logo-wordmark-transparent-clean.png 1x, /assets/images/flux-logo-wordmark-transparent-clean@4x.png 4x" alt="Flux &amp; Crave logo" width="2272" height="432" decoding="async" />
     </a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
       <span></span><span></span><span></span>
@@ -79,8 +79,14 @@
     <div class="hero-visual reveal">
       <img class="hero-logo-ambient" src="/assets/images/flux-mark.svg" alt="" />
       <div class="hero-stack">
-        <img class="hero-poster hero-poster-back" src="/assets/images/poster-left.png" alt="Flux and Crave flavor in motion poster" />
-        <img class="hero-poster hero-poster-front" src="/assets/images/poster-right.png" alt="Flux and Crave highlight poster" />
+        <picture class="hero-poster hero-poster-back quality-picture">
+          <source type="image/webp" srcset="/assets/images/poster-left.webp 1x, /assets/images/poster-left@2x.webp 2x" />
+          <img src="/assets/images/poster-left.png" alt="Flux and Crave flavor in motion poster" loading="eager" decoding="async" />
+        </picture>
+        <picture class="hero-poster hero-poster-front quality-picture">
+          <source type="image/webp" srcset="/assets/images/poster-right.webp 1x, /assets/images/poster-right@2x.webp 2x" />
+          <img src="/assets/images/poster-right.png" alt="Flux and Crave highlight poster" loading="eager" decoding="async" />
+        </picture>
       </div>
       <div class="hero-badge badge-top">Flavor in Motion</div>
       <div class="hero-badge badge-bottom">Clean ingredients. Stronger crave.</div>
@@ -119,7 +125,10 @@
       </div>
     </div>
     <div class="food-visual reveal">
-      <img src="/assets/images/hero-wrap.png" alt="Grilled wrap and salad from Flux and Crave" />
+      <picture class="quality-picture">
+        <source type="image/webp" srcset="/assets/images/hero-wrap.webp 1x, /assets/images/hero-wrap@2x.webp 2x" />
+        <img src="/assets/images/hero-wrap.png" alt="Grilled wrap and salad from Flux and Crave" loading="lazy" decoding="async" />
+      </picture>
       <div class="food-caption">
         <strong>Catchy enough to stop the scroll.</strong>
         <span>Clean enough to support the brand promise.</span>
@@ -214,7 +223,10 @@
 <section class="story-section">
   <div class="container split-grid reverse">
     <div class="food-visual reveal">
-      <img src="/assets/images/hero-chicken.png" alt="Crispy chicken and salad from Flux and Crave" />
+      <picture class="quality-picture">
+        <source type="image/webp" srcset="/assets/images/hero-chicken.webp 1x, /assets/images/hero-chicken@2x.webp 2x" />
+        <img src="/assets/images/hero-chicken.png" alt="Crispy chicken and salad from Flux and Crave" loading="lazy" decoding="async" />
+      </picture>
     </div>
     <div class="split-copy reveal">
       <span class="eyebrow">The concept</span>
