@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Flux &amp; Crave App | Order, Menu, Pickup, and Local Cravings</title>
+  <meta name="description" content="Use the free Flux &amp; Crave mobile app experience for quick ordering, menu discovery, local pickup, directions, and social rollout updates." />
+  <meta name="theme-color" content="#9d1208" />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://www.fluxcrave.com/app/" />
+  <link rel="icon" href="/assets/images/flux-mark.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/assets/images/app-icon-180.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="FluxCrave" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="Flux &amp; Crave App | Flavor in Motion" />
+  <meta property="og:description" content="A phone-first Flux &amp; Crave app experience for ordering, menu discovery, pickup, and local cravings." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.fluxcrave.com/app/" />
+  <meta property="og:image" content="https://www.fluxcrave.com/assets/images/flux-flyer.png" />
+  <link rel="stylesheet" href="/assets/site.css" />
+</head>
+<body class="app-body">
+  <div class="site-background">
+    <div class="glow glow-one"></div>
+    <div class="glow glow-two"></div>
+    <div class="ribbon ribbon-one"></div>
+    <div class="ribbon ribbon-two"></div>
+    <img class="logo-orbit orbit-one" src="/assets/images/flux-mark.svg" alt="" />
+    <img class="logo-orbit orbit-two" src="/assets/images/flux-mark.svg" alt="" />
+    <img class="logo-orbit orbit-three" src="/assets/images/flux-mark.svg" alt="" />
+  </div>
+  <header class="site-header app-header">
+    <div class="container header-shell">
+      <a class="brand" href="/" aria-label="Flux &amp; Crave home">
+        <img class="brand-wordmark" src="/assets/images/flux-logo-wordmark.png" alt="Flux &amp; Crave logo" width="568" height="108" />
+      </a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav class="site-nav" id="site-nav">
+        <div class="nav-links"><a class="nav-link" href="/">Home</a><a class="nav-link" href="/menu/">Menu</a><a class="nav-link" href="/story/">Story</a><a class="nav-link" href="/visit/">Visit</a><a class="nav-link is-current" href="/app/">App</a></div>
+        <a class="button button-primary nav-order" href="/online-ordering/">Order Here</a>
+      </nav>
+    </div>
+  </header>
+  <main class="app-main">
+    <section class="app-hero">
+      <div class="container app-hero-card reveal">
+        <div class="app-phone-frame">
+          <img src="/assets/images/poster-right.png" alt="Flux and Crave mobile food poster preview" />
+          <div class="app-phone-bar">Order &bull; Menu &bull; Directions</div>
+        </div>
+        <div class="app-hero-copy">
+          <span class="eyebrow">iPhone + Android friendly</span>
+          <h1>Flux &amp; Crave, built for the phone in your hand.</h1>
+          <p>Free to install and free to use: fast menu browsing, one-tap ordering, call, directions, and save-for-later cravings in a clean mobile web app.</p>
+          <div class="app-actions">
+            <a class="button button-primary" href="/online-ordering/">Order now</a>
+            <a class="button button-secondary" href="tel:5737193159">Call Flux &amp; Crave</a>
+            <button class="button button-secondary" type="button" data-install-app>Install free app</button>
+          </div>
+          <p class="app-install-note">No paid download. No subscription. On iPhone: tap Share, then Add to Home Screen. On Android: tap Install App when prompted.</p>
+        </div>
+      </div>
+    </section>
+    <section class="app-quick-actions" aria-label="Quick actions">
+      <div class="container app-action-grid">
+        <a class="app-action-card reveal" href="/online-ordering/"><strong>Order</strong><span>Jump into online ordering.</span></a>
+        <a class="app-action-card reveal" href="/menu/"><strong>Menu</strong><span>Browse the full crave lineup.</span></a>
+        <a class="app-action-card reveal" href="tel:5737193159"><strong>Call</strong><span>Reach the shop in one tap.</span></a>
+        <a class="app-action-card reveal" href="https://www.google.com/maps/search/?api=1&amp;query=3827%20Highway%20MM%2C%20Hannibal%2C%20MO%2063401"><strong>Directions</strong><span>Open maps for pickup.</span></a>
+      </div>
+    </section>
+    <section class="app-crave-builder">
+      <div class="container app-panel reveal">
+        <div class="app-panel-heading">
+          <span class="eyebrow">Crave builder</span>
+          <h2>Find the item that matches your mood.</h2>
+          <p>Search or filter the menu, then order when the craving gets loud.</p>
+        </div>
+        <div class="app-search-row">
+          <label class="sr-only" for="app-menu-search">Search Flux &amp; Crave menu</label>
+          <input id="app-menu-search" class="app-search" type="search" placeholder="Search wings, wraps, bowls, lemonade..." autocomplete="off" />
+        </div>
+        <div class="app-category-pills" id="app-category-pills" aria-label="Menu categories"></div>
+        <div class="app-menu-grid" id="app-menu-grid" aria-live="polite"></div>
+      </div>
+    </section>
+    <section class="app-social-loop">
+      <div class="container app-social-grid">
+        <article class="app-feature-card reveal"><span class="eyebrow">Today's push</span><h2>What makes it different?</h2><p>Use today's social angle to show the clean crave lane: bold flavor, intentional ingredients, and visuals that people remember.</p></article>
+        <article class="app-feature-card app-feature-hot reveal"><span class="eyebrow">Free app</span><h2>Order, call, directions &mdash; all in one place.</h2><p>Free to install and free to use. Perfect for stories, QR cards, counter signage, and repeat customers.</p></article>
+      </div>
+    </section>
+  </main>
+  <nav class="mobile-app-nav" aria-label="Flux &amp; Crave mobile app navigation">
+    <a href="/app/" aria-current="page">App</a><a href="/menu/">Menu</a><a href="/online-ordering/">Order</a><a href="tel:5737193159">Call</a>
+  </nav>
+  <script src="/assets/site.js"></script>
+  <script src="/assets/app.js"></script>
+</body>
+</html>

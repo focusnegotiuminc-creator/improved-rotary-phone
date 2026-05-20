@@ -1,4 +1,4 @@
-const ready = (fn) => {
+﻿const ready = (fn) => {
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", fn, { once: true });
   } else {
@@ -53,3 +53,33 @@ ready(() => {
     });
   }
 });
+
+ready(() => {
+  if ("serviceWorker" in navigator && location.protocol !== "file:") {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  }
+
+  window.fluxInstallPrompt = null;
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    window.fluxInstallPrompt = event;
+    document.querySelectorAll("[data-install-app]").forEach((button) => button.classList.add("is-ready"));
+  });
+
+  document.querySelectorAll("[data-install-app]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      if (window.fluxInstallPrompt) {
+        window.fluxInstallPrompt.prompt();
+        await window.fluxInstallPrompt.userChoice.catch(() => null);
+        window.fluxInstallPrompt = null;
+      } else {
+        button.classList.add("is-helping");
+        button.textContent = /iphone|ipad|ipod/i.test(navigator.userAgent)
+          ? "Use Share > Add to Home Screen"
+          : "Use browser menu > Install app";
+      }
+    });
+  });
+});
+
+

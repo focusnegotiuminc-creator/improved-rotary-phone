@@ -1,0 +1,37 @@
+{
+  "master_prompt_os_route": [
+    "INPUT",
+    "ENRICH",
+    "STRUCTURE",
+    "ROUTE",
+    "EXECUTE",
+    "TRACK",
+    "IMPROVE"
+  ],
+  "business_lane": "Flux & Crave",
+  "outputs": [
+    "D:\\TheFocusFiles\\FOCUS_MASTER_AI_live\\marketing\\fluxcrave\\rollout\\2026-05-20-fresh-mobile-social-pass\\fluxcrave_day8_differentiators_instagram_1080x1350.png",
+    "D:\\TheFocusFiles\\FOCUS_MASTER_AI_live\\marketing\\fluxcrave\\rollout\\2026-05-20-fresh-mobile-social-pass\\fluxcrave_day9_local_awareness_story_1080x1920.png",
+    "D:\\TheFocusFiles\\FOCUS_MASTER_AI_live\\marketing\\fluxcrave\\rollout\\2026-05-20-fresh-mobile-social-pass\\fluxcrave_day10_menu_poll_instagram_1080x1350.png",
+    "D:\\TheFocusFiles\\FOCUS_MASTER_AI_live\\marketing\\fluxcrave\\rollout\\2026-05-20-fresh-mobile-social-pass\\fluxcrave_mobile_app_launch_1080x1350.png",
+    "D:\\TheFocusFiles\\FOCUS_MASTER_AI_live\\marketing\\fluxcrave\\rollout\\2026-05-20-fresh-mobile-social-pass\\fluxcrave_save_this_card_1080x1080.png",
+    "D:\\TheFocusFiles\\FOCUS_MASTER_AI_live\\marketing\\fluxcrave\\dist\\app\\index.html"
+  ],
+  "quality_gate": {
+    "no_auto_publish": true,
+    "requires_verification": [
+      "address",
+      "phone",
+      "DoorDash/order state",
+      "final logo/photos",
+      "health/wellness claims"
+    ],
+    "mobile_targets": [
+      "iPhone Safari add-to-home-screen",
+      "Android Chrome install prompt",
+      "responsive browser"
+    ]
+  },
+  "adobe_account_requested": "thejmillercomany@gmail.com",
+  "note": "Account email noted for user context only; no password or sensitive account action performed."
+}
