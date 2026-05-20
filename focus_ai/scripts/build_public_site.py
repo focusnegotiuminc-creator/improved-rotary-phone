@@ -53,6 +53,13 @@ RLC_CONCEPT_STUDIES = [
     "generated/architecture/hexagonal_estate_plan.svg",
     "generated/architecture/development_cluster_study.svg",
 ]
+RLC_REFERENCE_VISUALS = [
+    "generated/rlc-history/522-vermont-office-restoration.svg",
+    "generated/rlc-history/quincy-veterans-home.svg",
+    "generated/rlc-history/wentzville-high-school.svg",
+    "generated/rlc-history/wentzville-middle-school.svg",
+]
+PRIMARY_PHONE = "2172576222"
 
 
 def copy_tree(src: Path, dst: Path) -> None:
@@ -198,6 +205,7 @@ def nav_html() -> str:
         '<div class="brand-lockup"><span class="brand-mark"></span><div>'
         '<p class="eyebrow">TheFocusCorp.com</p><strong>The Focus Corporation | Businesses, Services, and Store</strong>'
         f"</div></div><nav class=\"top-nav\">{items}</nav></header>"
+        f'<a class="floating-call" href="tel:{PRIMARY_PHONE}" aria-label="Call The Focus Corporation at {PRIMARY_PHONE}">Call {PRIMARY_PHONE}</a>'
     )
 
 
@@ -290,7 +298,7 @@ def _architecture_study_svg(title: str, subtitle: str, figure_label: str, accent
     <path d="M1135 250 V360" stroke="#202226" stroke-width="3" />
     <text x="1120" y="404" font-size="18">North</text>
     <text x="1120" y="488" font-size="18">Concept use: residential / development planning</text>
-    <text x="1120" y="522" font-size="18">Drafted by Reginald Hilton</text>
+    <text x="1120" y="522" font-size="18">Drafted by Reginald Hilton Jr</text>
     <text x="1120" y="556" font-size="18">Verify field dimensions before fabrication</text>
     <text x="1120" y="720" font-size="18">Scale reference</text>
     <path d="M1110 750 H1400" stroke="#202226" stroke-width="3" />
@@ -334,8 +342,80 @@ def _holding_structure_svg() -> str:
 """.strip()
 
 
+def _project_reference_svg(project: dict[str, str], accent: str, index: int) -> str:
+    title = project["title"]
+    location = project["location"]
+    status = project["status"]
+    is_school = "School" in title
+    is_veterans = "Veterans" in title
+    roof = "M260 410 L800 220 L1340 410" if not is_school else "M250 405 H1350"
+    tower = (
+        '<rect x="690" y="248" width="220" height="432" rx="18" fill="#13233d" stroke="#f2c96d" stroke-opacity="0.35" />'
+        '<path d="M700 248 L800 152 L900 248" fill="#1a3154" stroke="#f2c96d" stroke-opacity="0.35" />'
+        '<circle cx="800" cy="284" r="42" fill="#08111f" stroke="#7cc8ff" stroke-opacity="0.45" />'
+    ) if is_veterans else (
+        '<rect x="710" y="260" width="180" height="420" rx="16" fill="#13233d" stroke="#f2c96d" stroke-opacity="0.28" />'
+        '<rect x="748" y="308" width="104" height="94" rx="10" fill="#091629" stroke="#7cc8ff" stroke-opacity="0.28" />'
+    )
+    school_wings = (
+        '<rect x="260" y="420" width="450" height="260" rx="20" fill="#0e1c33" stroke="#7cc8ff" stroke-opacity="0.28" />'
+        '<rect x="890" y="420" width="450" height="260" rx="20" fill="#0e1c33" stroke="#7cc8ff" stroke-opacity="0.28" />'
+    )
+    civic_wings = (
+        '<rect x="230" y="418" width="470" height="262" rx="22" fill="#0e1c33" stroke="#7cc8ff" stroke-opacity="0.26" />'
+        '<rect x="900" y="418" width="470" height="262" rx="22" fill="#0e1c33" stroke="#7cc8ff" stroke-opacity="0.26" />'
+    )
+    windows = "\n".join(
+        f'<rect x="{x}" y="{y}" width="54" height="38" rx="6" fill="#d7ecff" opacity="0.72" />'
+        for y in [462, 532, 602]
+        for x in [310, 398, 486, 574, 946, 1034, 1122, 1210]
+    )
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="920" viewBox="0 0 1400 920" role="img" aria-labelledby="title desc">
+  <title>{escape(title)}</title>
+  <desc>{escape(status)} in {escape(location)}. Portfolio reference visual for Royal Lee Construction Solutions.</desc>
+  <defs>
+    <linearGradient id="sky{index}" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#071022" />
+      <stop offset="52%" stop-color="#102448" />
+      <stop offset="100%" stop-color="#0b162b" />
+    </linearGradient>
+    <radialGradient id="halo{index}" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="{accent}" stop-opacity="0.32" />
+      <stop offset="100%" stop-color="{accent}" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="1400" height="920" rx="44" fill="url(#sky{index})" />
+  <circle cx="1120" cy="190" r="230" fill="url(#halo{index})" />
+  <circle cx="260" cy="150" r="170" fill="#7cc8ff" opacity="0.08" />
+  <g stroke="#f2c96d" stroke-opacity="0.13" fill="none">
+    <circle cx="700" cy="482" r="338" />
+    <circle cx="700" cy="482" r="238" />
+    <path d="M700 144 V820" />
+    <path d="M364 482 H1036" />
+    <path d="M462 244 L938 720" />
+    <path d="M938 244 L462 720" />
+  </g>
+  <g>
+    <path d="{roof}" fill="none" stroke="#f2c96d" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" opacity="0.9" />
+    {school_wings if is_school else civic_wings}
+    {tower}
+    {windows}
+    <rect x="650" y="586" width="300" height="94" rx="18" fill="#08111f" stroke="#f2c96d" stroke-opacity="0.28" />
+    <path d="M120 704 C330 656 520 728 720 696 C910 666 1108 642 1280 704 V820 H120 Z" fill="#07101f" opacity="0.94" />
+  </g>
+  <g font-family="Manrope, Arial, sans-serif">
+    <text x="92" y="108" fill="#f2c96d" font-size="24" letter-spacing="7">{escape(status.upper())}</text>
+    <text x="92" y="164" fill="#f6f8ff" font-family="Cormorant Garamond, Georgia, serif" font-size="64" font-weight="700">{escape(title)}</text>
+    <text x="94" y="210" fill="#c8d6ea" font-size="25">{escape(location)}</text>
+    <text x="94" y="808" fill="#eef4ff" font-size="24">Royal Lee Construction Solutions LLC portfolio history</text>
+    <text x="94" y="846" fill="#b7c9e8" font-size="20">Owner-provided reference visual · verify detailed records before project-specific claims</text>
+  </g>
+</svg>
+""".strip()
+
+
 def generated_public_assets() -> dict[str, str]:
-    return {
+    assets = {
         HOLDING_DIAGRAM_PATH: _holding_structure_svg(),
         FOCUS_RECORDS_POSTERS[0]: _brand_poster_svg(
             "Release Identity Board",
@@ -377,6 +457,13 @@ def generated_public_assets() -> dict[str, str]:
             "#8b6b4c",
         ),
     }
+    for index, (path, project) in enumerate(zip(RLC_REFERENCE_VISUALS, RLC_PROJECT_REFERENCES), start=1):
+        assets[path] = _project_reference_svg(
+            project,
+            ["#7cc8ff", "#f2c96d", "#3ee4d6", "#ff9b68"][index - 1],
+            index,
+        )
+    return assets
 
 
 def write_generated_assets(public_dir: Path = PUBLIC) -> None:
@@ -486,21 +573,49 @@ def render_focus_records_section() -> str:
 def render_rlc_project_reference_cards() -> str:
     cards = "\n".join(
         f"""
-<article class="feature-panel glow-card">
+<article class="feature-panel glow-card project-reference-card">
+  <img class="reference-art" src="{escape(RLC_REFERENCE_VISUALS[index])}" alt="{escape(project['title'])} portfolio reference visual" loading="lazy" />
   <p class="eyebrow">{escape(project['status'])}</p>
   <h3>{escape(project['title'])}</h3>
   <p class="micro-note">{escape(project['location'])}</p>
   <p>{escape(project['summary'])}</p>
 </article>
 """.strip()
-        for project in RLC_PROJECT_REFERENCES
+        for index, project in enumerate(RLC_PROJECT_REFERENCES)
     )
     return f"""
 <section class="section-block">
   <p class="eyebrow">Construction portfolio history</p>
   <h2>Current package work and legacy project references stay visible together.</h2>
-  <p class="section-copy">The Royal Lee Construction Solutions page now preserves the Quincy office package alongside the owner-provided institutional and school construction references, including Quincy Veterans Home, Wentzville High School, and Wentzville Middle School.</p>
+  <p class="section-copy">The Royal Lee Construction Solutions page preserves the Quincy office package alongside owner-provided institutional and school construction references, including Quincy Veterans Home in Quincy, Illinois, plus Wentzville High School and Wentzville Middle School in Wentzville, Missouri.</p>
   <div class="grid-three">{cards}</div>
+</section>
+""".strip()
+
+
+def render_rlc_experience_panel(phone: str = PRIMARY_PHONE) -> str:
+    return f"""
+<section class="section-block split-band rlc-experience-band">
+  <section class="feature-panel glow-card experience-card">
+    <p class="eyebrow">Field experience and project leadership</p>
+    <h2>Reginald Hilton Jr brings Union Carpenter experience into owner-facing construction planning.</h2>
+    <p>The page keeps the construction story grounded in practical trade exposure: framing logic, field sequencing, jobsite coordination, blueprint interpretation, and a build-first way of reviewing scope before money is wasted.</p>
+    <ul class="detail-list">
+      <li>Union Carpenter experience carried into preconstruction strategy and construction package review.</li>
+      <li>Portfolio continuity for Quincy Veterans Home, Wentzville High School, Wentzville Middle School, and the 522 Vermont office package.</li>
+      <li>Sacred-geometry concept work presented as planning and visualization support, not stamped construction documents.</li>
+    </ul>
+  </section>
+  <section class="feature-panel glow-card mobile-action-card">
+    <p class="eyebrow">Fast mobile route</p>
+    <h2>Tap once, explain the project, and get routed into the right next step.</h2>
+    <p>Mobile visitors should not have to hunt. The call path is now repeated in the header, hero, service pages, and sticky mobile action.</p>
+    <div class="button-row">
+      <a class="btn" href="tel:{phone}">Call {phone}</a>
+      <a class="btn secondary" href="royal-lee-construction.html">Open construction page</a>
+      <a class="btn secondary" href="rlc-office-package.html">Open Quincy package</a>
+    </div>
+  </section>
 </section>
 """.strip()
 
@@ -516,13 +631,14 @@ def render_rlc_section() -> str:
         for path, alt, caption in [
             ("rlc/first_floor.svg", "First floor office schematic", "Existing office-package schematic preserved inside the construction portfolio."),
             ("rlc/second_floor.svg", "Second floor office schematic", "Second-floor schematic from the existing package, ready for owner review."),
-            (RLC_CONCEPT_STUDIES[0], "Sacred geometry residence concept study", "Concept Study A: a courtyard residence drafted by Reginald Hilton."),
-            (RLC_CONCEPT_STUDIES[1], "Hexagonal estate concept study", "Concept Study B: an estate plan drafted by Reginald Hilton."),
-            (RLC_CONCEPT_STUDIES[2], "Development cluster concept study", "Concept Study C: a development cluster drafted by Reginald Hilton."),
+            (RLC_CONCEPT_STUDIES[0], "Sacred geometry residence concept study", "Concept Study A: a courtyard residence drafted by Reginald Hilton Jr."),
+            (RLC_CONCEPT_STUDIES[1], "Hexagonal estate concept study", "Concept Study B: an estate plan drafted by Reginald Hilton Jr."),
+            (RLC_CONCEPT_STUDIES[2], "Development cluster concept study", "Concept Study C: a development cluster drafted by Reginald Hilton Jr."),
         ]
     )
     return f"""
 {render_rlc_project_reference_cards()}
+{render_rlc_experience_panel()}
 <section class="section-block">
   <p class="eyebrow">Drafted concept studies</p>
   <h2>Presentation-grade sacred-geometry studies for homes, sites, and development work.</h2>
@@ -1008,6 +1124,9 @@ main {{ width: min(1220px, 94vw); margin: 0 auto; padding: 1rem 0 4rem; display:
   background: rgba(7, 15, 29, 0.42);
   color: var(--ink);
   font-size: 0.95rem;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
   transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
 }}
 .top-nav a:hover {{
@@ -1121,6 +1240,23 @@ p, li {{ color: #c8d6ea; line-height: 1.72; }}
 .btn:hover {{
   transform: translateY(-2px);
   box-shadow: 0 16px 34px rgba(2, 8, 24, 0.34);
+}}
+.floating-call {{
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 40;
+  min-height: 52px;
+  padding: 0 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: linear-gradient(120deg, var(--gold), #ffd999 54%, var(--ember));
+  color: #17101b;
+  font-weight: 900;
+  box-shadow: 0 18px 44px rgba(2, 8, 24, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }}
 .section-block {{ display: grid; gap: 0.9rem; }}
 .section-copy {{ max-width: 68ch; margin: 0; }}
@@ -1280,6 +1416,27 @@ p, li {{ color: #c8d6ea; line-height: 1.72; }}
 }}
 .drawing-frame img {{ width: 100%; height: auto; display: block; border-radius: 20px; background: #ffffff; }}
 .drawing-frame figcaption {{ margin-top: 0.8rem; color: var(--muted); }}
+.project-reference-card {{
+  gap: 0.75rem;
+  overflow: hidden;
+}}
+.reference-art {{
+  width: 100%;
+  aspect-ratio: 16 / 10.5;
+  object-fit: cover;
+  display: block;
+  border-radius: 22px;
+  border: 1px solid rgba(242, 201, 109, 0.18);
+  background: rgba(6, 13, 26, 0.62);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+}}
+.rlc-experience-band {{
+  align-items: stretch;
+}}
+.experience-card,
+.mobile-action-card {{
+  min-height: 100%;
+}}
 @keyframes slowSpin {{ from {{ transform: rotate(0deg); }} to {{ transform: rotate(360deg); }} }}
 @keyframes pulseCore {{ 0%, 100% {{ transform: scale(1); opacity: 0.92; }} 50% {{ transform: scale(1.08); opacity: 1; }} }}
 @keyframes beamDrift {{ from {{ transform: translateX(-3%); }} to {{ transform: translateX(3%); }} }}
@@ -1312,8 +1469,14 @@ p, li {{ color: #c8d6ea; line-height: 1.72; }}
   .top-nav {{ justify-content: flex-start; }}
 }}
 @media (max-width: 720px) {{
+  body {{ padding-bottom: 5.4rem; }}
   main {{ width: min(94vw, 100%); }}
-  .site-header {{ position: static; gap: 0.75rem; }}
+  .site-header {{
+    position: sticky;
+    top: 0;
+    gap: 0.75rem;
+    padding: 0.65rem 0 0.75rem;
+  }}
   .button-row,
   .metric-strip,
   .meta-row,
@@ -1323,10 +1486,18 @@ p, li {{ color: #c8d6ea; line-height: 1.72; }}
     flex-wrap: nowrap;
     justify-content: flex-start;
     overflow-x: auto;
-    padding-bottom: 0.2rem;
+    padding: 0.15rem 0 0.28rem;
+    scroll-snap-type: x proximity;
   }}
   .btn {{ width: 100%; justify-content: center; }}
-  .top-nav a {{ width: auto; white-space: nowrap; justify-content: center; flex: 0 0 auto; }}
+  .top-nav a {{
+    width: auto;
+    min-height: 44px;
+    white-space: nowrap;
+    justify-content: center;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }}
   .metric-strip span,
   .micro-note,
   .price-pill {{ width: 100%; justify-content: center; }}
@@ -1339,8 +1510,16 @@ p, li {{ color: #c8d6ea; line-height: 1.72; }}
   .service-cluster,
   .drawing-frame {{ border-radius: 24px; }}
   .brand-lockup {{ align-items: flex-start; }}
+  .brand-lockup strong {{ font-size: 0.95rem; line-height: 1.2; }}
+  .brand-mark {{ width: 46px; height: 46px; }}
   .service-row {{ grid-template-columns: 1fr; }}
   .sacred-visual {{ min-height: 280px; }}
+  .floating-call {{
+    left: max(1rem, env(safe-area-inset-left));
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
+    width: auto;
+  }}
 }}
 """.strip() + "\n"
 
@@ -1385,6 +1564,8 @@ def build_pages(catalog: dict) -> dict[str, str]:
       <p class="section-copy">The homepage carries the parent-company structure and the affiliate roles clearly so visitors can move into the right sector without losing the bigger picture.</p>
       <div class="grid-three">{render_company_cards(catalog)}</div>
     </section>
+    {render_rlc_project_reference_cards()}
+    {render_rlc_experience_panel(phone)}
     <section class="section-block catalog-band">
       <section class="feature-panel glow-card">
         <p class="eyebrow">Storefront</p>
@@ -1685,6 +1866,7 @@ def build_pages(catalog: dict) -> dict[str, str]:
       </section>
     </section>
     {render_rlc_project_reference_cards()}
+    {render_rlc_experience_panel(phone)}
     <section class="drawing-grid">
       <figure class="drawing-frame">
         <img src="rlc/first_floor.svg" alt="First floor drawing preview" />

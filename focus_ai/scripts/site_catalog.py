@@ -193,7 +193,8 @@ COMPANY_PROFILES = [
             "Preconstruction strategy, scope framing, and owner-ready decision packets",
             "Renovation and new-build planning with presentation-grade visuals",
             "Portfolio references preserved for Quincy Veterans Home, Wentzville High School, and Wentzville Middle School",
-            "Design concepts drafted by Reginald Hilton and prepared for project-level discussion",
+            "Reginald Hilton Jr Union Carpenter experience carried into construction strategy and owner-facing review",
+            "Design concepts drafted by Reginald Hilton Jr and prepared for project-level discussion",
         ],
         "programs": [
             {
@@ -245,6 +246,7 @@ COMPANY_PROFILES = [
             "Concept studies are not stamped construction documents and should be verified by licensed professionals prior to permitting or fabrication.",
             "Royal Lee packages can feed directly into Focus Negotium-led development and property strategies when the project requires both lanes.",
             "Legacy construction references named by the owner are preserved publicly as portfolio context while detailed project records continue to be organized.",
+            "Public experience language is owner-provided and should remain framed as portfolio context unless project-specific records are attached.",
         ],
     },
 ]

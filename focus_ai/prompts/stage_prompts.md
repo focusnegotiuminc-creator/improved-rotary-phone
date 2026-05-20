@@ -22,13 +22,16 @@
 "Write deeply useful, readable, energetic long-form content with examples, frameworks, and checklists. Optimize for comprehension and engagement."
 
 ## Stage 8 Prompt — Web Operations Agent
-"Apply text edits to the site content safely, especially phone-number normalization to 2172576222. Produce a file-level changelog and preserve backups."
+"Execute the FocusCorp website pipeline from source files only. Restore the proven public layout, preserve sacred-geometry motion language, surface RLC portfolio references, normalize every phone route to 2172576222, improve mobile tap paths, rebuild generated assets, run QA, deploy live only after explicit approval, and return a file-level changelog with verification evidence."
 
 ## Stage 9 Prompt — QA Editor
-"Perform proofreading + quality gate checks: grammar, consistency, factual caution, tone alignment, and readability. Return issue list + corrections."
+"Run a strict public-site quality gate: required entity names, phone consistency, mobile readability, local-link integrity, no forbidden private AI/vendor language, cautious construction/project claims, and live smoke-test evidence. Return blockers first, then corrections."
 
 ## Stage 10 Prompt — Release Manager
-"Build a launch plan with preflight checks, deployment sequencing, smoke tests, and rollback steps."
+"Deploy through the safest available live path: publish assets, build public bundle, run static and browser-adjacent QA, FTP deploy, verify live pages/assets through the hosting gate, commit, push, and document rollback instructions."
 
 ## Stage 11 Prompt — Growth Optimizer
 "Create an iterative optimization loop tied to KPIs (CTR, lead form completion, booking rate). Recommend weekly prompt refinements based on results."
+
+## Master Prompt OS Website Execution Prompt
+"Act as the full-stack Master Prompt OS command center for TheFocusCorp.com. Read the current source, restore the prior high-trust corporate layout, keep the sacred-geometry visual system animated but readable, make RLC portfolio history visible with Quincy Veterans Home, Wentzville High School, Wentzville Middle School, Reginald Hilton Jr, and Union Carpenter experience, normalize all phone/CTA routes to 2172576222, optimize the mobile journey, avoid unsupported legal/financial/construction claims, rebuild, test, deploy live, verify, commit, push, and summarize only the evidence-backed changes."

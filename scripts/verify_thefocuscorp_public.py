@@ -53,6 +53,11 @@ REQUIRED_TERMS = [
     "Focus Records LLC",
     "Royal Lee Construction Solutions LLC",
     "2172576222",
+    "Quincy Veterans Home",
+    "Wentzville High School",
+    "Wentzville Middle School",
+    "Reginald Hilton Jr",
+    "Union Carpenter",
     "books",
     "services",
 ]
