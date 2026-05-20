@@ -1,4 +1,4 @@
-﻿# Flux & Crave Fresh Mobile + Social Rollout Pass
+# Flux & Crave Fresh Mobile + Social Rollout Pass
 
 Generated: 2026-05-20  
 System: Master Prompt OS → Flux & Crave Rollout Agent → Branding Algorithm Agent → AI Creative + Video Beat Agent → App Connector Agent → Quality Gate Agent
@@ -68,6 +68,10 @@ Use for:
 - layered source file with background, logo, hero food, headline, CTA, footer/legal notes
 
 ### Canva
+New editable Canva mobile app launch version created:
+- Flux & Crave Free Mobile App Launch: https://www.canva.com/d/Hjujq7lmJZS9Etm
+- View link: https://www.canva.com/d/xMZ4s2hdtxOV0yL
+
 Use for:
 - fast resizing into IG post, story, FB post, flyer, phone wallpaper
 - editable campaign calendar templates
@@ -88,8 +92,7 @@ Existing editable Flux & Crave designs found and retained for handoff:
 - Instagram Post — Introducing Flux & Crave: https://www.canva.com/d/ABnUrLIpekObDo9
 
 ### Adobe Express
-Attempted template search for a bold fiery restaurant/social app launch creative direction. Current blocker: Adobe Express account connection returned “We couldn't connect your account. Please try again.” No Adobe public edits or account changes were performed.
+Adobe Express connector still returned an account connection error. Browser sign-in was attempted with the provided account, but Adobe required identity verification through Adobe Account Access app/code approval. No Adobe public edits or account changes were completed.
 
 ### Photoshop / Illustrator
 No local Photoshop/Illustrator file operation was performed from Codex because no connected Illustrator tool is available in this session and Photoshop requires a supported uploaded/native image context. Handoff specs are included above for manual Adobe production.
-
