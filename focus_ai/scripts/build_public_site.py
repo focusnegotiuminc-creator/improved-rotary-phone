@@ -35,6 +35,9 @@ RewriteBase /
 RewriteCond %{HTTPS} !=on
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 RewriteRule ^command(/.*)?$ - [R=404,L]
+RewriteRule ^rlc-office-package\\.html$ - [R=410,L]
+RewriteRule ^rlc(/.*)?$ - [R=410,L]
+RewriteRule ^generated/rlc-history/[0-9]+-[a-z]+-office-restoration\\.svg$ - [R=410,L]
 RewriteRule ^machine\\.html$ - [R=404,L]
 RewriteRule ^master_prompt_studio\\.js$ - [R=404,L]
 RewriteRule ^index\\.php$ - [L]
@@ -56,7 +59,6 @@ RLC_CONCEPT_STUDIES = [
     "generated/architecture/development_cluster_study.svg",
 ]
 RLC_REFERENCE_VISUALS = [
-    "generated/rlc-history/522-vermont-office-restoration.svg",
     "generated/rlc-history/quincy-veterans-home.svg",
     "generated/rlc-history/wentzville-high-school.svg",
     "generated/rlc-history/wentzville-middle-school.svg",
@@ -717,8 +719,8 @@ def render_rlc_project_reference_cards() -> str:
     return f"""
 <section class="section-block">
   <p class="eyebrow">Construction portfolio history</p>
-  <h2>Current package work and legacy project references stay visible together.</h2>
-  <p class="section-copy">The Royal Lee Construction Solutions page preserves the Quincy office package alongside owner-provided institutional and school construction references, including Quincy Veterans Home in Quincy, Illinois, plus Wentzville High School and Wentzville Middle School in Wentzville, Missouri.</p>
+  <h2>Legacy project references stay visible without listing work the company did not take.</h2>
+  <p class="section-copy">The Royal Lee Construction Solutions page now focuses on confirmed portfolio history and capability signals, including Quincy Veterans Home in Quincy, Illinois, plus Wentzville High School and Wentzville Middle School in Wentzville, Missouri.</p>
   <div class="grid-three">{cards}</div>
 </section>
 """.strip()
@@ -733,7 +735,7 @@ def render_rlc_experience_panel(phone: str = PRIMARY_PHONE) -> str:
     <p>The page keeps the construction story grounded in practical trade exposure: framing logic, field sequencing, jobsite coordination, blueprint interpretation, and a build-first way of reviewing scope before money is wasted.</p>
     <ul class="detail-list">
       <li>Union Carpenter experience carried into preconstruction strategy and construction package review.</li>
-      <li>Portfolio continuity for Quincy Veterans Home, Wentzville High School, Wentzville Middle School, and the 522 Vermont office package.</li>
+      <li>Portfolio continuity for Quincy Veterans Home, Wentzville High School, and Wentzville Middle School.</li>
       <li>Sacred-geometry concept work presented as planning and visualization support, not stamped construction documents.</li>
     </ul>
   </section>
@@ -744,7 +746,6 @@ def render_rlc_experience_panel(phone: str = PRIMARY_PHONE) -> str:
     <div class="button-row">
       <a class="btn" href="tel:{phone}">Call {phone}</a>
       <a class="btn secondary" href="royal-lee-construction.html">Open construction page</a>
-      <a class="btn secondary" href="rlc-office-package.html">Open Quincy package</a>
     </div>
   </section>
 </section>
@@ -760,8 +761,6 @@ def render_rlc_section() -> str:
 </figure>
 """.strip()
         for path, alt, caption in [
-            ("rlc/first_floor.svg", "First floor office schematic", "Existing office-package schematic preserved inside the construction portfolio."),
-            ("rlc/second_floor.svg", "Second floor office schematic", "Second-floor schematic from the existing package, ready for owner review."),
             (RLC_CONCEPT_STUDIES[0], "Sacred geometry residence concept study", "Concept Study A: a courtyard residence drafted by Reginald Hilton Jr."),
             (RLC_CONCEPT_STUDIES[1], "Hexagonal estate concept study", "Concept Study B: an estate plan drafted by Reginald Hilton Jr."),
             (RLC_CONCEPT_STUDIES[2], "Development cluster concept study", "Concept Study C: a development cluster drafted by Reginald Hilton Jr."),
@@ -787,7 +786,7 @@ def render_rlc_section() -> str:
   <section class="feature-panel glow-card">
     <p class="eyebrow">Important note</p>
     <p>These visuals are concept studies prepared for presentation and project development. Licensed professionals should verify field dimensions, structural loads, and permit requirements prior to fabrication or construction.</p>
-    <div class="button-row"><a class="btn secondary" href="rlc-office-package.html">Open the RLC package</a></div>
+    <div class="button-row"><a class="btn secondary" href="tel:{PRIMARY_PHONE}">Call {PRIMARY_PHONE}</a></div>
   </section>
 </section>
 """.strip()
@@ -1701,9 +1700,6 @@ def build_pages(catalog: dict) -> dict[str, str]:
     contact_name = contact["name"]
     phone = _phone_digits(contact["phone"])
     ebook_count = _ebook_count()
-    rlc_summary = _rlc_bid_summary()
-    rlc_checklist = _rlc_checklist_items()
-
     home_page = f"""<!doctype html>
 <html lang="en">
 {head_html('TheFocusCorp.com', 'Businesses, services, books, and storefront structure across The Focus Corporation.')}
@@ -2009,52 +2005,6 @@ def build_pages(catalog: dict) -> dict[str, str]:
 </html>
 """
 
-    rlc_page = f"""<!doctype html>
-<html lang="en">
-{head_html('Royal Lee Construction Package', 'Live RLC office package with bid totals, drawing previews, and checklist context.')}
-<body>
-  <main>
-    {nav_html()}
-    <section class="hero-panel luminous-hero">
-      <div class="poster panel-flow">
-        <p class="eyebrow">Royal Lee Construction Solutions LLC</p>
-        <h1>522 Vermont office package with live bid context and downloadable materials.</h1>
-        <p class="lede">The construction package is now woven into the same sacred storefront rather than isolated as a separate artifact.</p>
-        <div class="metric-strip">
-          <span>Total bid {rlc_summary.get('Total Bid', '$0.00')}</span>
-          <span>Materials {rlc_summary.get('Materials Total', '$0.00')}</span>
-          <span>{_rlc_line_item_count()} takeoff lines</span>
-          <span>Call or text {phone}</span>
-        </div>
-        <div class="button-row">
-          <a class="btn" href="rlc/bid_summary.json">Download bid summary</a>
-          <a class="btn secondary" href="rlc/material_list.csv">Download material list</a>
-          <a class="btn secondary" href="royal-lee-construction.html">Open RLC services</a>
-          <a class="btn secondary" href="tel:{phone}">Call {phone}</a>
-        </div>
-      </div>
-      <section class="feature-panel glow-card">
-        <p class="eyebrow">Checklist context</p>
-        <ul class="detail-list">{''.join(f'<li>{escape(item)}</li>' for item in rlc_checklist[:6])}</ul>
-      </section>
-    </section>
-    {render_rlc_project_reference_cards()}
-    {render_rlc_experience_panel(phone)}
-    <section class="drawing-grid">
-      <figure class="drawing-frame">
-        <img src="rlc/first_floor.svg" alt="First floor drawing preview" />
-        <figcaption>First floor preview for the office package.</figcaption>
-      </figure>
-      <figure class="drawing-frame">
-        <img src="rlc/second_floor.svg" alt="Second floor drawing preview" />
-        <figcaption>Second floor preview for the office package.</figcaption>
-      </figure>
-    </section>
-  </main>
-</body>
-</html>
-"""
-
     email_automation = f"""<!doctype html>
 <html lang="en">
 {head_html('Email Follow-Up Sequence', 'Follow-up sequence for moving readers into the public store and service offers.')}
@@ -2094,7 +2044,6 @@ def build_pages(catalog: dict) -> dict[str, str]:
         "business_os.html": business_os_page,
         "structure.html": business_os_page,
         "booking.html": booking_page,
-        "rlc-office-package.html": rlc_page,
         "funnel_landing.html": landing_page,
         "delivery.html": books_page,
         "book_offer.html": products_page,
@@ -2114,7 +2063,6 @@ def build() -> int:
     staging_dir = Path(tempfile.mkdtemp(prefix="_public_site_staging_", dir=str(ROOT / "published")))
 
     copy_tree(PUBLISHED, staging_dir / "ebooks")
-    copy_tree(RLC_OUTPUT, staging_dir / "rlc")
     write_generated_assets(staging_dir)
 
     (staging_dir / "funnel.css").write_text(build_css(catalog), encoding="utf-8")
@@ -2143,6 +2091,7 @@ def build() -> int:
         (staging_dir / page_name).write_text(page_content, encoding="utf-8")
 
     (staging_dir / ".htaccess").write_text(ROOT_HTACCESS, encoding="utf-8")
+    safe_rmtree(PUBLIC)
     sync_tree(staging_dir, PUBLIC)
     safe_rmtree(staging_dir)
     print(f"Built public site at {PUBLIC}")

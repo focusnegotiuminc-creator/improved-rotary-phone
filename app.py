@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
-from flask import Flask, jsonify, render_template, request, send_from_directory, url_for
+from flask import Flask, abort, jsonify, render_template, request, send_from_directory, url_for
 
 BASE_DIR = Path(__file__).resolve().parent
 FOCUS_APP_DIR = BASE_DIR / "FOCUS_MASTER_AI"
@@ -285,23 +285,33 @@ def _package_downloads() -> list[dict[str, str]]:
 
 
 def _load_rlc_package(preview_only: bool = False) -> dict[str, Any]:
-    summary_items = _load_bid_summary()
-    material_rows = [] if preview_only else _load_material_rows()
-    downloads = _package_downloads()
+    # The prior job-specific package was not accepted, so do not surface old
+    # bid totals, material lists, drawings, or downloadable client files.
+    summary_items: list[dict[str, str]] = []
+    material_rows: list[dict[str, str]] = []
+    downloads: list[dict[str, str]] = []
 
     data: dict[str, Any] = {
-        "project_name": "522 Vermont Office Restoration",
+        "project_name": "Royal Lee Construction Capability Package",
         "project_location": "Quincy, Illinois",
-        "project_owner": "Steven Bunch / Bunch Family Enterprises",
+        "project_owner": "Owner / client to be confirmed",
         "project_contractor": "Royal Lee Construction Solutions LLC",
         "prepared_date": "March 27, 2026",
         "scope_items": _markdown_list_items(RLC_TEMPLATE_FILE, "Scope Summary"),
         "included_pages": _markdown_list_items(RLC_TEMPLATE_FILE, "Included Pages"),
         "design_elements": _markdown_list_items(RLC_TEMPLATE_FILE, "Required Design Elements"),
         "checklist_items": _markdown_list_items(RLC_CHECKLIST_FILE),
-        "attachment_items": _markdown_list_items(RLC_DELIVERY_DRAFT_FILE, "Recommended Attachment Set"),
-        "approval_items": _markdown_list_items(RLC_DELIVERY_DRAFT_FILE, "Approval Checklist"),
-        "review_note": " ".join(_markdown_paragraphs(RLC_DELIVERY_DRAFT_FILE, "Important Review Note")),
+        "attachment_items": [
+            "Scope notes and owner-provided reference materials",
+            "Concept visuals or drawing sheets approved for presentation",
+            "Material list, budget assumptions, and exclusions when a project is active",
+        ],
+        "approval_items": [
+            "Confirm project is accepted before publishing job-specific address or owner details",
+            "Verify all public claims are limited to confirmed work and portfolio references",
+            "Review drawings, totals, and contract language before sending to a client",
+        ],
+        "review_note": "Project-specific names, addresses, and bid details should only be published after the job is accepted and approved for public use.",
         "insurance_notice": " ".join(_markdown_paragraphs(RLC_INSURANCE_SUMMARY_FILE)),
         "summary_items": summary_items,
         "downloads": downloads,
@@ -459,7 +469,7 @@ def system_status():
 
 @app.get("/rlc-bid-package/downloads/<path:filename>")
 def rlc_package_download(filename: str):
-    return send_from_directory(RLC_OUTPUT_DIR, filename, as_attachment=True)
+    abort(404)
 
 
 @app.get("/rlc-bid-package/assets/<path:asset_path>")

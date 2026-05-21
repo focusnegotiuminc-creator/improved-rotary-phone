@@ -80,4 +80,4 @@ Verified with rendered browser checks when Selenium is available, otherwise with
 - missing links: none
 - required hits: `Royal Lee Construction Solutions LLC`, `2172576222`, `Quincy Veterans Home`, `Wentzville High School`, `Wentzville Middle School`, `Reginald Hilton Jr`, `Union Carpenter`, `books`, `services`
 - forbidden hits: none
-- snippet: `Royal Lee Construction Package TheFocusCorp.com The Focus Corporation | Businesses, Services, and Store Home Services Store Books Structure Focus Negotium Focus Records Construction Library Booking Call 2172576222 Royal Lee Construction Solutions LLC 522 Vermont office package with live bid context and downloadable mat`
+- snippet: `Royal Lee Construction page TheFocusCorp.com The Focus Corporation | Businesses, Services, and Store Home Services Store Books Structure Focus Negotium Focus Records Construction Library Booking Call 2172576222 Royal Lee Construction Solutions LLC portfolio history with confirmed project references`

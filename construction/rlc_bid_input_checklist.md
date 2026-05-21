@@ -15,5 +15,5 @@ Drop these files into the workspace before the final bid package is assembled:
 
 Recommended folder:
 
-`C:\Users\reggi\OneDrive\Desktop\FOCUS- AI\bid_input\rlc_522_vermont\`
+`C:\Users\reggi\OneDrive\Desktop\FOCUS- AI\bid_input\rlc_active_project\`
 

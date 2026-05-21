@@ -398,8 +398,8 @@ def build_report(
 
     header("Royal Lee Construction Solutions | Office Renovation Package")
     c.setFont("Helvetica", 11)
-    c.drawString(40, height - 90, "Project: Office Renovation - Steven Bunch")
-    c.drawString(40, height - 105, "Jobsite: 522 Vermont St, Quincy, IL")
+    c.drawString(40, height - 90, "Project: Active Office Renovation Scope")
+    c.drawString(40, height - 105, "Jobsite: To be confirmed before publication")
     c.drawString(40, height - 120, "Scope: Demo + replace drywall, ceiling grid, base, repaint")
     c.drawString(40, height - 135, "Note: This package is based on provided sketches and measurements.")
     c.drawString(40, height - 150, "Pricing basis: Existing material stack retained from the prior package, with only missing allowances added.")
@@ -851,8 +851,8 @@ def main() -> None:
         License: Hannibal, MO General Contracting License #7411
         MO Registration: LC014481759
 
-        Owner: Steven Bunch
-        Jobsite Address: 522 Vermont St, Quincy, IL
+        Owner: To be confirmed before publication
+        Jobsite Address: To be confirmed before publication
 
         Scope of Work: Interior demolition and replacement of drywall, drop ceiling grid, baseboard,
         repaint, and debris haul-off. No structural modifications proposed. All work to comply with AHJ requirements.
@@ -867,8 +867,8 @@ def main() -> None:
     contract_text = textwrap.dedent(
         """
         CONSTRUCTION AGREEMENT (DRAFT)
-        Parties: Royal Lee Construction Solutions LLC ("Contractor") and Steven Bunch ("Owner")
-        Project Address: 522 Vermont St, Quincy, IL
+        Parties: Royal Lee Construction Solutions LLC ("Contractor") and the confirmed project owner ("Owner")
+        Project Address: To be confirmed before publication
 
         Scope: Demo and replacement of interior drywall, 2x4 drop ceiling grid, ceiling tiles,
         baseboard, and repainting as outlined in the attached takeoff and material list.
@@ -891,8 +891,8 @@ def main() -> None:
         """
         CERTIFICATE OF WORKMANSHIP - 20 YEAR GUARANTEE
 
-        Customer: Steven Bunch
-        Jobsite: 522 Vermont St, Quincy, IL
+        Customer: To be confirmed before publication
+        Jobsite: To be confirmed before publication
 
         Royal Lee Construction Solutions LLC guarantees, for a period of twenty (20) years from
         completion, to repair or replace holes and workmanship discrepancies directly related to
@@ -949,7 +949,7 @@ def build_blueprint_pdf(path: Path, floor1: FloorAssumptions, floor2: FloorAssum
         c.drawString(40, height_pt - 40, title)
         c.setFont("Helvetica", 10)
         c.drawString(40, height_pt - 56, "Royal Lee Construction Solutions LLC")
-        c.drawString(40, height_pt - 70, "Jobsite: 522 Vermont St, Quincy, IL")
+        c.drawString(40, height_pt - 70, "Jobsite: To be confirmed before publication")
         c.drawString(40, height_pt - 84, "Scale: 1/4\" = 1'-0\" (print at 100%)")
         c.drawRightString(width_pt - 40, height_pt - 56, f"Sheet: {sheet}")
         c.drawRightString(width_pt - 40, height_pt - 70, datetime.now().strftime("%B %d, %Y"))
@@ -1123,7 +1123,7 @@ def build_blueprint_floor_pdf(path: Path, floor: str) -> None:
         c.drawString(40, height_pt - 40, title)
         c.setFont("Helvetica", 10)
         c.drawString(40, height_pt - 56, "Royal Lee Construction Solutions LLC")
-        c.drawString(40, height_pt - 70, "Jobsite: 522 Vermont St, Quincy, IL")
+        c.drawString(40, height_pt - 70, "Jobsite: To be confirmed before publication")
         c.drawString(40, height_pt - 84, "Scale: 1/4\" = 1'-0\" (print at 100%)")
         c.drawRightString(width_pt - 40, height_pt - 56, f"Sheet: {sheet}")
         c.drawRightString(width_pt - 40, height_pt - 70, datetime.now().strftime("%B %d, %Y"))

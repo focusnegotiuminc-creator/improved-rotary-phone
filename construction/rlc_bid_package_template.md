@@ -3,8 +3,8 @@
 
 ### Project
 
-- Project: 522 Vermont Office Space Restoration
-- Owner: Steven Bunch / Bunch Family Enterprises
+- Project: Active Royal Lee Construction scope
+- Owner: To be confirmed before publication
 - Contractor: Royal Lee Construction Solutions
 - Prepared date: __________________
 

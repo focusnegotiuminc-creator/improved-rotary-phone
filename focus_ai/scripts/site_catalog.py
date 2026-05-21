@@ -258,12 +258,6 @@ COMPANY_BY_ID = {item["id"]: item for item in COMPANY_PROFILES}
 
 RLC_PROJECT_REFERENCES = [
     {
-        "title": "522 Vermont Office Restoration",
-        "location": "Quincy, Illinois",
-        "status": "Documented package",
-        "summary": "Owner-review office renovation package with downloadable bid summary, material takeoff, floor-plan previews, and large-format blueprint PDFs.",
-    },
-    {
         "title": "Quincy Veterans Home Construction",
         "location": "Quincy, Illinois",
         "status": "Legacy portfolio reference",

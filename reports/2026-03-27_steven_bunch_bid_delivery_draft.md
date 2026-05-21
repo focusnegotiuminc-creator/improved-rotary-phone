@@ -1,8 +1,8 @@
-# Steven Bunch Bid Delivery Draft
+# Voided RLC Bid Delivery Draft
 
 Prepared: 2026-03-27
 
-Do not send this yet. Hold for operator review and approval.
+Do not send this. This draft is retained only as an internal voided template because the job was not taken.
 
 ## Recommended Attachment Set
 
@@ -27,15 +27,15 @@ This package now keeps the existing material stack from the prior package and on
 
 ## Text Message Draft
 
-Steven, I have the updated Royal Lee Construction Solutions office package ready for 522 Vermont. It includes the cleaned layout package, floor plan sheets, material takeoff, bid summary, and owner packet for review. The current draft total is $10,931.90, with materials, reduced labor, insurance fee, and debris allowance included. I can send the full PDF package over now once I get final approval on my end.
+Void. Do not send job-specific outreach for this unaccepted scope.
 
 ## Email Draft
 
-Subject: Royal Lee Construction Solutions | 522 Vermont Office Package Draft
+Subject: Royal Lee Construction Solutions | Voided Office Package Draft
 
-Steven,
+Hello,
 
-Attached is the updated Royal Lee Construction Solutions draft package for the office restoration scope at 522 Vermont in Quincy, Illinois.
+This job-specific draft is voided and should not be sent, published, or used as a public portfolio reference because the job was not taken.
 
 This packet includes:
 
@@ -63,4 +63,4 @@ rlcsolutions@proton.me
 - confirm message tone
 - confirm current total bid
 - confirm whether to include all blueprint sheets or owner packet only
-- confirm whether Steven should receive text only, email only, or both
+- confirm job is accepted before any client-specific text, email, address, drawing, or pricing package is prepared for delivery

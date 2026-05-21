@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}RLC Bid Package - 522 Vermont{% endblock %}
+{% block title %}RLC Construction Capability Package{% endblock %}
 {% block body_class %}app-body rlc-body{% endblock %}
 {% block main_class %}page-shell page-shell-rlc{% endblock %}
 
@@ -10,8 +10,8 @@
       <p class="rlc-kicker">Royal Lee Construction Solutions LLC</p>
       <h1 class="rlc-title">{{ package.project_name }}</h1>
       <p class="rlc-summary-copy">
-        A client-ready construction bid front end built from the March 27 owner packet, blueprint
-        sheets, material takeoff, and delivery workflow for {{ package.project_owner }}.
+        A construction bid front end for organizing approved owner packets, blueprint sheets,
+        material takeoffs, and delivery workflows without publishing unaccepted job details.
       </p>
 
       <div class="rlc-chip-row">
@@ -257,7 +257,7 @@
     </article>
     <article class="rlc-panel reveal" style="--delay: 120ms;">
       <h3>Delivery workflow</h3>
-      <p class="rlc-panel-copy">Recommended attachment set for the Steven Bunch delivery draft:</p>
+      <p class="rlc-panel-copy">Recommended attachment set for an approved construction delivery draft:</p>
       <ul class="rlc-list compact">
         {% for item in package.attachment_items %}
         <li>{{ item }}</li>

@@ -8,7 +8,7 @@ My current number is 2172576222.
 
 I have been in contact with Eric Sutter, who is now my new probation officer. He had to reschedule my appointment and told me he would be contacting me today to set a new date. Since we last spoke, I have also seen Chris Flynn.
 
-Work-wise, I am still waiting on Adam Klien / Weis Drywall / Benn Hurr Construction to give me a start date on the Hannibal Career and Tech Center project. We are waiting on doors to be fully installed before drywall work starts again. I am also waiting to hear from Steven Bunch with Bunch Family Enterprises on whether he will accept my company's or affiliate companies' bid for the office space restoration at 522 Vermont in Quincy, Illinois.
+Work-wise, I am still waiting on Adam Klien / Weis Drywall / Benn Hurr Construction to give me a start date on the Hannibal Career and Tech Center project. We are waiting on doors to be fully installed before drywall work starts again.
 
 I am also still attending all of my DV groups on Saturdays, as well as my Dads 2.0 class on Thursdays in Hannibal, Missouri.
 
