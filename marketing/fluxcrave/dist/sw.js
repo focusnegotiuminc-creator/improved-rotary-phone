@@ -1,4 +1,4 @@
-const CACHE_NAME = "flux-crave-mobile-v2";
+const CACHE_NAME = "flux-crave-mobile-v3";
 const CORE_ASSETS = [
   "/", "/app/", "/menu/", "/story/", "/visit/",
   "/assets/site.css", "/assets/site.js", "/assets/app.js", "/assets/data/menu.json",
