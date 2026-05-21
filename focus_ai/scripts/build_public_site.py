@@ -32,6 +32,8 @@ ROOT_HTACCESS = """DirectoryIndex index.html index.php
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 RewriteRule ^command(/.*)?$ - [R=404,L]
 RewriteRule ^machine\\.html$ - [R=404,L]
 RewriteRule ^master_prompt_studio\\.js$ - [R=404,L]
@@ -39,7 +41,7 @@ RewriteRule ^index\\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
-RewriteRule . /index.php [L]
+RewriteRule . /index.html [L]
 </IfModule>
 """
 HOLDING_DIAGRAM_PATH = "generated/corporate/holding_structure.svg"
@@ -60,6 +62,38 @@ RLC_REFERENCE_VISUALS = [
     "generated/rlc-history/wentzville-middle-school.svg",
 ]
 PRIMARY_PHONE = "2172576222"
+FOCUS_CORP_LOGO_PATH = "generated/corporate/the-focus-corporation-logo.svg"
+COMPANY_LOGO_PATHS = {
+    "focus-negotium": "generated/corporate/focus-negotium-logo.svg",
+    "focus-records": "generated/corporate/focus-records-logo.svg",
+    "royal-lee-construction": "generated/corporate/royal-lee-construction-logo.svg",
+}
+THEME_LIBRARY = [
+    {
+        "name": "Sacred Geometry Original",
+        "slug": "theme-sacred-geometry-original",
+        "summary": "The restored post-first-edit direction: luminous sacred geometry, deep indigo atmosphere, gold/teal cognition cues, and animated corporate clarity.",
+        "palette": ["#050812", "#3EE4D6", "#F2C96D", "#7CC8FF"],
+    },
+    {
+        "name": "Luminous Corporate Storefront",
+        "slug": "theme-luminous-corporate-storefront",
+        "summary": "The current commerce-ready version: store, services, books, booking, and affiliate routing preserved as a clean business operating layer.",
+        "palette": ["#081022", "#F2C96D", "#FF9B68", "#F6F8FF"],
+    },
+    {
+        "name": "Royal Lee Sacred Build",
+        "slug": "theme-royal-lee-sacred-build",
+        "summary": "Construction-forward theme for Royal Lee: blueprint discipline, sacred geometry overlays, legacy portfolio references, and owner-ready planning energy.",
+        "palette": ["#07101F", "#B08A3B", "#C7A96A", "#F4EFE4"],
+    },
+    {
+        "name": "Focus Records Neon Release",
+        "slug": "theme-focus-records-neon-release",
+        "summary": "Music/media rollout theme with electric blue, violet, teal, and launch-campaign motion for creative assets and catalog products.",
+        "palette": ["#070A1A", "#7CC8FF", "#B77CFF", "#3EE4D6"],
+    },
+]
 
 
 def copy_tree(src: Path, dst: Path) -> None:
@@ -186,6 +220,75 @@ def head_html(title: str, description: str) -> str:
 </head>"""
 
 
+def render_floating_words(text: str) -> str:
+    words = text.split()
+    rendered = []
+    for index, word in enumerate(words):
+        safe_word = escape(word)
+        rendered.append(f'<span class="float-word" style="--i:{index % 12};">{safe_word}</span>')
+    return '<span class="floating-words">' + ' '.join(rendered) + '</span>'
+
+
+def _palette_dots(colors: list[str]) -> str:
+    return "".join(f'<span style="--swatch:{escape(color)}"></span>' for color in colors)
+
+
+def render_theme_library() -> str:
+    cards = "\n".join(
+        f"""
+<article class="theme-card glow-card {escape(theme['slug'])}">
+  <div class="theme-card-top">
+    <p class="eyebrow">Named theme</p>
+    <div class="theme-swatch">{_palette_dots(theme['palette'])}</div>
+  </div>
+  <h3>{escape(theme['name'])}</h3>
+  <p>{escape(theme['summary'])}</p>
+</article>
+""".strip()
+        for theme in THEME_LIBRARY
+    )
+    return f"""
+<section class="section-block theme-library" id="theme-library">
+  <p class="eyebrow">Theme archive</p>
+  <h2>{render_floating_words('Named visual themes preserved instead of overwritten.')}</h2>
+  <p class="section-copy">Each major design direction is kept as a named theme layer. The live homepage defaults to Sacred Geometry Original while the storefront, construction, and media themes stay documented for future page-level expansion.</p>
+  <div class="theme-grid">{cards}</div>
+</section>
+""".strip()
+
+
+def _company_logo_svg(name: str, initials: str, subtitle: str, accent_a: str, accent_b: str) -> str:
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="900" height="360" viewBox="0 0 900 360" role="img" aria-labelledby="title desc">
+  <title>{escape(name)} logo</title>
+  <desc>{escape(subtitle)}</desc>
+  <defs>
+    <radialGradient id="halo" cx="50%" cy="46%" r="60%">
+      <stop offset="0%" stop-color="{accent_a}" stop-opacity="0.42" />
+      <stop offset="100%" stop-color="{accent_a}" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{accent_a}" />
+      <stop offset="100%" stop-color="{accent_b}" />
+    </linearGradient>
+  </defs>
+  <rect width="900" height="360" rx="42" fill="#07101f" />
+  <circle cx="180" cy="180" r="138" fill="url(#halo)" />
+  <g transform="translate(180 180)" fill="none" stroke="url(#ring)" stroke-width="5" opacity="0.92">
+    <circle r="108" />
+    <circle r="72" />
+    <path d="M0 -116 L100 58 H-100 Z" />
+    <path d="M0 116 L100 -58 H-100 Z" />
+    <path d="M-116 0 H116 M0 -116 V116" opacity="0.65" />
+  </g>
+  <text x="180" y="197" text-anchor="middle" fill="#f6f8ff" font-family="Cormorant Garamond, Georgia, serif" font-size="86" font-weight="700">{escape(initials)}</text>
+  <text x="350" y="154" fill="#f6f8ff" font-family="Cormorant Garamond, Georgia, serif" font-size="58" font-weight="700">{escape(name)}</text>
+  <text x="352" y="204" fill="#c8d6ea" font-family="Manrope, Arial, sans-serif" font-size="22">{escape(subtitle)}</text>
+  <path d="M352 238 H776" stroke="url(#ring)" stroke-width="3" stroke-linecap="round" opacity="0.9" />
+  <text x="352" y="282" fill="{accent_a}" font-family="Manrope, Arial, sans-serif" font-size="18" letter-spacing="6">THE FOCUS CORPORATION</text>
+</svg>"""
+
+
+
 def nav_html() -> str:
     links = [
         ("index.html", "Home"),
@@ -202,7 +305,7 @@ def nav_html() -> str:
     items = "".join(f'<a href="{href}">{label}</a>' for href, label in links)
     return (
         '<header class="site-header">'
-        '<div class="brand-lockup"><span class="brand-mark"></span><div>'
+        '<div class="brand-lockup"><img class="brand-logo" src="generated/corporate/the-focus-corporation-logo.svg" alt="The Focus Corporation logo" /><div>'
         '<p class="eyebrow">TheFocusCorp.com</p><strong>The Focus Corporation | Businesses, Services, and Store</strong>'
         f"</div></div><nav class=\"top-nav\">{items}</nav></header>"
         f'<a class="floating-call" href="tel:{PRIMARY_PHONE}" aria-label="Call The Focus Corporation at {PRIMARY_PHONE}">Call {PRIMARY_PHONE}</a>'
@@ -416,6 +519,34 @@ def _project_reference_svg(project: dict[str, str], accent: str, index: int) -> 
 
 def generated_public_assets() -> dict[str, str]:
     assets = {
+        FOCUS_CORP_LOGO_PATH: _company_logo_svg(
+            "The Focus Corporation",
+            "FC",
+            "Parent company | affiliates | books | services | store",
+            "#F2C96D",
+            "#3EE4D6",
+        ),
+        COMPANY_LOGO_PATHS["focus-negotium"]: _company_logo_svg(
+            "Focus Negotium Inc",
+            "FN",
+            "Holding company | real estate | executive systems",
+            "#3EE4D6",
+            "#F2C96D",
+        ),
+        COMPANY_LOGO_PATHS["focus-records"]: _company_logo_svg(
+            "Focus Records LLC",
+            "FR",
+            "Media company | release systems | catalog commerce",
+            "#7CC8FF",
+            "#B77CFF",
+        ),
+        COMPANY_LOGO_PATHS["royal-lee-construction"]: _company_logo_svg(
+            "Royal Lee Construction Solutions LLC",
+            "RL",
+            "Sacred geometry | preconstruction | owner strategy",
+            "#F2C96D",
+            "#C7A96A",
+        ),
         HOLDING_DIAGRAM_PATH: _holding_structure_svg(),
         FOCUS_RECORDS_POSTERS[0]: _brand_poster_svg(
             "Release Identity Board",
@@ -741,7 +872,8 @@ def render_company_cards(catalog: dict) -> str:
         bullets = "".join(f"<li>{escape(item)}</li>" for item in company.get("proof_points", []))
         cards.append(
             f"""
-<article class="info-card glow-card" style="--accent:{accent.get('accent', '#7CC8FF')};">
+<article class="info-card glow-card company-card" style="--accent:{accent.get('accent', '#7CC8FF')};">
+  <img class="company-logo" src="{escape(COMPANY_LOGO_PATHS.get(company['id'], FOCUS_CORP_LOGO_PATH))}" alt="{escape(company['name'])} logo" loading="lazy" />
   <p class="eyebrow">{escape(company['eyebrow'])}</p>
   <h3>{escape(company['name'])}</h3>
   <p>{escape(company['description'])}</p>
@@ -773,7 +905,8 @@ def render_company_service_rows() -> str:
         )
         rows.append(
             f"""
-<section class="service-cluster glow-card">
+<section class="service-cluster glow-card company-card">
+  <img class="company-logo compact" src="{escape(COMPANY_LOGO_PATHS.get(company['id'], FOCUS_CORP_LOGO_PATH))}" alt="{escape(company['name'])} logo" loading="lazy" />
   <p class="eyebrow">{escape(company['name'])}</p>
   <h2>{escape(company['headline'])}</h2>
   <p class="section-copy">{escape(company['description'])}</p>
@@ -1102,21 +1235,48 @@ main {{ width: min(1220px, 94vw); margin: 0 auto; padding: 1rem 0 4rem; display:
   backdrop-filter: blur(16px);
   background: linear-gradient(180deg, rgba(5, 8, 18, 0.92), rgba(5, 8, 18, 0.68));
 }}
-.brand-lockup {{ display: inline-flex; align-items: center; gap: 0.85rem; }}
-.brand-mark {{
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  border: 1px solid rgba(242, 201, 109, 0.35);
-  background:
-    radial-gradient(circle at center, rgba(242, 201, 109, 0.2), transparent 40%),
-    repeating-conic-gradient(from 0deg, rgba(124, 200, 255, 0.18) 0deg 18deg, transparent 18deg 36deg),
-    rgba(7, 15, 29, 0.92);
-  box-shadow: inset 0 0 28px rgba(124, 200, 255, 0.12);
-  animation: pulseHalo 11s ease-in-out infinite;
+.brand-lockup {{ display: inline-flex; align-items: center; gap: 0.85rem; perspective: 900px; }}
+.brand-logo {{
+  width: clamp(58px, 8vw, 86px);
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  border-radius: 24px;
+  filter: drop-shadow(0 10px 24px rgba(62, 228, 214, 0.16)) drop-shadow(0 0 18px rgba(242, 201, 109, 0.12));
+  animation: logoFloat3d 8s ease-in-out infinite;
 }}
 .top-nav {{ display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.85rem; overflow-x: auto; scrollbar-width: none; }}
 .top-nav::-webkit-scrollbar {{ display: none; }}
+.floating-words {{ display: inline; perspective: 1100px; }}
+.float-word {{
+  display: inline-block;
+  transform-style: preserve-3d;
+  animation: wordFloat3d 8.8s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 120ms);
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.12),
+    1px 2px 0 rgba(16, 34, 64, 0.5),
+    0 0 22px rgba(62, 228, 214, 0.16),
+    0 18px 36px rgba(2, 8, 24, 0.36);
+}}
+.theme-library {{ position: relative; }}
+.theme-grid {{ display: grid; gap: 1rem; grid-template-columns: repeat(4, minmax(0, 1fr)); }}
+.theme-card {{ padding: 1.05rem; min-height: 100%; }}
+.theme-card-top {{ display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; }}
+.theme-swatch {{ display: inline-flex; gap: 0.28rem; }}
+.theme-swatch span {{ width: 18px; height: 18px; border-radius: 50%; background: var(--swatch); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 0 16px color-mix(in srgb, var(--swatch) 46%, transparent); }}
+.company-logo {{
+  width: min(100%, 360px);
+  max-height: 120px;
+  object-fit: contain;
+  object-position: left center;
+  border-radius: 22px;
+  margin-bottom: 0.75rem;
+  background: rgba(6, 13, 26, 0.42);
+  border: 1px solid rgba(124, 200, 255, 0.14);
+  filter: drop-shadow(0 14px 28px rgba(2, 8, 24, 0.24));
+}}
+.company-logo.compact {{ max-height: 92px; width: min(100%, 300px); }}
+.company-card {{ align-content: start; }}
 .top-nav a {{
   padding: 0.62rem 0.95rem;
   border-radius: 999px;
@@ -1437,6 +1597,15 @@ p, li {{ color: #c8d6ea; line-height: 1.72; }}
 .mobile-action-card {{
   min-height: 100%;
 }}
+@keyframes wordFloat3d {{
+  0%, 100% {{ transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg); }}
+  42% {{ transform: translate3d(0, -0.42rem, 26px) rotateX(5deg) rotateY(-2deg); }}
+  70% {{ transform: translate3d(0, 0.12rem, 12px) rotateX(-2deg) rotateY(1deg); }}
+}}
+@keyframes logoFloat3d {{
+  0%, 100% {{ transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(-3deg); }}
+  50% {{ transform: translate3d(0, -0.32rem, 28px) rotateX(5deg) rotateY(4deg); }}
+}}
 @keyframes slowSpin {{ from {{ transform: rotate(0deg); }} to {{ transform: rotate(360deg); }} }}
 @keyframes pulseCore {{ 0%, 100% {{ transform: scale(1); opacity: 0.92; }} 50% {{ transform: scale(1.08); opacity: 1; }} }}
 @keyframes beamDrift {{ from {{ transform: translateX(-3%); }} to {{ transform: translateX(3%); }} }}
@@ -1467,6 +1636,7 @@ p, li {{ color: #c8d6ea; line-height: 1.72; }}
   .drawing-grid {{ grid-template-columns: 1fr; }}
   .site-header {{ grid-template-columns: 1fr; }}
   .top-nav {{ justify-content: flex-start; }}
+  .theme-grid {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
 }}
 @media (max-width: 720px) {{
   body {{ padding-bottom: 5.4rem; }}
@@ -1511,7 +1681,9 @@ p, li {{ color: #c8d6ea; line-height: 1.72; }}
   .drawing-frame {{ border-radius: 24px; }}
   .brand-lockup {{ align-items: flex-start; }}
   .brand-lockup strong {{ font-size: 0.95rem; line-height: 1.2; }}
-  .brand-mark {{ width: 46px; height: 46px; }}
+  .brand-logo {{ width: 52px; border-radius: 18px; }}
+  .theme-grid {{ grid-template-columns: 1fr; }}
+  .company-logo {{ max-height: 104px; }}
   .service-row {{ grid-template-columns: 1fr; }}
   .sacred-visual {{ min-height: 280px; }}
   .floating-call {{
@@ -1535,13 +1707,13 @@ def build_pages(catalog: dict) -> dict[str, str]:
     home_page = f"""<!doctype html>
 <html lang="en">
 {head_html('TheFocusCorp.com', 'Businesses, services, books, and storefront structure across The Focus Corporation.')}
-<body>
+<body class="theme-sacred-geometry-original">
   <main>
     {nav_html()}
     <section class="hero-panel luminous-hero">
       <div class="poster panel-flow">
         <p class="eyebrow">The Focus Corporation</p>
-        <h1>One holding company, two affiliate operating companies, and one clear path into books, services, development, and premium support.</h1>
+        <h1>{render_floating_words('One holding company, two affiliate operating companies, and one clear path into books, services, development, and premium support.')}</h1>
         <p class="lede">TheFocusCorp.com is the public home of Focus Negotium Inc, Focus Records LLC, and Royal Lee Construction Solutions LLC, organized as a mobile-friendly corporate storefront with clearer routing into the right company, the right service, and the right next step.</p>
         <p>The experience stays elevated and easy to use so visitors can understand the structure quickly, review pricing, and move from first visit into a real engagement without confusion.</p>
         <div class="metric-strip">
@@ -1558,6 +1730,7 @@ def build_pages(catalog: dict) -> dict[str, str]:
       </div>
       <section class="hero-visual-panel glow-card">{render_sacred_visual()}</section>
     </section>
+    {render_theme_library()}
     <section class="section-block">
       <p class="eyebrow">Holding company and affiliates</p>
       <h2>One public standard across corporate services, media work, and construction strategy.</h2>
