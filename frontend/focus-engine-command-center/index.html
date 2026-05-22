@@ -1,0 +1,85 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Focus Private AI Engine Command Center</title>
+  <style>
+    :root { color-scheme: dark; --bg:#080b12; --panel:#121826; --panel2:#172033; --text:#f5f7fb; --muted:#aeb8cf; --cyan:#3ee4d6; --gold:#f2c96d; --violet:#9b6cff; --danger:#ff7161; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, Segoe UI, Arial, sans-serif; background: radial-gradient(circle at top left, rgba(62,228,214,.16), transparent 34%), radial-gradient(circle at top right, rgba(155,108,255,.15), transparent 34%), var(--bg); color: var(--text); }
+    header { padding: 28px 20px 18px; border-bottom: 1px solid rgba(255,255,255,.09); position: sticky; top:0; backdrop-filter: blur(14px); background: rgba(8,11,18,.82); z-index: 5; }
+    .wrap { max-width: 1180px; margin:auto; padding: 0 16px; }
+    h1 { margin:0; font-size: clamp(28px, 5vw, 54px); letter-spacing:-.04em; }
+    .sub { margin: 10px 0 0; color: var(--muted); max-width: 860px; line-height:1.55; }
+    main { padding: 24px 0 80px; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+    .panel { background: linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.035)); border: 1px solid rgba(255,255,255,.11); border-radius: 22px; padding: 18px; box-shadow: 0 18px 50px rgba(0,0,0,.25); }
+    .panel h2, .panel h3 { margin: 0 0 8px; }
+    .eyebrow { color: var(--cyan); font-size: 12px; text-transform: uppercase; letter-spacing:.16em; font-weight:800; }
+    .muted { color: var(--muted); line-height:1.48; }
+    .flow { display:grid; gap: 10px; margin-top: 12px; }
+    .step { padding: 12px; border-radius: 16px; background: rgba(0,0,0,.2); border:1px solid rgba(255,255,255,.08); }
+    .badge { display:inline-flex; gap:6px; align-items:center; padding: 6px 10px; border-radius:999px; background: rgba(62,228,214,.1); color: var(--cyan); font-weight:700; font-size: 12px; }
+    .danger { background: rgba(255,113,97,.11); color:#ffaca2; }
+    textarea { width:100%; min-height: 150px; border-radius: 18px; border:1px solid rgba(255,255,255,.13); background:#090d16; color:var(--text); padding:14px; font: inherit; }
+    button { border:0; border-radius:999px; padding: 12px 16px; background: linear-gradient(135deg, var(--cyan), var(--gold)); color:#081018; font-weight:900; cursor:pointer; }
+    pre { white-space: pre-wrap; background:#070a11; padding:14px; border-radius:16px; border:1px solid rgba(255,255,255,.08); color:#dce6ff; overflow:auto; }
+    .footer-note { margin-top: 16px; color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <header><div class="wrap">
+    <p class="eyebrow">Focus-owned local/open model command center</p>
+    <h1>Focus Private AI Engine</h1>
+    <p class="sub">A mobile-first front end for a Focus-tailored agent board: OpenAI-like builder lane, Claude-like critic lane, Hugging Face model registry, business routing, and approval gates before public actions.</p>
+  </div></header>
+  <main class="wrap">
+    <section class="grid">
+      <article class="panel"><p class="eyebrow">Business lanes</p><h2>Focus ecosystem router</h2><p class="muted">Routes tasks across Focus Negotium Inc, Focus Records LLC, Royal Lee Construction Solutions LLC, Flux & Crave, The Focus Corporation, and partner companies.</p></article>
+      <article class="panel"><p class="eyebrow">Model lanes</p><h2>HF + local + provider</h2><p class="muted">Uses Hugging Face open models for coder, reasoner, critic, and embeddings. Provider APIs can be attached as optional lanes.</p></article>
+      <article class="panel"><p class="eyebrow">Operator control</p><h2>Less friction, not reckless</h2><p class="muted">No unnecessary moralizing for owned business work. Approval required for posting, deploying, outreach, purchases, credentials, and high-impact claims.</p></article>
+    </section>
+
+    <section class="panel" style="margin-top:18px;">
+      <p class="eyebrow">Task packet demo</p>
+      <h2>Paste a task for Focus Engine routing</h2>
+      <textarea id="task">Build a Flux & Crave mobile social rollout and have the coder and critic agents cross-check it before posting.</textarea>
+      <p><button id="run">Generate local run packet</button></p>
+      <pre id="output">Ready.</pre>
+      <p class="footer-note">This static prototype mirrors the Python orchestrator shape. Production version connects to the local API/mobile shell.</p>
+    </section>
+
+    <section class="grid" style="margin-top:18px;">
+      <article class="panel"><span class="badge">Architect</span><h3>Focus Architect</h3><p class="muted">Turns raw tasks into execution plans and file scope.</p></article>
+      <article class="panel"><span class="badge">Builder</span><h3>Open Coder Lane</h3><p class="muted">Uses Qwen/other HF coder models for code edits and task implementation.</p></article>
+      <article class="panel"><span class="badge">Critic</span><h3>Claude-like Reviewer</h3><p class="muted">Pushes back on errors, bad claims, weak UX, and missing tests.</p></article>
+      <article class="panel"><span class="badge danger">Gate</span><h3>Action Approval</h3><p class="muted">Blocks external action until the operator approves exact post/deploy/send scope.</p></article>
+    </section>
+  </main>
+  <script>
+    const businessLane = (task) => {
+      const t = task.toLowerCase();
+      if (t.includes('flux') || t.includes('crave')) return 'Flux & Crave';
+      if (t.includes('records') || t.includes('music')) return 'Focus Records LLC';
+      if (t.includes('construction') || t.includes('royal lee') || t.includes('rlc')) return 'Royal Lee Construction Solutions LLC';
+      if (t.includes('negotium')) return 'Focus Negotium Inc';
+      return 'The Focus Corporation / General Focus Engine';
+    };
+    const highImpact = ['deploy','post','publish','send','outreach','payment','purchase','contract','legal','tax','credit','loan','funding','property','permit','zoning','credential','password','token'];
+    document.querySelector('#run').addEventListener('click', () => {
+      const task = document.querySelector('#task').value.trim();
+      const hits = highImpact.filter(w => task.toLowerCase().includes(w));
+      const packet = {
+        task,
+        lane: businessLane(task),
+        approval_required: hits.length > 0,
+        model_board: ['focus-architect','focus-builder','focus-critic','focus-brand-router','focus-action-gate'],
+        recommended_next_action: hits.length ? 'Draft and QA locally; request approval before external action.' : 'Safe for local drafting and code QA.',
+        high_impact_terms: hits
+      };
+      document.querySelector('#output').textContent = JSON.stringify(packet, null, 2);
+    });
+  </script>
+</body>
+</html>

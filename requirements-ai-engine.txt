@@ -1,0 +1,6 @@
+﻿huggingface_hub>=0.30.0
+transformers>=4.50.0
+sentence-transformers>=3.4.0
+accelerate>=1.4.0
+safetensors>=0.5.0
+requests>=2.31.0

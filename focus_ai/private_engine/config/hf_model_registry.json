@@ -1,0 +1,130 @@
+﻿{
+  "registry_name": "focus-huggingface-model-registry",
+  "version": "0.2.0",
+  "created_for": "Focus Negotium Inc / Focus Records LLC / Royal Lee Construction Solutions LLC / Flux & Crave partner lanes",
+  "download_root": "D:/TheFocusFiles/Models/huggingface",
+  "policy": {
+    "default_download_mode": "metadata_only",
+    "never_commit_weights": true,
+    "never_log_tokens": true,
+    "hf_token_source": "HF_TOKEN environment variable or local Hugging Face auth cache",
+    "operator_goal": "maximum useful autonomy for owned business tasks while retaining approval gates for high-impact external actions"
+  },
+  "profiles": {
+    "starter_local": {
+      "description": "Reasonable first local stack for code, planning, critique, and retrieval without immediately pulling massive weights.",
+      "models": [
+        "open_coder_primary",
+        "fast_reasoner_chat",
+        "critic_code_lane",
+        "embedding_light"
+      ]
+    },
+    "strong_local_or_endpoint": {
+      "description": "Bigger models for machines with GPU resources or Hugging Face endpoints.",
+      "models": [
+        "advanced_coder_qwen3",
+        "large_reasoner_llama33",
+        "critic_code_lane",
+        "embedding_strong"
+      ]
+    },
+    "browser_frontend_light": {
+      "description": "Small models or APIs suitable for front-end experiments and low-latency UX.",
+      "models": [
+        "tiny_reasoner_llama32",
+        "embedding_light"
+      ]
+    }
+  },
+  "models": {
+    "open_coder_primary": {
+      "repo_id": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "source": "https://hf.co/Qwen/Qwen2.5-Coder-7B-Instruct",
+      "role": "OpenAI-like code builder lane for repository edits, debugging, task implementation, and script generation.",
+      "task": "text-generation",
+      "library": "transformers",
+      "license_note": "Apache-2.0 per Hugging Face tags returned 2026-05-21.",
+      "recommended_runtime": ["vLLM", "text-generation-inference", "Ollama/llama.cpp conversion when available", "Transformers"],
+      "default_allow_patterns": ["README*", "config.json", "generation_config.json", "tokenizer*", "*.json", "*.md"],
+      "weights_allow_patterns": ["*.safetensors", "*.bin", "*.model", "*.json", "tokenizer*", "config.json", "generation_config.json"]
+    },
+    "advanced_coder_qwen3": {
+      "repo_id": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "source": "https://hf.co/Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "role": "High-strength coding and agentic planning lane for GPU endpoint use.",
+      "task": "text-generation",
+      "library": "transformers",
+      "license_note": "Apache-2.0 per Hugging Face tags returned 2026-05-21.",
+      "recommended_runtime": ["Hugging Face endpoint", "vLLM", "TGI"],
+      "default_allow_patterns": ["README*", "config.json", "generation_config.json", "tokenizer*", "*.json", "*.md"],
+      "weights_allow_patterns": ["*.safetensors", "*.json", "tokenizer*", "config.json", "generation_config.json"]
+    },
+    "fast_reasoner_chat": {
+      "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "source": "https://hf.co/meta-llama/Llama-3.1-8B-Instruct",
+      "role": "General reasoning/chat lane for Focus command-center tasks and user-facing assistant behavior.",
+      "task": "text-generation",
+      "library": "transformers",
+      "license_note": "Llama license; may require accepting model terms on Hugging Face.",
+      "recommended_runtime": ["Ollama/llama.cpp conversion when available", "Transformers", "vLLM"],
+      "default_allow_patterns": ["README*", "config.json", "generation_config.json", "tokenizer*", "*.json", "*.md"],
+      "weights_allow_patterns": ["*.safetensors", "*.json", "tokenizer*", "config.json", "generation_config.json"]
+    },
+    "tiny_reasoner_llama32": {
+      "repo_id": "meta-llama/Llama-3.2-3B-Instruct",
+      "source": "https://hf.co/meta-llama/Llama-3.2-3B-Instruct",
+      "role": "Small local/mobile-friendly reasoning lane for demos and lower-resource runs.",
+      "task": "text-generation",
+      "library": "transformers",
+      "license_note": "Llama 3.2 license; may require accepting model terms on Hugging Face.",
+      "recommended_runtime": ["Transformers", "Ollama/llama.cpp conversion", "mobile/backend demo"],
+      "default_allow_patterns": ["README*", "config.json", "generation_config.json", "tokenizer*", "*.json", "*.md"],
+      "weights_allow_patterns": ["*.safetensors", "*.json", "tokenizer*", "config.json", "generation_config.json"]
+    },
+    "large_reasoner_llama33": {
+      "repo_id": "meta-llama/Llama-3.3-70B-Instruct",
+      "source": "https://hf.co/meta-llama/Llama-3.3-70B-Instruct",
+      "role": "Large general reasoning lane for endpoint/GPU use; closest open-model feel to frontier chat for broad planning.",
+      "task": "text-generation",
+      "library": "transformers",
+      "license_note": "Llama license; likely requires accepting terms and GPU endpoint scale.",
+      "recommended_runtime": ["Hugging Face endpoint", "vLLM", "TGI"],
+      "default_allow_patterns": ["README*", "config.json", "generation_config.json", "tokenizer*", "*.json", "*.md"],
+      "weights_allow_patterns": ["*.safetensors", "*.json", "tokenizer*", "config.json", "generation_config.json"]
+    },
+    "critic_code_lane": {
+      "repo_id": "deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct",
+      "source": "https://hf.co/deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct",
+      "role": "Claude-like skeptical code reviewer / critic lane for error review, alternate implementation plans, and adversarial checks.",
+      "task": "text-generation",
+      "library": "transformers",
+      "license_note": "License marked other on Hugging Face; review terms before commercial deployment.",
+      "recommended_runtime": ["Transformers with trust_remote_code only after review", "vLLM/TGI if supported"],
+      "default_allow_patterns": ["README*", "config.json", "generation_config.json", "tokenizer*", "*.json", "*.md", "*.py"],
+      "weights_allow_patterns": ["*.safetensors", "*.json", "tokenizer*", "config.json", "generation_config.json", "*.py"]
+    },
+    "embedding_light": {
+      "repo_id": "Qwen/Qwen3-Embedding-0.6B",
+      "source": "https://hf.co/Qwen/Qwen3-Embedding-0.6B",
+      "role": "Knowledge-base retrieval and semantic memory for Focus docs, Drive exports, Notion exports, code, and business facts.",
+      "task": "sentence-similarity",
+      "library": "sentence-transformers",
+      "license_note": "Apache-2.0 per Hugging Face tags returned 2026-05-21.",
+      "recommended_runtime": ["sentence-transformers", "text-embeddings-inference"],
+      "default_allow_patterns": ["README*", "config.json", "modules.json", "sentence_*.json", "tokenizer*", "*.json", "*.md"],
+      "weights_allow_patterns": ["*.safetensors", "*.bin", "*.json", "tokenizer*", "config.json", "modules.json"]
+    },
+    "embedding_strong": {
+      "repo_id": "jinaai/jina-embeddings-v3",
+      "source": "https://hf.co/jinaai/jina-embeddings-v3",
+      "role": "Stronger multilingual embedding/retrieval lane for mixed business docs and web captures.",
+      "task": "sentence-similarity",
+      "library": "transformers",
+      "license_note": "Review model card/license before commercial deployment; may require custom code.",
+      "recommended_runtime": ["Transformers", "sentence-transformers", "text-embeddings-inference"],
+      "default_allow_patterns": ["README*", "config.json", "tokenizer*", "*.json", "*.md", "*.py"],
+      "weights_allow_patterns": ["*.safetensors", "*.bin", "*.json", "tokenizer*", "config.json", "*.py"]
+    }
+  }
+}
