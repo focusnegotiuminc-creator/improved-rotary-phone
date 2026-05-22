@@ -87,7 +87,7 @@ def test_public_site_build_exports_business_os_bundle():
 
     assert (public_dir / "business_os.html").exists()
     assert "Stripe-connected offers" in products_html
-    assert "One holding company, two affiliate operating companies" in home_html
+    assert "One public standard across corporate services, media work, and construction strategy" in home_html
     assert "Enter the brand without losing the practical next step." in landing_html
     assert "individual book pricing" in products_html
     assert "printable editions" in books_html

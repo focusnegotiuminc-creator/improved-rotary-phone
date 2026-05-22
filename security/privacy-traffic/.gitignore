@@ -1,0 +1,5 @@
+﻿snapshots/
+*.pcap
+*.pcapng
+*.etl
+

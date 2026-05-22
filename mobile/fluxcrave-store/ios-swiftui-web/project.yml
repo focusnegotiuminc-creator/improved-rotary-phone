@@ -1,0 +1,28 @@
+name: FluxCraveApp
+options:
+  bundleIdPrefix: com.fluxcrave
+settings:
+  base:
+    SWIFT_VERSION: 5.9
+targets:
+  FluxCraveApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - App
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: FluxCrave
+        CFBundleShortVersionString: 1.0.0
+        CFBundleVersion: 1
+        UILaunchScreen:
+          UIColorName: ""
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.fluxcrave.app
+        DEVELOPMENT_TEAM: "REPLACE_WITH_APPLE_TEAM_ID"
+        TARGETED_DEVICE_FAMILY: "1,2"

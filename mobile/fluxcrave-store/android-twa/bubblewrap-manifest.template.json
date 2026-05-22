@@ -1,0 +1,29 @@
+{
+  "name": "Flux & Crave Mobile",
+  "short_name": "FluxCrave",
+  "description": "A free, phone-first Flux & Crave app for menu browsing, ordering, pickup, calls, directions, and local craving updates.",
+  "start_url": "https://www.fluxcrave.com/app/?source=play-store",
+  "scope": "https://www.fluxcrave.com/",
+  "theme_color": "#9d1208",
+  "background_color": "#1a120d",
+  "display": "standalone",
+  "orientation": "portrait",
+  "packageId": "com.fluxcrave.app",
+  "host": "www.fluxcrave.com",
+  "launcherName": "FluxCrave",
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "signingKey": {
+    "path": "REPLACE_WITH_LOCAL_KEYSTORE_PATH",
+    "alias": "fluxcrave-release"
+  },
+  "features": {
+    "locationDelegation": {
+      "enabled": false
+    },
+    "playBilling": {
+      "enabled": false
+    }
+  },
+  "fallbackType": "customtabs"
+}
