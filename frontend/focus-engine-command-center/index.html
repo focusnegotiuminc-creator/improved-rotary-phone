@@ -37,7 +37,7 @@
   <main class="wrap">
     <section class="grid">
       <article class="panel"><p class="eyebrow">Business lanes</p><h2>Focus ecosystem router</h2><p class="muted">Routes tasks across Focus Negotium Inc, Focus Records LLC, Royal Lee Construction Solutions LLC, Flux & Crave, The Focus Corporation, and partner companies.</p></article>
-      <article class="panel"><p class="eyebrow">Model lanes</p><h2>HF + local + provider</h2><p class="muted">Uses Hugging Face open models for coder, reasoner, critic, and embeddings. Provider APIs can be attached as optional lanes.</p></article>
+      <article class="panel"><p class="eyebrow">Model lanes</p><h2>HF + large GPU + local</h2><p class="muted">Balanced mode uses Qwen3 Coder 30B + DeepSeek R1 70B on GPU endpoints. Maximum mode adds Qwen3 Coder 480B FP8 when the operator approves the cost.</p></article>
       <article class="panel"><p class="eyebrow">Operator control</p><h2>Less friction, not reckless</h2><p class="muted">No unnecessary moralizing for owned business work. Approval required for posting, deploying, outreach, purchases, credentials, and high-impact claims.</p></article>
     </section>
 
@@ -54,7 +54,17 @@
       <article class="panel"><span class="badge">Architect</span><h3>Focus Architect</h3><p class="muted">Turns raw tasks into execution plans and file scope.</p></article>
       <article class="panel"><span class="badge">Builder</span><h3>Open Coder Lane</h3><p class="muted">Uses Qwen/other HF coder models for code edits and task implementation.</p></article>
       <article class="panel"><span class="badge">Critic</span><h3>Claude-like Reviewer</h3><p class="muted">Pushes back on errors, bad claims, weak UX, and missing tests.</p></article>
-      <article class="panel"><span class="badge danger">Gate</span><h3>Action Approval</h3><p class="muted">Blocks external action until the operator approves exact post/deploy/send scope.</p></article>
+      <article class="panel"><span class="badge danger">Gate</span><h3>Action + GPU Approval</h3><p class="muted">Blocks external action and paid GPU endpoint creation until the operator approves exact scope, model, instance, and hourly cost.</p></article>
+    </section>
+
+    <section class="panel" style="margin-top:18px;">
+      <p class="eyebrow">Large GPU mode</p>
+      <h2>Balanced first, maximum when it earns the cost.</h2>
+      <div class="flow">
+        <div class="step"><strong>Balanced:</strong> Qwen3-Coder-30B-A3B-Instruct-FP8 + DeepSeek-R1-Distill-Llama-70B + Qwen3 Embedding.</div>
+        <div class="step"><strong>Maximum:</strong> Qwen3-Coder-480B-A35B-Instruct-FP8 + Llama-3.3-70B + DeepSeek-R1-70B.</div>
+        <div class="step"><strong>Paid activation:</strong> requires explicit approval and <code>FOCUS_APPROVE_PAID_GPU=YES</code>.</div>
+      </div>
     </section>
   </main>
   <script>
@@ -83,3 +93,4 @@
   </script>
 </body>
 </html>
+

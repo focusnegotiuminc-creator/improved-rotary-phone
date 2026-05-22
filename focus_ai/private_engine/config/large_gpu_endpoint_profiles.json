@@ -1,0 +1,78 @@
+{
+  "profile_name": "focus-large-gpu-endpoints",
+  "source_pricing_checked": "https://huggingface.co/docs/inference-endpoints/en/pricing checked 2026-05-22",
+  "approval_rule": "Paid endpoint creation requires FOCUS_APPROVE_PAID_GPU=YES and explicit operator approval of profile name.",
+  "cost_examples_from_hf_pricing": {
+    "aws_nvidia_l40s_x1": {
+      "hourly_usd": 1.8,
+      "gpu_memory": "48GB",
+      "use": "30B FP8 coder candidate"
+    },
+    "aws_nvidia_a100_x1": {
+      "hourly_usd": 2.5,
+      "gpu_memory": "80GB",
+      "use": "high quality single-GPU model or quantized 70B experiments"
+    },
+    "aws_nvidia_a100_x2": {
+      "hourly_usd": 5.0,
+      "gpu_memory": "160GB",
+      "use": "70B class model candidate"
+    },
+    "aws_nvidia_a100_x4": {
+      "hourly_usd": 10.0,
+      "gpu_memory": "320GB",
+      "use": "higher throughput or larger model candidate"
+    },
+    "aws_nvidia_h200_x8": {
+      "hourly_usd": 40.0,
+      "gpu_memory": "1128GB",
+      "use": "maximum/480B class experiments"
+    },
+    "gcp_nvidia_h100_x2": {
+      "hourly_usd": 20.0,
+      "gpu_memory": "160GB",
+      "use": "faster 70B class candidate"
+    }
+  },
+  "endpoints": {
+    "focus-coder-large-qwen3-30b": {
+      "repo": "Qwen/Qwen3-Coder-30B-A3B-Instruct-FP8",
+      "engine": "vllm",
+      "vendor": "aws",
+      "region": "us-east-1",
+      "instance_type": "nvidia-l40s",
+      "instance_size": "x1",
+      "hourly_estimate_usd": 1.8,
+      "min_replica": 0,
+      "max_replica": 1,
+      "scale_to_zero_timeout_minutes": 15,
+      "purpose": "Primary large GPU coder/builder lane."
+    },
+    "focus-reasoner-deepseek-r1-70b": {
+      "repo": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B",
+      "engine": "text-generation-inference",
+      "vendor": "aws",
+      "region": "us-east-1",
+      "instance_type": "nvidia-a100",
+      "instance_size": "x2",
+      "hourly_estimate_usd": 5.0,
+      "min_replica": 0,
+      "max_replica": 1,
+      "scale_to_zero_timeout_minutes": 15,
+      "purpose": "Large critic/reasoner cross-examination lane."
+    },
+    "focus-frontier-coder-qwen3-480b": {
+      "repo": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+      "engine": "vllm",
+      "vendor": "aws",
+      "region": "us-east-1",
+      "instance_type": "nvidia-h200",
+      "instance_size": "x8",
+      "hourly_estimate_usd": 40.0,
+      "min_replica": 0,
+      "max_replica": 1,
+      "scale_to_zero_timeout_minutes": 15,
+      "purpose": "Maximum experimental coder lane; use only after smaller profile proves value."
+    }
+  }
+}

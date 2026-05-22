@@ -1,4 +1,4 @@
-﻿{
+{
   "registry_name": "focus-huggingface-model-registry",
   "version": "0.2.0",
   "created_for": "Focus Negotium Inc / Focus Records LLC / Royal Lee Construction Solutions LLC / Flux & Crave partner lanes",
@@ -35,6 +35,23 @@
         "tiny_reasoner_llama32",
         "embedding_light"
       ]
+    },
+    "large_gpu_balanced": {
+      "description": "Paid GPU endpoint profile: strong coder + strong reasoner/critic + embeddings. Good first serious backend.",
+      "models": [
+        "large_coder_qwen3_30b_fp8",
+        "reasoner_deepseek_r1_70b",
+        "embedding_light"
+      ]
+    },
+    "large_gpu_maximum": {
+      "description": "Highest-power profile. Use provider-backed inference or costly multi-GPU endpoints. Requires explicit paid activation approval.",
+      "models": [
+        "frontier_coder_qwen_480b_fp8",
+        "large_reasoner_llama33",
+        "reasoner_deepseek_r1_70b",
+        "embedding_strong"
+      ]
     }
   },
   "models": {
@@ -45,9 +62,29 @@
       "task": "text-generation",
       "library": "transformers",
       "license_note": "Apache-2.0 per Hugging Face tags returned 2026-05-21.",
-      "recommended_runtime": ["vLLM", "text-generation-inference", "Ollama/llama.cpp conversion when available", "Transformers"],
-      "default_allow_patterns": ["README*", "config.json", "generation_config.json", "tokenizer*", "*.json", "*.md"],
-      "weights_allow_patterns": ["*.safetensors", "*.bin", "*.model", "*.json", "tokenizer*", "config.json", "generation_config.json"]
+      "recommended_runtime": [
+        "vLLM",
+        "text-generation-inference",
+        "Ollama/llama.cpp conversion when available",
+        "Transformers"
+      ],
+      "default_allow_patterns": [
+        "README*",
+        "config.json",
+        "generation_config.json",
+        "tokenizer*",
+        "*.json",
+        "*.md"
+      ],
+      "weights_allow_patterns": [
+        "*.safetensors",
+        "*.bin",
+        "*.model",
+        "*.json",
+        "tokenizer*",
+        "config.json",
+        "generation_config.json"
+      ]
     },
     "advanced_coder_qwen3": {
       "repo_id": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
@@ -56,9 +93,26 @@
       "task": "text-generation",
       "library": "transformers",
       "license_note": "Apache-2.0 per Hugging Face tags returned 2026-05-21.",
-      "recommended_runtime": ["Hugging Face endpoint", "vLLM", "TGI"],
-      "default_allow_patterns": ["README*", "config.json", "generation_config.json", "tokenizer*", "*.json", "*.md"],
-      "weights_allow_patterns": ["*.safetensors", "*.json", "tokenizer*", "config.json", "generation_config.json"]
+      "recommended_runtime": [
+        "Hugging Face endpoint",
+        "vLLM",
+        "TGI"
+      ],
+      "default_allow_patterns": [
+        "README*",
+        "config.json",
+        "generation_config.json",
+        "tokenizer*",
+        "*.json",
+        "*.md"
+      ],
+      "weights_allow_patterns": [
+        "*.safetensors",
+        "*.json",
+        "tokenizer*",
+        "config.json",
+        "generation_config.json"
+      ]
     },
     "fast_reasoner_chat": {
       "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
@@ -67,9 +121,26 @@
       "task": "text-generation",
       "library": "transformers",
       "license_note": "Llama license; may require accepting model terms on Hugging Face.",
-      "recommended_runtime": ["Ollama/llama.cpp conversion when available", "Transformers", "vLLM"],
-      "default_allow_patterns": ["README*", "config.json", "generation_config.json", "tokenizer*", "*.json", "*.md"],
-      "weights_allow_patterns": ["*.safetensors", "*.json", "tokenizer*", "config.json", "generation_config.json"]
+      "recommended_runtime": [
+        "Ollama/llama.cpp conversion when available",
+        "Transformers",
+        "vLLM"
+      ],
+      "default_allow_patterns": [
+        "README*",
+        "config.json",
+        "generation_config.json",
+        "tokenizer*",
+        "*.json",
+        "*.md"
+      ],
+      "weights_allow_patterns": [
+        "*.safetensors",
+        "*.json",
+        "tokenizer*",
+        "config.json",
+        "generation_config.json"
+      ]
     },
     "tiny_reasoner_llama32": {
       "repo_id": "meta-llama/Llama-3.2-3B-Instruct",
@@ -78,9 +149,26 @@
       "task": "text-generation",
       "library": "transformers",
       "license_note": "Llama 3.2 license; may require accepting model terms on Hugging Face.",
-      "recommended_runtime": ["Transformers", "Ollama/llama.cpp conversion", "mobile/backend demo"],
-      "default_allow_patterns": ["README*", "config.json", "generation_config.json", "tokenizer*", "*.json", "*.md"],
-      "weights_allow_patterns": ["*.safetensors", "*.json", "tokenizer*", "config.json", "generation_config.json"]
+      "recommended_runtime": [
+        "Transformers",
+        "Ollama/llama.cpp conversion",
+        "mobile/backend demo"
+      ],
+      "default_allow_patterns": [
+        "README*",
+        "config.json",
+        "generation_config.json",
+        "tokenizer*",
+        "*.json",
+        "*.md"
+      ],
+      "weights_allow_patterns": [
+        "*.safetensors",
+        "*.json",
+        "tokenizer*",
+        "config.json",
+        "generation_config.json"
+      ]
     },
     "large_reasoner_llama33": {
       "repo_id": "meta-llama/Llama-3.3-70B-Instruct",
@@ -89,9 +177,26 @@
       "task": "text-generation",
       "library": "transformers",
       "license_note": "Llama license; likely requires accepting terms and GPU endpoint scale.",
-      "recommended_runtime": ["Hugging Face endpoint", "vLLM", "TGI"],
-      "default_allow_patterns": ["README*", "config.json", "generation_config.json", "tokenizer*", "*.json", "*.md"],
-      "weights_allow_patterns": ["*.safetensors", "*.json", "tokenizer*", "config.json", "generation_config.json"]
+      "recommended_runtime": [
+        "Hugging Face endpoint",
+        "vLLM",
+        "TGI"
+      ],
+      "default_allow_patterns": [
+        "README*",
+        "config.json",
+        "generation_config.json",
+        "tokenizer*",
+        "*.json",
+        "*.md"
+      ],
+      "weights_allow_patterns": [
+        "*.safetensors",
+        "*.json",
+        "tokenizer*",
+        "config.json",
+        "generation_config.json"
+      ]
     },
     "critic_code_lane": {
       "repo_id": "deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct",
@@ -100,9 +205,27 @@
       "task": "text-generation",
       "library": "transformers",
       "license_note": "License marked other on Hugging Face; review terms before commercial deployment.",
-      "recommended_runtime": ["Transformers with trust_remote_code only after review", "vLLM/TGI if supported"],
-      "default_allow_patterns": ["README*", "config.json", "generation_config.json", "tokenizer*", "*.json", "*.md", "*.py"],
-      "weights_allow_patterns": ["*.safetensors", "*.json", "tokenizer*", "config.json", "generation_config.json", "*.py"]
+      "recommended_runtime": [
+        "Transformers with trust_remote_code only after review",
+        "vLLM/TGI if supported"
+      ],
+      "default_allow_patterns": [
+        "README*",
+        "config.json",
+        "generation_config.json",
+        "tokenizer*",
+        "*.json",
+        "*.md",
+        "*.py"
+      ],
+      "weights_allow_patterns": [
+        "*.safetensors",
+        "*.json",
+        "tokenizer*",
+        "config.json",
+        "generation_config.json",
+        "*.py"
+      ]
     },
     "embedding_light": {
       "repo_id": "Qwen/Qwen3-Embedding-0.6B",
@@ -111,9 +234,27 @@
       "task": "sentence-similarity",
       "library": "sentence-transformers",
       "license_note": "Apache-2.0 per Hugging Face tags returned 2026-05-21.",
-      "recommended_runtime": ["sentence-transformers", "text-embeddings-inference"],
-      "default_allow_patterns": ["README*", "config.json", "modules.json", "sentence_*.json", "tokenizer*", "*.json", "*.md"],
-      "weights_allow_patterns": ["*.safetensors", "*.bin", "*.json", "tokenizer*", "config.json", "modules.json"]
+      "recommended_runtime": [
+        "sentence-transformers",
+        "text-embeddings-inference"
+      ],
+      "default_allow_patterns": [
+        "README*",
+        "config.json",
+        "modules.json",
+        "sentence_*.json",
+        "tokenizer*",
+        "*.json",
+        "*.md"
+      ],
+      "weights_allow_patterns": [
+        "*.safetensors",
+        "*.bin",
+        "*.json",
+        "tokenizer*",
+        "config.json",
+        "modules.json"
+      ]
     },
     "embedding_strong": {
       "repo_id": "jinaai/jina-embeddings-v3",
@@ -122,9 +263,120 @@
       "task": "sentence-similarity",
       "library": "transformers",
       "license_note": "Review model card/license before commercial deployment; may require custom code.",
-      "recommended_runtime": ["Transformers", "sentence-transformers", "text-embeddings-inference"],
-      "default_allow_patterns": ["README*", "config.json", "tokenizer*", "*.json", "*.md", "*.py"],
-      "weights_allow_patterns": ["*.safetensors", "*.bin", "*.json", "tokenizer*", "config.json", "*.py"]
+      "recommended_runtime": [
+        "Transformers",
+        "sentence-transformers",
+        "text-embeddings-inference"
+      ],
+      "default_allow_patterns": [
+        "README*",
+        "config.json",
+        "tokenizer*",
+        "*.json",
+        "*.md",
+        "*.py"
+      ],
+      "weights_allow_patterns": [
+        "*.safetensors",
+        "*.bin",
+        "*.json",
+        "tokenizer*",
+        "config.json",
+        "*.py"
+      ]
+    },
+    "frontier_coder_qwen_480b_fp8": {
+      "repo_id": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+      "source": "https://hf.co/Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+      "role": "Maximum-strength open coder/agentic coding lane. Use via provider-backed inference or very large dedicated endpoint; not a casual local download.",
+      "task": "text-generation",
+      "library": "transformers",
+      "license_note": "Apache-2.0 per Hugging Face metadata checked 2026-05-22.",
+      "recommended_runtime": [
+        "Hugging Face Inference Provider",
+        "Hugging Face dedicated endpoint on multi-GPU H200/A100/H100",
+        "vLLM"
+      ],
+      "default_allow_patterns": [
+        "README*",
+        "config.json",
+        "generation_config.json",
+        "tokenizer*",
+        "*.json",
+        "*.md"
+      ],
+      "weights_allow_patterns": [
+        "*.safetensors",
+        "*.json",
+        "tokenizer*",
+        "config.json",
+        "generation_config.json"
+      ],
+      "large_gpu_note": "480B total / 35B active MoE class. Prefer hosted provider first; dedicated endpoint can be expensive."
+    },
+    "large_coder_qwen3_30b_fp8": {
+      "repo_id": "Qwen/Qwen3-Coder-30B-A3B-Instruct-FP8",
+      "source": "https://hf.co/Qwen/Qwen3-Coder-30B-A3B-Instruct-FP8",
+      "role": "Large coding lane for fast GPU endpoint use with lower cost than 480B.",
+      "task": "text-generation",
+      "library": "transformers",
+      "license_note": "Apache-2.0 per Hugging Face metadata checked 2026-05-22.",
+      "recommended_runtime": [
+        "vLLM",
+        "TGI",
+        "Hugging Face endpoint"
+      ],
+      "default_allow_patterns": [
+        "README*",
+        "config.json",
+        "generation_config.json",
+        "tokenizer*",
+        "*.json",
+        "*.md"
+      ],
+      "weights_allow_patterns": [
+        "*.safetensors",
+        "*.json",
+        "tokenizer*",
+        "config.json",
+        "generation_config.json"
+      ],
+      "large_gpu_note": "Good first large-GPU coder endpoint target."
+    },
+    "reasoner_deepseek_r1_70b": {
+      "repo_id": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B",
+      "source": "https://hf.co/deepseek-ai/DeepSeek-R1-Distill-Llama-70B",
+      "role": "Large reasoning/critic lane for deliberate cross-examination and alternative reasoning.",
+      "task": "text-generation",
+      "library": "transformers",
+      "license_note": "MIT per Hugging Face metadata checked 2026-05-22.",
+      "recommended_runtime": [
+        "TGI",
+        "vLLM",
+        "Hugging Face endpoint/provider"
+      ],
+      "default_allow_patterns": [
+        "README*",
+        "config.json",
+        "generation_config.json",
+        "tokenizer*",
+        "*.json",
+        "*.md"
+      ],
+      "weights_allow_patterns": [
+        "*.safetensors",
+        "*.json",
+        "tokenizer*",
+        "config.json",
+        "generation_config.json"
+      ],
+      "large_gpu_note": "70B class; expect at least 2x80GB GPUs for full precision class deployments."
     }
+  },
+  "cost_control": {
+    "paid_gpu_requires_env": "FOCUS_APPROVE_PAID_GPU=YES",
+    "recommended_default": "large_gpu_balanced",
+    "start_with_scale_to_zero": true,
+    "manual_approval_note": "Do not create or resume paid endpoints until the operator approves model, provider, instance, max hourly cost, and scale-to-zero settings."
   }
 }
