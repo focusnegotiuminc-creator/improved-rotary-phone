@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 244 239 227;
+  --foreground: 33 38 31;
+  --card: 251 248 240;
+  --card-foreground: 33 38 31;
+  --muted: 233 226 210;
+  --muted-foreground: 95 92 80;
+  --border: 216 207 186;
+
+  --primary: 46 74 57;
+  --primary-foreground: 244 239 227;
+  --accent: 168 93 47;
+  --accent-foreground: 251 248 240;
+
+  --verified: 47 107 76;
+  --strong: 47 96 121;
+  --likely: 108 126 47;
+  --possible: 176 125 36;
+  --speculative: 176 74 43;
+  --unknown: 107 103 96;
+
+  --radius: 0.5rem;
+
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, "SFMono-Regular", monospace;
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  background-color: var(--background);
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+}
+
+.paper-grid {
+  background-image:
+    linear-gradient(to right, rgba(46, 74, 57, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(46, 74, 57, 0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
