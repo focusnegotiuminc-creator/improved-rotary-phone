@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+:root {
+  /* Core palette — 5 colors */
+  --background: #060c18;
+  --surface: #0d1a2e;
+  --surface-elevated: #121f38;
+  --foreground: #e8f0ff;
+  --muted: #6b84a8;
+
+  /* Brand accents */
+  --gold: #f2c96d;
+  --gold-dim: rgba(242, 201, 109, 0.18);
+  --blue: #81c9ff;
+  --blue-dim: rgba(129, 201, 255, 0.14);
+
+  /* Borders */
+  --border: rgba(129, 201, 255, 0.14);
+  --border-gold: rgba(242, 201, 109, 0.32);
+
+  /* Status */
+  --success: #4ade80;
+  --warning: #f2c96d;
+  --error: #f87171;
+  --running: #60a5fa;
+
+  /* Radius */
+  --radius: 1.25rem;
+  --radius-sm: 0.75rem;
+
+  /* Shadows */
+  --shadow: 0 4px 32px rgba(0, 0, 0, 0.48), 0 1px 4px rgba(0, 0, 0, 0.24);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-muted: var(--muted);
+  --color-gold: var(--gold);
+  --color-gold-dim: var(--gold-dim);
+  --color-blue: var(--blue);
+  --color-blue-dim: var(--blue-dim);
+  --color-border: var(--border);
+  --color-border-gold: var(--border-gold);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-running: var(--running);
+  --font-sans: var(--font-space-grotesk);
+  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-cormorant);
+  --radius: var(--radius);
+  --radius-sm: var(--radius-sm);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* Terminal / mono output */
+.terminal {
+  font-family: var(--font-geist-mono), "SFMono-Regular", Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Streaming cursor blink */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.cursor-blink::after {
+  content: "▋";
+  animation: blink 1s step-start infinite;
+  color: var(--gold);
+}
+
+/* Engine stage pulse */
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(242, 201, 109, 0); }
+  50% { box-shadow: 0 0 0 4px rgba(242, 201, 109, 0.18); }
+}
+.pulse-gold {
+  animation: pulse-gold 2s ease-in-out infinite;
+}
+
+/* Ambient glow background */
+.ambient-glow {
+  background: radial-gradient(ellipse at 20% 30%, rgba(129, 201, 255, 0.06) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 70%, rgba(242, 201, 109, 0.05) 0%, transparent 50%);
+}
