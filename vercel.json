@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/connectors.py": {
+      "includeFiles": "FOCUS_MASTER_AI/config/integrations.json"
+    }
+  },
+  "rewrites": [
+    { "source": "/connectors", "destination": "/api/connectors" }
+  ]
+}
