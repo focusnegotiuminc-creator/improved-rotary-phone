@@ -1,0 +1,15 @@
+{
+  "generated_routes": [
+    "https://thefocuscorp.com/rlcsolutions/",
+    "https://thefocuscorp.com/focusrecords/",
+    "https://thefocuscorp.com/waldenauto/",
+    "https://thefocuscorp.com/WaldensTimberCarryingConstruction/"
+  ],
+  "source_script": "focus_ai/scripts/build_affiliate_pages.py",
+  "deployment_workflow": ".github/workflows/deploy-infinityfree.yml",
+  "crm_destination_env": [
+    "FOCUS_CRM_WEBHOOK_URL",
+    "MAKE_WEBHOOK_URL"
+  ],
+  "approval_policy": "Human approval required before sending messages, filing documents, charging payments, account changes, legal/financial/tax/payroll actions, or grant-related submissions."
+}
