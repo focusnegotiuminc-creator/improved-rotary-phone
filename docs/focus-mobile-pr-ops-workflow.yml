@@ -1,0 +1,74 @@
+name: Focus Mobile PR Ops
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Pull request number
+        required: true
+        type: string
+      action:
+        description: Operation to run
+        required: true
+        default: inspect
+        type: choice
+        options: [inspect, approve, merge, deploy-vercel, merge-and-deploy-vercel]
+      merge_method:
+        description: Merge method
+        required: true
+        default: merge
+        type: choice
+        options: [merge, squash, rebase]
+      delete_branch:
+        description: Delete PR branch after merge
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+  deployments: write
+  statuses: write
+
+jobs:
+  pr_ops:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR_NUMBER: ${{ inputs.pr_number }}
+      OPERATION: ${{ inputs.action }}
+      MERGE_METHOD: ${{ inputs.merge_method }}
+      DELETE_BRANCH: ${{ inputs.delete_branch }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Inspect PR
+        run: |
+          gh pr view "$PR_NUMBER" --json number,title,state,isDraft,mergeable,reviewDecision,headRefName,baseRefName,url --jq .
+          gh pr checks "$PR_NUMBER" || true
+      - name: Approve PR
+        if: contains(fromJSON('["approve","merge","merge-and-deploy-vercel"]'), env.OPERATION)
+        run: gh pr review "$PR_NUMBER" --approve --body "Approved by Focus Mobile PR Ops workflow after inspection."
+      - name: Merge PR
+        if: contains(fromJSON('["merge","merge-and-deploy-vercel"]'), env.OPERATION)
+        run: |
+          FLAGS="--$MERGE_METHOD"
+          if [ "$DELETE_BRANCH" = "true" ]; then FLAGS="$FLAGS --delete-branch"; fi
+          gh pr merge "$PR_NUMBER" $FLAGS
+      - name: Deploy to Vercel
+        if: contains(fromJSON('["deploy-vercel","merge-and-deploy-vercel"]'), env.OPERATION)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          if [ -z "${VERCEL_TOKEN:-}" ] || [ -z "${VERCEL_ORG_ID:-}" ] || [ -z "${VERCEL_PROJECT_ID:-}" ]; then
+            echo "Missing Vercel secrets; skip deploy."; exit 0
+          fi
+          npm i -g vercel@latest
+          vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
+          vercel build --prod --token "$VERCEL_TOKEN"
+          vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN"
