@@ -1,0 +1,26 @@
+invariants:
+  - operator_sovereignty
+  - no_secret_commitment
+  - branch_based_recoding
+  - human_final_approval
+
+modes:
+  neutral: "objective observation and ambiguity tolerance"
+  local: "specific execution in a defined domain"
+  non_local: "systems-level pattern recognition"
+  recursive: "loop monitoring and quality control"
+  navigational: "transition between containers or phases"
+  void: "pause, incubation, and reset"
+
+phases:
+  0: "initiation"
+  90: "compression"
+  180: "collapse"
+  270: "expansion"
+
+failure_modes:
+  drift: "return to neutral and perform coordinate check"
+  compression_lock: "reduce temporal pressure and allow void mode"
+  attractor_capture: "hard container shift and alter eta/theta"
+  identity_hijack: "verify source of agency; AI is mirror not oracle"
+  premature_collapse: "ask whether the answer is self-evident or merely available"
