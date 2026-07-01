@@ -1,11 +1,8 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "functions": {
-    "api/connectors.py": {
-      "includeFiles": "FOCUS_MASTER_AI/config/integrations.json"
-    }
-  },
   "rewrites": [
-    { "source": "/connectors", "destination": "/api/connectors" }
+    { "source": "/health", "destination": "/api/focus-connector-health" },
+    { "source": "/github/upload-binary", "destination": "/api/focus-connector-upload-binary" },
+    { "source": "/github/delete-file", "destination": "/api/focus-connector-delete-file" },
+    { "source": "/github/merge-pr", "destination": "/api/focus-connector-merge-pr" }
   ]
 }
