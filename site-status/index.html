@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Focus Corp Live Site QA Status</title>
+  <meta name="description" content="Live QA status for Focus Corp and Flux & Crave production pages, audio assets, and deployment checks." />
+  <style>
+    :root{--bg:#070a12;--panel:#101827;--ink:#f7f4e9;--muted:#b8c1d8;--cyan:#3ee4d6;--gold:#f2c96d;--orange:#ff6a00;--red:#ff2d2d;--line:rgba(242,201,109,.25)}
+    body{margin:0;background:radial-gradient(circle at top left,rgba(62,228,214,.20),transparent 26%),radial-gradient(circle at top right,rgba(242,201,109,.20),transparent 28%),var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+    main{width:min(1000px,calc(100% - 28px));margin:34px auto 70px}.hero{border:1px solid var(--line);border-radius:30px;background:rgba(16,24,39,.76);padding:28px;box-shadow:0 0 60px rgba(62,228,214,.10)}h1{font-size:clamp(38px,7vw,76px);line-height:.9;margin:0 0 12px;letter-spacing:-.07em}.grad{background:linear-gradient(90deg,var(--cyan),var(--gold),var(--orange),var(--red));-webkit-background-clip:text;background-clip:text;color:transparent}p{color:var(--muted);line-height:1.55}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:20px}.card{border:1px solid var(--line);border-radius:22px;background:rgba(7,10,18,.62);padding:18px}.ok{color:#6dff9d;font-weight:900}.warn{color:var(--gold);font-weight:900}a{color:var(--gold);word-break:break-word}.badge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:7px 10px;margin:4px;background:rgba(242,201,109,.08)}@media(max-width:760px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body><main><section class="hero"><h1><span class="grad">Live QA</span><br>Focus Corp + Flux & Crave</h1><p>Production status page for the currently deployed Focus Corp system and the new glowing Flux & Crave page.</p><p><span class="badge">Deployment: READY</span><span class="badge">Git ref: main</span><span class="badge">Audio: MP3 assets verified</span><span class="badge">Old pointer files removed</span></p></section>
+<section class="grid">
+  <article class="card"><h2>Focus Corp homepage</h2><p class="ok">Active</p><p>Root homepage exists, includes Focus Corp content, glowing/luminous styling, and navigation.</p><p><a href="/">Open Focus Corp homepage</a></p></article>
+  <article class="card"><h2>Flux & Crave page</h2><p class="ok">Active</p><p>New warm neon Flux & Crave page is published with Flux brand colors only: red, orange, mango, lemon, cream, and charcoal.</p><p><a href="/flux-crave/">Open Flux & Crave</a></p></article>
+  <article class="card"><h2>Audio asset checks</h2><p class="ok">Active</p><p>change-your-life-money.mp3: 6,843,035 bytes<br>be-your-menu.mp3: 7,575,971 bytes</p><p><a href="/focus_ai/site/flux-crave/assets/audio/change-your-life-money.mp3">Money MP3</a><br><a href="/focus_ai/site/flux-crave/assets/audio/be-your-menu.mp3">Menu MP3</a></p></article>
+  <article class="card"><h2>Cleanup checks</h2><p class="ok">Complete</p><p>Old pointer MP3 paths were checked after merge and are absent from main.</p><p class="warn">Temporary connector tools are protected by access code. Remove them later if you want a fully locked public surface.</p></article>
+</section></main></body></html>
