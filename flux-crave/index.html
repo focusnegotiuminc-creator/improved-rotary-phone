@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flux & Crave | Neon Flavor Lab</title>
+  <meta name="description" content="Flux & Crave is a glowing fast-casual food and media brand built around bold flavor, music energy, mobile ordering, catering, and local Hannibal activation." />
+  <meta property="og:title" content="Flux & Crave | Neon Flavor Lab" />
+  <meta property="og:description" content="A glowing Flux & Crave landing page with warm brand colors, food-forward calls to action, and live audio assets." />
+  <meta property="og:type" content="website" />
+  <style>
+    :root{
+      --charcoal:#090504;
+      --espresso:#160904;
+      --crave-red:#ff2d2d;
+      --hot-orange:#ff6a00;
+      --mango:#ffb000;
+      --lemon:#ffe66d;
+      --cream:#fff2d0;
+      --ember:#ff3b00;
+      --line:rgba(255,176,0,.28);
+      --glass:rgba(32,10,3,.74);
+      --shadow:0 0 28px rgba(255,106,0,.35),0 0 70px rgba(255,45,45,.22);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--cream);background:var(--charcoal);overflow-x:hidden}
+    body:before{content:"";position:fixed;inset:-25%;z-index:-3;background:radial-gradient(circle at 20% 10%,rgba(255,45,45,.34),transparent 24%),radial-gradient(circle at 80% 5%,rgba(255,176,0,.28),transparent 28%),radial-gradient(circle at 55% 75%,rgba(255,106,0,.30),transparent 34%),linear-gradient(135deg,#080302,#1b0702 55%,#090504);filter:saturate(1.2)}
+    body:after{content:"";position:fixed;inset:0;z-index:-2;background:linear-gradient(rgba(255,230,109,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,230,109,.045) 1px,transparent 1px);background-size:42px 42px;mask-image:radial-gradient(circle at 50% 25%,#000,transparent 72%)}
+    .orb{position:fixed;border-radius:999px;filter:blur(24px);opacity:.85;z-index:-1;animation:float 12s ease-in-out infinite alternate}.o1{width:220px;height:220px;background:rgba(255,45,45,.35);left:-70px;top:150px}.o2{width:290px;height:290px;background:rgba(255,176,0,.26);right:-100px;top:60px;animation-delay:2s}.o3{width:240px;height:240px;background:rgba(255,106,0,.30);left:45%;bottom:-95px;animation-delay:4s}@keyframes float{to{transform:translate3d(32px,-28px,0) scale(1.08)}}
+    header{position:sticky;top:0;z-index:20;background:rgba(9,5,4,.78);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+    nav{width:min(1180px,calc(100% - 28px));margin:auto;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 0}.brand{display:flex;align-items:center;gap:12px;font-weight:1000;letter-spacing:-.04em}.mark{width:46px;height:46px;border-radius:16px;background:conic-gradient(from 160deg,var(--crave-red),var(--hot-orange),var(--mango),var(--lemon),var(--crave-red));box-shadow:var(--shadow);position:relative}.mark:after{content:"F&C";position:absolute;inset:5px;border-radius:12px;background:rgba(9,5,4,.84);display:grid;place-items:center;color:var(--lemon);font-size:12px}.navlinks{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.navlinks a{color:var(--cream);text-decoration:none;border:1px solid var(--line);padding:9px 12px;border-radius:999px;background:rgba(255,106,0,.08)}
+    main{width:min(1180px,calc(100% - 28px));margin:auto}.hero{min-height:84vh;display:grid;grid-template-columns:1.1fr .9fr;gap:26px;align-items:center;padding:72px 0 48px}.eyebrow{display:inline-flex;gap:10px;align-items:center;border:1px solid var(--line);background:rgba(255,176,0,.08);border-radius:999px;padding:9px 13px;color:var(--lemon);font-weight:800;box-shadow:0 0 26px rgba(255,176,0,.13)}h1{font-size:clamp(48px,9vw,118px);line-height:.86;margin:18px 0;letter-spacing:-.085em;text-shadow:0 0 28px rgba(255,106,0,.45),0 0 80px rgba(255,45,45,.28)}.grad{background:linear-gradient(90deg,var(--lemon),var(--mango),var(--hot-orange),var(--crave-red));-webkit-background-clip:text;background-clip:text;color:transparent}.lead{font-size:clamp(18px,2.4vw,25px);line-height:1.38;color:#ffe8b1;max-width:760px}.actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:26px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;font-weight:950;border-radius:18px;padding:15px 20px}.btn.primary{background:linear-gradient(135deg,var(--lemon),var(--mango),var(--hot-orange));color:#1a0702;box-shadow:var(--shadow)}.btn.ghost{border:1px solid var(--line);color:var(--cream);background:rgba(255,106,0,.09)}
+    .plate{position:relative;border:1px solid var(--line);border-radius:34px;min-height:540px;background:linear-gradient(160deg,rgba(255,45,45,.16),rgba(255,176,0,.08)),rgba(22,9,4,.72);box-shadow:var(--shadow);overflow:hidden}.plate:before{content:"";position:absolute;inset:8%;border-radius:50%;border:2px solid rgba(255,230,109,.22);box-shadow:inset 0 0 60px rgba(255,106,0,.22),0 0 80px rgba(255,45,45,.24)}.plate:after{content:"CRAVE";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-8deg);font-size:clamp(54px,10vw,112px);font-weight:1000;letter-spacing:-.09em;color:rgba(255,230,109,.11);text-shadow:0 0 28px rgba(255,176,0,.25)}.chip{position:absolute;border:1px solid var(--line);border-radius:999px;padding:12px 15px;background:rgba(9,5,4,.68);box-shadow:0 0 28px rgba(255,106,0,.20);font-weight:900}.c1{left:28px;top:28px}.c2{right:25px;top:110px}.c3{left:38px;bottom:105px}.c4{right:34px;bottom:28px}
+    section{padding:54px 0}.section-title{font-size:clamp(32px,5vw,62px);line-height:.95;margin:0 0 14px;letter-spacing:-.06em}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{border:1px solid var(--line);border-radius:26px;background:var(--glass);padding:22px;box-shadow:0 0 36px rgba(255,106,0,.12)}.card h3{margin:0 0 10px;font-size:24px;color:var(--lemon)}.card p{color:#ffe7b0;line-height:1.55}.menu{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.item{border-radius:24px;padding:20px;background:linear-gradient(160deg,rgba(255,45,45,.18),rgba(255,176,0,.09));border:1px solid var(--line);min-height:160px}.price{color:var(--lemon);font-size:28px;font-weight:1000}.audio{display:grid;grid-template-columns:1fr 1fr;gap:18px}.audio audio{width:100%;filter:drop-shadow(0 0 16px rgba(255,106,0,.35))}.status{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.pill{border:1px solid var(--line);border-radius:18px;padding:15px;background:rgba(255,176,0,.07)}.pill b{display:block;color:var(--lemon)}footer{padding:32px 0 56px;color:#ffd99a;border-top:1px solid var(--line)}
+    @media(max-width:880px){.hero{grid-template-columns:1fr}.plate{min-height:420px}.grid,.menu,.audio,.status{grid-template-columns:1fr}.navlinks{display:none}}
+  </style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Restaurant","name":"Flux & Crave","servesCuisine":["Fast Casual","Chicken","Wraps","Lemonade"],"address":{"@type":"PostalAddress","streetAddress":"3827 Highway MM","addressLocality":"Hannibal","addressRegion":"MO"},"telephone":"+1-217-257-6222","url":"/flux-crave/"}</script>
+</head>
+<body>
+  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+  <header><nav><div class="brand"><div class="mark"></div><span>Flux & Crave</span></div><div class="navlinks"><a href="#menu">Menu</a><a href="#media">Music</a><a href="#catering">Catering</a><a href="/">Focus Corp</a></div></nav></header>
+  <main>
+    <section class="hero">
+      <div>
+        <span class="eyebrow">🔥 Hannibal flavor lab • glowing fast-casual energy</span>
+        <h1><span class="grad">Flux</span><br>& Crave</h1>
+        <p class="lead">A warm neon food brand built for wings, wraps, loaded sides, lemonade, music, events, catering, and mobile-first customer flow.</p>
+        <div class="actions"><a class="btn primary" href="#menu">Explore the menu</a><a class="btn ghost" href="#media">Play the campaign audio</a><a class="btn ghost" href="tel:2172576222">Call 217-257-6222</a></div>
+      </div>
+      <div class="plate" aria-label="Glowing Flux and Crave brand plate"><span class="chip c1">Whole Wings</span><span class="chip c2">Tornado Fries</span><span class="chip c3">Wraps</span><span class="chip c4">Lemonade</span></div>
+    </section>
+
+    <section id="status"><div class="status"><div class="pill"><b>Live page</b>Production-ready</div><div class="pill"><b>Audio assets</b>Real MP3 files active</div><div class="pill"><b>Brand color</b>Red • orange • mango • lemon</div><div class="pill"><b>Lead flow</b>Phone + catering CTA</div></div></section>
+
+    <section id="menu"><h2 class="section-title">Crave-ready menu flow</h2><p class="lead">Built as a conversion page: fast visual impact, quick item scan, and direct customer actions.</p><div class="menu"><div class="item"><h3>Signature Wings</h3><p>Golden, crispy, sauced or seasoned.</p><div class="price">Hot</div></div><div class="item"><h3>Tornado Fries</h3><p>Loaded, shareable, social-ready.</p><div class="price">Glow</div></div><div class="item"><h3>Crave Wraps</h3><p>Portable, bold, fast-service friendly.</p><div class="price">Fresh</div></div><div class="item"><h3>House Lemonade</h3><p>Bright, cold, sweet counterbalance.</p><div class="price">Chill</div></div></div></section>
+
+    <section id="media"><h2 class="section-title">Campaign audio is live</h2><p class="lead">The real MP3 assets are wired directly into the production site path.</p><div class="audio"><div class="card"><h3>Change Your Life Money</h3><audio controls preload="metadata" src="/focus_ai/site/flux-crave/assets/audio/change-your-life-money.mp3"></audio></div><div class="card"><h3>Be Your Menu</h3><audio controls preload="metadata" src="/focus_ai/site/flux-crave/assets/audio/be-your-menu.mp3"></audio></div></div></section>
+
+    <section id="catering"><h2 class="section-title">Events, pop-ups, catering</h2><div class="grid"><div class="card"><h3>Local activation</h3><p>Built for Hannibal traffic, events, school/work lunch flow, and social media campaigns.</p></div><div class="card"><h3>Lead funnel</h3><p>Phone-first conversion path with a clean catering and booking call-to-action.</p></div><div class="card"><h3>Focus ecosystem</h3><p>Connected into the Focus Corp operating system, music, media, and storefront infrastructure.</p></div></div></section>
+  </main>
+  <footer><main>Flux & Crave • 3827 Highway MM, Hannibal, MO • <a style="color:var(--lemon)" href="tel:2172576222">217-257-6222</a></main></footer>
+</body>
+</html>
