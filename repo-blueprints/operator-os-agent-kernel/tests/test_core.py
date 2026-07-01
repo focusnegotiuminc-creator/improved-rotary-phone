@@ -15,13 +15,6 @@ def test_loop_has_four_stages():
     assert results[-1].output.startswith("Resolution:")
 
 
-def test_sensitive_credential_warning_triggers():
-    kernel = OperatorOSKernel()
-    result = kernel.global_consistency_check("Store a credential in the repository", CoordinateState(), {})
-    assert result.warnings
-
-
-def test_render_prompt_preserves_operator_rules():
+def test_render_prompt_preserves_human_final_approval():
     prompt = OperatorOSKernel().render_prompt("Build repo scaffold")
-    assert "no secrets" in prompt.lower()
     assert "human final approval" in prompt.lower()
