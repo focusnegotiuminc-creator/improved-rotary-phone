@@ -1,0 +1,93 @@
+document_types:
+  entity_profile:
+    folder: 01_ENTITY_RECORDS
+    status_flow:
+      - draft
+      - review
+      - approved
+      - archived
+    required_metadata:
+      - entity_id
+      - document_date
+      - owner
+      - reviewer
+      - source
+
+  decision_record:
+    folder: 01_ENTITY_RECORDS/decisions
+    status_flow:
+      - draft
+      - review
+      - approved
+      - archived
+    required_metadata:
+      - entity_id
+      - decision_date
+      - decision_title
+      - approver
+
+  ownership_ledger:
+    folder: 01_ENTITY_RECORDS/ownership
+    status_flow:
+      - draft
+      - review
+      - active
+      - archived
+    required_metadata:
+      - entity_id
+      - class_type
+      - holder_reference
+      - units
+      - date_recorded
+
+  asset_register:
+    folder: 06_FINANCE_AND_ASSETS
+    status_flow:
+      - draft
+      - review
+      - active
+      - retired
+    required_metadata:
+      - entity_id
+      - asset_id
+      - asset_category
+      - custody_location
+      - review_status
+
+  agreement_record:
+    folder: 07_INTERCOMPANY_RECORDS
+    status_flow:
+      - draft
+      - review
+      - active
+      - expired
+      - archived
+    required_metadata:
+      - party_a
+      - party_b
+      - agreement_type
+      - effective_date
+      - reviewer
+
+  brand_asset:
+    folder: 02_BRAND_ASSETS
+    status_flow:
+      - source
+      - approved
+      - archived
+    required_metadata:
+      - brand_owner
+      - asset_type
+      - version
+      - usage_notes
+
+  final_packet:
+    folder: 10_FINAL_SIGNED_DOCS
+    status_flow:
+      - final
+      - archived
+    required_metadata:
+      - entity_id
+      - document_bundle
+      - final_date
+      - storage_location
