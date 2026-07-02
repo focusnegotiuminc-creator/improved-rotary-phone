@@ -1,0 +1,109 @@
+integrations:
+  github:
+    role: code_repository_and_pr_workflow
+    allowed_outputs:
+      - source_files
+      - issues
+      - pull_requests
+      - ci_logs
+    blocked_outputs:
+      - credentials
+      - private_account_numbers
+
+  google_drive:
+    role: document_vault_and_source_archive
+    allowed_outputs:
+      - source_documents
+      - final_documents
+      - brand_assets
+      - export_folders
+    blocked_outputs:
+      - plaintext_passwords
+      - unrestricted_private_keys
+
+  notion:
+    role: knowledge_base_and_operating_manual
+    allowed_outputs:
+      - entity_pages
+      - operating_manuals
+      - project_notes
+      - task_references
+
+  airtable:
+    role: structured_records_database
+    allowed_outputs:
+      - entity_records
+      - asset_records
+      - agreement_records
+      - document_metadata
+      - task_status
+
+  project_tools:
+    role: task_execution
+    tools:
+      - asana
+      - clickup
+      - monday
+      - linear
+    allowed_outputs:
+      - tasks
+      - milestones
+      - status_updates
+      - blockers
+
+  design_tools:
+    role: brand_and_document_visuals
+    tools:
+      - adobe_express
+      - adobe_photoshop
+      - adobe_acrobat
+      - figma
+      - apixel
+      - heygen
+    allowed_outputs:
+      - logo_variants
+      - seal_variants
+      - letterhead
+      - cover_pages
+      - signed_packet_exports
+
+  finance_tools:
+    role: finance_tracking_and_payment_reference
+    tools:
+      - quickbooks
+      - paypal
+      - financial_datasets
+    allowed_outputs:
+      - payment_reference
+      - invoice_reference
+      - ledger_summary
+      - reporting_snapshot
+    blocked_outputs:
+      - invented_revenue
+      - unreviewed_tax_position
+
+  ai_tools:
+    role: model_routing_and_agent_generation
+    tools:
+      - openai_platform
+      - hugging_face
+      - chatgpt
+    allowed_outputs:
+      - prompts
+      - generated_drafts
+      - code_reviews
+      - summaries
+
+  research_tools:
+    role: external_research_and_opportunity_tracking
+    tools:
+      - waldo
+      - common_room
+      - clay
+      - biggeo_ai
+      - hera_digital
+    allowed_outputs:
+      - research_briefs
+      - lead_lists
+      - market_notes
+      - location_analysis
