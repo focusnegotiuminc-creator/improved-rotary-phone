@@ -1,0 +1,79 @@
+entities:
+  - id: focus_negotium_inc
+    display_name: Focus Negotium Inc.
+    category: corporation
+    status: draft_records
+    record_book: 01_ENTITY_RECORDS/focus_negotium_inc
+    primary_use:
+      - operating_company
+      - holding_company_records
+      - project_management
+    required_records:
+      - entity_profile
+      - officer_register
+      - decision_log
+      - ownership_ledger
+      - agreement_index
+      - asset_register
+
+  - id: focus_bank_account_records
+    display_name: Focus Negotium Bank Account Records
+    category: finance_records
+    status: draft_records
+    record_book: 06_FINANCE_AND_ASSETS/bank_accounts
+    primary_use:
+      - account_index
+      - authorized_use_log
+      - monthly_reconciliation_reference
+    required_records:
+      - account_register
+      - authorization_log
+      - monthly_statement_index
+      - reconciliation_checklist
+
+  - id: focus_equipment_records
+    display_name: Focus Equipment Records
+    category: asset_records
+    status: draft_records
+    record_book: 06_FINANCE_AND_ASSETS/equipment
+    primary_use:
+      - equipment_tracking
+      - lease_reference
+      - maintenance_history
+    required_records:
+      - equipment_register
+      - maintenance_log
+      - insurance_reference
+      - lease_or_use_agreement_index
+
+  - id: focus_real_estate_records
+    display_name: Focus Real Estate Investment Records
+    category: asset_records
+    status: draft_records
+    record_book: 06_FINANCE_AND_ASSETS/real_estate
+    primary_use:
+      - parcel_tracking
+      - project_tracking
+      - lease_reference
+    required_records:
+      - property_register
+      - deed_or_title_reference
+      - lease_index
+      - project_budget_log
+
+  - id: house_of_chakra_foundation_records
+    display_name: House of Chakra Ascension and Divinity Records
+    category: foundation_records
+    status: draft_records
+    record_book: 05_FOUNDATION_RECORDS/house_of_chakra
+    primary_use:
+      - mission_records
+      - meeting_records
+      - program_records
+      - donation_reference
+    required_records:
+      - mission_statement_draft
+      - leadership_roster
+      - meeting_log
+      - program_register
+      - contribution_reference_log
