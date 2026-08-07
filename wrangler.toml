@@ -1,0 +1,45 @@
+name = "focus-master-os"
+main = "workers/master-os.ts"
+compatibility_date = "2026-07-07"
+compatibility_flags = ["nodejs_compat"]
+account_id = "${CLOUDFLARE_ACCOUNT_ID}"
+workers_dev = true
+
+[vars]
+APP_ENV = "dev"
+QUALITY_GATE_REQUIRED = "true"
+PRIMARY_DEPLOYMENT_TARGET = "cloudflare"
+FALLBACK_DEPLOYMENT_TARGET = "vercel"
+
+[[kv_namespaces]]
+binding = "FOCUS_MASTER_OS_KV"
+id = "${CLOUDFLARE_KV_NAMESPACE_ID}"
+
+[[d1_databases]]
+binding = "FOCUS_MASTER_OS_D1"
+database_name = "focus-master-os-dev"
+database_id = "${CLOUDFLARE_D1_DATABASE_ID}"
+
+[[r2_buckets]]
+binding = "FOCUS_MASTER_OS_R2"
+bucket_name = "${CLOUDFLARE_R2_BUCKET}"
+
+[env.staging]
+name = "focus-master-os-staging"
+workers_dev = true
+route = { pattern = "staging.thefocuscorp.com/*", zone_id = "${CLOUDFLARE_ZONE_ID}" }
+[env.staging.vars]
+APP_ENV = "staging"
+QUALITY_GATE_REQUIRED = "true"
+PRIMARY_DEPLOYMENT_TARGET = "cloudflare"
+FALLBACK_DEPLOYMENT_TARGET = "vercel"
+
+[env.production]
+name = "focus-master-os"
+workers_dev = false
+route = { pattern = "thefocuscorp.com/*", zone_id = "${CLOUDFLARE_ZONE_ID}" }
+[env.production.vars]
+APP_ENV = "production"
+QUALITY_GATE_REQUIRED = "true"
+PRIMARY_DEPLOYMENT_TARGET = "cloudflare"
+FALLBACK_DEPLOYMENT_TARGET = "vercel"
