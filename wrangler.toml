@@ -1,0 +1,32 @@
+name = "master-os-platform"
+main = "workers/master-os-worker.ts"
+compatibility_date = "2026-07-07"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "./dist"
+
+[vars]
+MASTER_OS_ENV = "dev"
+CLOUDFLARE_PROJECT_NAME = "master-os-dev"
+
+[[kv_namespaces]]
+binding = "MASTER_OS_KV"
+id = "${CLOUDFLARE_KV_NAMESPACE_ID}"
+
+[[d1_databases]]
+binding = "MASTER_OS_D1"
+database_id = "${CLOUDFLARE_D1_DATABASE_ID}"
+database_name = "master-os-dev"
+
+[[r2_buckets]]
+binding = "MASTER_OS_R2"
+bucket_name = "${CLOUDFLARE_R2_BUCKET}"
+
+[env.staging]
+name = "master-os-platform-staging"
+route = { pattern = "staging.thefocuscorp.com/*", zone_id = "${CLOUDFLARE_ZONE_ID}" }
+vars = { MASTER_OS_ENV = "staging", CLOUDFLARE_PROJECT_NAME = "master-os-staging" }
+
+[env.production]
+name = "master-os-platform-production"
+route = { pattern = "thefocuscorp.com/*", zone_id = "${CLOUDFLARE_ZONE_ID}" }
+vars = { MASTER_OS_ENV = "production", CLOUDFLARE_PROJECT_NAME = "master-os" }
