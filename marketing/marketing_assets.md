@@ -1,4 +1,4 @@
-# Marketing Content Drop (2026-10-31T04:46:09.612774+00:00)
+# Marketing Content Drop (2026-10-31T11:54:18.332991+00:00)
 
 Hook → Insight → CTA (link in bio)
 
